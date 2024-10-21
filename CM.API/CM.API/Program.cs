@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using CM.API.Data;
 using CM.API.Interfaces;
 using CM.API.Services;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure; 
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -17,16 +18,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add services to the container
 builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 28))));
 
-    // Specify the MySQL version (Replace with your version, e.g., 8.0)
-    var serverVersion = ServerVersion.AutoDetect(connectionString);
-
-    // Pass the connection string and server version to UseMySql
-    options.UseMySql(connectionString, serverVersion);
-});
 
 
 var app = builder.Build();
