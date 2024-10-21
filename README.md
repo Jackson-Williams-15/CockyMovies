@@ -7,4 +7,5 @@
 ## CM.SPA
 - Navigate to `cd cm.spa`
 - run `npm install`
+- run `npm install axios` so you can make API requests
 - to run front end for development run `npm run dev`
