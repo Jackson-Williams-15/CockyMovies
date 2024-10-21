@@ -3,9 +3,9 @@ using CM.API.Models;
 namespace CM.API.Interfaces;
 public interface IMovieService
 {
-    Movie? GetMovie(int id);
+    Movie? GetMovieById(int id);
 
     bool AddMovie(Movie movie);
 
-    List<Movie> GetAllMovies();
+    List<Movie> GetMovies();
     }

@@ -13,13 +13,12 @@ public class MovieService : IMovieService {
         return false;
     }
 
-    // Assign a unique ID
     movie.Id = _movies.Count > 0 ? _movies.Max(m => m.Id) + 1 : 1;
 
     _movies.Add(movie);
     return true;
         }
-        public Movie? GetMovie(int id)
+        public Movie? GetMovieById(int id)
         {
             // find the movie with the specified ID
             var movie = _movies.FirstOrDefault(m => m.Id == id);
@@ -28,7 +27,7 @@ public class MovieService : IMovieService {
             return movie;
         }
         
-        public List<Movie> GetAllMovies()
+        public List<Movie> GetMovies()
 {
     return _movies;
 }
