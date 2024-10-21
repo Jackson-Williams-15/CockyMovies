@@ -3,8 +3,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Link, useLocation  } from 'react-router-dom';
 import Box from '@mui/material/Box';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import './Navbar.css';
-import { Button } from '@mui/material';
+import { Button, IconButton  } from '@mui/material';
 
 export default function Navbar() {
     const location = useLocation(); // Get the current path
@@ -58,6 +59,27 @@ export default function Navbar() {
           >
             About
           </Button>
+          <Button
+            component={Link}
+            to="/movies"
+            className={location.pathname === '/movies' ? 'MuiButton-root active' : ''}
+            sx={{
+              color: 'inherit',
+              textDecoration: 'none',
+              fontWeight: 500,
+              marginRight: '20px',
+            }}
+          >
+            Movies
+          </Button>
+
+          <IconButton
+          component={Link}
+          to="/cart"
+          sx={{ color: 'inherit' }}
+        >
+          <ShoppingCartIcon />
+        </IconButton>
         </Toolbar>
       </AppBar>
     );
