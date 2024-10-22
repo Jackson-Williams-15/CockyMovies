@@ -9,5 +9,5 @@ namespace CM.API.Models;
 
         public DateTime DateReleased { get; set; }
 
-        public string? Genre { get; set; }
+        public List<Genre>? Genres { get; set; }
     }
