@@ -9,8 +9,9 @@ namespace CM.API.Data;
         {
         }
 
-        // DbSet for Movie entities
+        // DbSet for entities
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<Genre> Genres { get; set; }
 
         // this is used to further configure the model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,5 +21,10 @@ namespace CM.API.Data;
         modelBuilder.Entity<Movie>()
         .Property(m => m.Title)
         .IsRequired();
-        }
+
+         modelBuilder.Entity<Movie>()
+        .HasMany(m => m.Genres)
+        .WithMany(g => g.Movies)
+        .UsingEntity(j => j.ToTable("MovieGenres"));
+}
     }
