@@ -14,7 +14,7 @@ builder.Services.AddHttpsRedirection(options =>
 });
 
 builder.Services.AddSingleton<IMovieService, MovieService>();
-builder.Services.AddSingleton<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
