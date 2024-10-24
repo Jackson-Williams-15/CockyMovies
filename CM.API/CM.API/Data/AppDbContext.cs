@@ -9,16 +9,33 @@ namespace CM.API.Data;
         {
         }
 
-        // DbSet for Movie entities
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<User> Users { get; set; }
 
         // this is used to further configure the model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             // This makes the title required
-        modelBuilder.Entity<Movie>()
-        .Property(m => m.Title)
-        .IsRequired();
+            modelBuilder.Entity<Movie>()
+                .Property(m => m.Title)
+                .IsRequired();
+
+            // User entity
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Username)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.DateOfBirth)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Password)
+                .IsRequired();
         }
     }
