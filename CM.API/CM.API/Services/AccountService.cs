@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Threading.Tasks;
 using CM.API.Data;
 using CM.API.Interfaces;
 using CM.API.Models;
@@ -11,12 +9,12 @@ namespace CM.API.Services;
     {
         private readonly AppDbContext _context;
 
-        public LoginService(AppDbContext context)
+        public AccountService(AppDbContext context)
         {
             _context = context;
         }
 
-        public async User Authenticate(string username, string password)
+        public async Task<User> Authenticate(string username, string password)
         {
             var user = await _context.Users
                 .Where(u => u.Username == username && u.Password == password)

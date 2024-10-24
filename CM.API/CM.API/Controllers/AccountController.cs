@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using CM.API.Interfaces;
 using CM.API.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,7 @@ namespace CM.API.Controllers
         }
 
         [HttpPost]
-        public async IActionResult SignUp([FromBody] SignUpRequest signupRequest)
+        public async Task<IActionResult> SignUp([FromBody] SignUpRequest signupRequest)
         {
             var user = await _accountService.Authenticate(signupRequest.Username, signupRequest.Password);
 
