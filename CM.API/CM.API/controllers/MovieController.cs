@@ -85,7 +85,9 @@ namespace CM.API.Controllers;
                 Description = movieDto.Description,
                 DateReleased = movieDto.DateReleased,
                 // assign the genres to the movie
-                Genres = genres
+                Genres = genres,
+                // initialize Showtimes
+                Showtimes = new List<Showtime>()
             };
 
             var success = _movieService.AddMovie(movie);
