@@ -5,4 +5,6 @@ public class MovieDto
     public string? Description { get; set; }
     public DateTime DateReleased { get; set; }
     public List<GenreDto>? Genres { get; set; }
+    public List<ShowtimeDto> Showtimes { get; set; }
+
 }
