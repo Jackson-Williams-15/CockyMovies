@@ -16,6 +16,7 @@ builder.Services.AddHttpsRedirection(options =>
 
 builder.Services.AddSingleton<IMovieService, MovieService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddSingleton<IShowtimeService, ShowtimeService>();
 builder.Services.AddSingleton<GenreRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
