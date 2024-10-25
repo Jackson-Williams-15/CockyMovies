@@ -12,7 +12,5 @@ namespace CM.API.Models;
         public DateTime DateReleased { get; set; }
 
         public List<Genre>? Genres { get; set; }
-
-        [Required]
         public required List<Showtime> Showtimes {get; set;}
     }
