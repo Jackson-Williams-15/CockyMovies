@@ -50,18 +50,28 @@ namespace CM.API.Controllers;
                 return NotFound();
             }
 
-            var movieDto = new MovieDto
+    var movieDto = new MovieDto
+    {
+        Id = movie.Id,
+        Title = movie.Title,
+        Description = movie.Description,
+        DateReleased = movie.DateReleased,
+        Genres = movie.Genres.Select(g => new GenreDto
+        {
+            Id = g.Id,
+            Name = g.Name
+        }).ToList(),
+        // showtimes added
+        Showtimes = movie.Showtimes.Select(s => new ShowtimeDto
+        {
+            Id = s.Id,
+            StartTime = s.StartTime,
+            Tickets = s.Tickets.Select(t => new TicketDto
             {
-                Id = movie.Id,
-                Title = movie.Title,
-                Description = movie.Description,
-                DateReleased = movie.DateReleased,
-                Genres = movie.Genres.Select(g => new GenreDto
-                {
-                    Id = g.Id,
-                    Name = g.Name
-                }).ToList()
-            };
+                Id = t.Id
+            }).ToList()
+        }).ToList()
+    };
 
             return Ok(movieDto);
         }
@@ -71,6 +81,11 @@ namespace CM.API.Controllers;
        public IActionResult AddMovie([FromBody] MovieCreateDto movieDto)
         {
             // genres by their IDs
+            if (movieDto.GenreIds == null || !movieDto.GenreIds.Any())
+            {
+                return BadRequest("Genre IDs cannot be null or empty.");
+            }
+
             var genres = _movieService.GetGenresByIds(movieDto.GenreIds);
             
             if (!genres.Any())
