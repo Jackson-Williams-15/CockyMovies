@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CM.API.Models;
     public class Movie
     {
@@ -9,5 +11,6 @@ namespace CM.API.Models;
 
         public DateTime DateReleased { get; set; }
 
-        public string? Genre { get; set; }
+        public List<Genre>? Genres { get; set; }
+        public required List<Showtime> Showtimes {get; set;}
     }

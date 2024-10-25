@@ -8,6 +8,7 @@ import { Route, Routes, Link  } from 'react-router-dom';
 import Home from './components/pages/Home';
 import About from './components/pages/About';
 import Movies from './components/pages/Movies';
+import Showtimes from './components/pages/Showtimes';
 import Cart from './components/pages/Cart';
 import './components/Navbar.css';
 import Theme from './Theme';
@@ -21,6 +22,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/movies/:movieId/showtimes" element={<Showtimes />} />
       </Routes>
     </ThemeProvider>
     </div>
