@@ -29,52 +29,61 @@ export default function Movies() {
     <div>
       <h2>Movies List</h2>
       <Box sx={{ padding: 3 }}>
-      <Grid container spacing={3}>
-        {movies.map(movie => (
-          <Grid item xs={12} sm={6} md={4} key={movie.id}>
-            <Card sx={{ height: 350, display: 'flex', flexDirection: 'column' }}>
-              <CardMedia
-                component="img"
-                alt={movie.title}
-                height="140"
-                image={movie.imageUrl}
-              />
-              <CardContent sx={{ flexgrow: '1' }}>
-                <Typography gutterBottom variant="h5" component="div">
-                  {movie.title}
-                </Typography>
-                <Typography gutterBottom variant="h6" component="div">
-                {movie.genres && movie.genres.length > 0
-                    ? movie.genres.map(genre => genre.name).join(', ')
-                    : 'No genres available'}
-                </Typography>
-                <Typography variant="body2" 
-                ariant="body2" sx={{
-                  maxHeight: 80,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: 'vertical',
-                  color: 'text.secondary'
-              }}>
-                  {movie.description}
-                </Typography>
-                {/*<Typography variant="subtitle2" color="text.secondary">
+        <Grid container spacing={3}>
+          {movies.map((movie) => (
+            <Grid item xs={12} sm={6} md={4} key={movie.id}>
+              <Card
+                sx={{ height: 350, display: 'flex', flexDirection: 'column' }}
+              >
+                <CardMedia
+                  component="img"
+                  alt={movie.title}
+                  height="140"
+                  image={movie.imageUrl}
+                />
+                <CardContent sx={{ flexgrow: '1' }}>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {movie.title}
+                  </Typography>
+                  <Typography gutterBottom variant="h6" component="div">
+                    {movie.genres && movie.genres.length > 0
+                      ? movie.genres.map((genre) => genre.name).join(', ')
+                      : 'No genres available'}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    ariant="body2"
+                    sx={{
+                      maxHeight: 80,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      color: 'text.secondary',
+                    }}
+                  >
+                    {movie.description}
+                  </Typography>
+                  {/*<Typography variant="subtitle2" color="text.secondary">
                   {movie.genres && movie.genres.length > 0
                     ? movie.genres.map(genre => genre.name).join(', ')
                     : 'No genres available'}
                 </Typography>*/}
-              </CardContent>
-              <CardActions>
-                <Button size="large" component={Link} to={`/movies/${movie.id}/showtimes`}>
-                  Show Times
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="large"
+                    component={Link}
+                    to={`/movies/${movie.id}/showtimes`}
+                  >
+                    Show Times
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </div>
   );

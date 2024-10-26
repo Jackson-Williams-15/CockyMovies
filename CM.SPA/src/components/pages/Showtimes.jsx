@@ -21,7 +21,9 @@ export default function Showtimes() {
     const fetchMovieTitle = async () => {
       try {
         const moviesData = await getMovies();
-        const movie = moviesData.find(movie => movie.id === parseInt(movieId));
+        const movie = moviesData.find(
+          (movie) => movie.id === parseInt(movieId),
+        );
         if (movie) {
           setMovieTitle(movie.title);
         }
@@ -38,7 +40,7 @@ export default function Showtimes() {
     <div>
       <h2>Showtimes for Movie: {movieTitle}</h2>
       <ul>
-        {showtimes.map(showtime => (
+        {showtimes.map((showtime) => (
           <li key={showtime.id}>{showtime.startTime}</li>
         ))}
       </ul>
