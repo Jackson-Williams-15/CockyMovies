@@ -9,4 +9,4 @@ public interface IMovieService
 
     List<Movie> GetMovies();
     List<Genre> GetGenresByIds(List<int> genreIds);
-    }
+}

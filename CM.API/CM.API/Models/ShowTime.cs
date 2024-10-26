@@ -13,6 +13,6 @@ public class Showtime
 
     public required ICollection<Ticket> Tickets { get; set; }
 
-     // Max number of seats available
+    // Max number of seats available
     public int Capacity { get; set; }
 }

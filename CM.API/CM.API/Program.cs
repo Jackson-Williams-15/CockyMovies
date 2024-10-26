@@ -3,7 +3,7 @@ using CM.API.Data;
 using CM.API.Interfaces;
 using CM.API.Repositories;
 using CM.API.Services;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure; 
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 

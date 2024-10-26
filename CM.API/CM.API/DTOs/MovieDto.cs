@@ -6,6 +6,6 @@ public class MovieDto
     public DateTime DateReleased { get; set; }
     public List<GenreDto>? Genres { get; set; }
     public List<ShowtimeDto> Showtimes { get; set; }
-    public string? ImageUrl { get; set; } 
+    public string? ImageUrl { get; set; }
 
 }

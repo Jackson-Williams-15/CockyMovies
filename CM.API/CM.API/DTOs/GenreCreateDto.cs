@@ -1,4 +1,4 @@
- public class GenreCreateDto
-    {
-        public string Name { get; set; }
-    }
+public class GenreCreateDto
+{
+    public string Name { get; set; }
+}

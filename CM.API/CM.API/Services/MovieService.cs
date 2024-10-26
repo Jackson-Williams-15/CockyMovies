@@ -26,10 +26,10 @@ namespace CM.API.Services
             movie.Id = _movies.Count > 0 ? _movies.Max(m => m.Id) + 1 : 1;
 
             //Set the ImageUrl while adding the movie
-    if (string.IsNullOrWhiteSpace(movie.ImageUrl))
-    {
-     movie.ImageUrl =  "https://plus.unsplash.com/premium_vector-1682303466154-2161da750ac7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fG1vdmllfGVufDB8fDB8fHww";
-    }
+            if (string.IsNullOrWhiteSpace(movie.ImageUrl))
+            {
+                movie.ImageUrl = "https://plus.unsplash.com/premium_vector-1682303466154-2161da750ac7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fG1vdmllfGVufDB8fDB8fHww";
+            }
             // add movie in-memory
             _movies.Add(movie);
             return true;
@@ -83,6 +83,6 @@ namespace CM.API.Services
 
             return fetchedGenres;
         }
-}
+    }
 
 }
