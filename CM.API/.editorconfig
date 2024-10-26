@@ -1,0 +1,5 @@
+# .editorconfig file for C#
+[*.cs]
+# C# indentation style
+indent_style = space
+indent_size = 4
