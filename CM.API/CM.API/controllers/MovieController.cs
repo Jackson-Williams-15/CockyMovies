@@ -33,7 +33,8 @@ namespace CM.API.Controllers;
                 {
                     Id = g.Id,
                     Name = g.Name
-                }).ToList()
+                }).ToList(),
+                ImageUrl = m.ImageUrl
             }).ToList();
 
             return Ok(movieDtos);
@@ -70,7 +71,9 @@ namespace CM.API.Controllers;
             {
                 Id = t.Id
             }).ToList()
-        }).ToList()
+        }).ToList(),
+        // ImageUrl in the response
+        ImageUrl = movie.ImageUrl
     };
 
             return Ok(movieDto);
@@ -102,7 +105,8 @@ namespace CM.API.Controllers;
                 // assign the genres to the movie
                 Genres = genres,
                 // initialize Showtimes
-                Showtimes = new List<Showtime>()
+                Showtimes = new List<Showtime>(),
+                ImageUrl = movieDto.ImageUrl
             };
 
             var success = _movieService.AddMovie(movie);
