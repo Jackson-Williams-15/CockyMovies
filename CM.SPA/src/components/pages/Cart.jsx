@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from 'react';
 
-const Cart = () => {
-  // Initialize state for cart items
+const Cart = ({ cartId }) => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Fetch cart items from API or initialize with dummy data
+  // Fetch cart items from the API
   useEffect(() => {
-    // Dummy data to simulate fetching from an API
-    const initialCartItems = [
-      {
-        ticketId: 1,
-        movieTitle: 'Movie A',
-        showtime: '7:00 PM',
-        quantity: 2,
-        price: 12.5,
-      },
-      {
-        ticketId: 2,
-        movieTitle: 'Movie B',
-        showtime: '9:00 PM',
-        quantity: 1,
-        price: 15.0,
-      },
-    ];
+    const fetchCartItems = async () => {
+      try {
+        setIsLoading(true);
+        setError('');
+        const response = await fetch(`/api/cart/GetCartById/${cartId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch cart items');
+        }
+        const data = await response.json();
+        setCartItems(data.cartItems || []);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
+    };
 
-    setCartItems(initialCartItems);
-  }, []);
+    fetchCartItems();
+  }, [cartId]); // Fetch cart items whenever cartId changes
 
   // Update total price whenever the cart items change
   useEffect(() => {
@@ -36,7 +36,6 @@ const Cart = () => {
     setTotal(totalPrice);
   }, [cartItems]);
 
-  // Update quantity for a specific ticket
   const updateQuantity = (ticketId, newQuantity) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -45,12 +44,10 @@ const Cart = () => {
     );
   };
 
-  // Remove a ticket from the cart
   const removeTicket = (ticketId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.ticketId !== ticketId));
   };
 
-  // Simulate the checkout process
   const handleCheckout = () => {
     if (cartItems.length === 0) {
       setCheckoutMessage("Your cart is empty. Add items before checking out.");
@@ -60,14 +57,20 @@ const Cart = () => {
     setIsCheckingOut(true);
     setCheckoutMessage("");
 
-    // Simulate payment processing
     setTimeout(() => {
-      // Simulate successful payment and clear the cart
       setCartItems([]);
       setIsCheckingOut(false);
       setCheckoutMessage("Checkout successful! Thank you for your purchase.");
-    }, 2000); // Simulates a 2 second delay for checkout process
+    }, 2000); // Simulate a checkout delay
   };
+
+  if (isLoading) {
+    return <p>Loading cart items...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading cart: {error}</p>;
+  }
 
   return (
     <div className="cart-container">
