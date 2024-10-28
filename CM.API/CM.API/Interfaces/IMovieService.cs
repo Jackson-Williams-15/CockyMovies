@@ -8,4 +8,5 @@ public interface IMovieService
     bool AddMovie(Movie movie);
 
     List<Movie> GetMovies();
-    }
+    List<Genre> GetGenresByIds(List<int> genreIds);
+}

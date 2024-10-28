@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using CM.API.Data;
 using CM.API.Interfaces;
+using CM.API.Repositories;
 using CM.API.Services;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Disable HTTPS Redirection Middleware (for local dev)
@@ -15,6 +15,9 @@ builder.Services.AddHttpsRedirection(options =>
 
 builder.Services.AddSingleton<IMovieService, MovieService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddSingleton<IShowtimeService, ShowtimeService>();
+builder.Services.AddSingleton<GenreRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
