@@ -1,5 +1,5 @@
 public interface ICartService
 {
-    bool AddTicketToCart(int cartId, int ticketId, int quantity);
+    bool AddTicketsToCart(int cartId, List<int> ticketIds);
     Cart GetCartById(int cartId);
 }

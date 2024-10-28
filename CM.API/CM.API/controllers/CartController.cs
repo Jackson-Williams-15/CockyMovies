@@ -1,35 +1,41 @@
-// Controllers/CartController.cs
 using CM.API.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 [ApiController]
 [Route("api/[controller]")]
 public class CartController : ControllerBase
 {
-    private readonly ICartService _cartService;
-
-    public CartController(ICartService cartService)
-    {
-        _cartService = cartService;
-    }
+    private List<Cart> _carts = new List<Cart>();
+    private List<Ticket> _tickets = new List<Ticket>();
 
     [HttpPost("AddTicketToCart")]
-    public IActionResult AddTicketToCart(int cartId, int ticketId, int quantity)
+    public IActionResult AddTicketToCart(int cartId, int ticketId)
     {
-        var success = _cartService.AddTicketToCart(cartId, ticketId, quantity);
-        if (!success)
+        // Find the ticket
+        var ticket = _tickets.FirstOrDefault(t => t.Id == ticketId);
+        if (ticket == null)
         {
-            return BadRequest("Failed to add ticket to cart. Either the ticket was not found or the quantity is invalid.");
+            return NotFound("Ticket not found.");
         }
 
-        return Ok(new { message = "Tickets added to cart successfully.", success = true });
+        // Find or create a new cart
+        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
+        if (cart == null)
+        {
+            cart = new Cart { CartId = cartId };
+            _carts.Add(cart);
+        }
+
+        // Add ticket to the cart
+        cart.Tickets.Add(ticket);
+
+        return Ok(new { message = "Ticket added to cart successfully.", success = true });
     }
 
     [HttpGet("GetCartById/{cartId}")]
     public IActionResult GetCartById(int cartId)
     {
-        var cart = _cartService.GetCartById(cartId);
+        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
         if (cart == null)
         {
             return NotFound("Cart not found.");

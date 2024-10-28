@@ -1,5 +1,12 @@
+using CM.API.Models;
+
 public class Cart
 {
     public int CartId { get; set; }
-    public List<CartItem> CartItems { get; set; } = new List<CartItem>();
+
+    // List of tickets in the cart
+    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+
+    // The total price of all tickets in the cart
+    public decimal TotalPrice => Tickets.Sum(ticket => ticket.Price);
 }

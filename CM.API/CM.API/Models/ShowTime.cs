@@ -15,4 +15,5 @@ public class Showtime
 
     // Max number of seats available
     public int Capacity { get; set; }
+    public int TicketsSold => Tickets.Count;
 }
