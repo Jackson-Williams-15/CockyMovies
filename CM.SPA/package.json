@@ -32,5 +32,6 @@
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
     "vite": "^5.4.8"
-  }
+  },
+   "proxy": "http://localhost:5252"
 }
