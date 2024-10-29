@@ -9,7 +9,10 @@ export const login = async (credentials) => {
     return response.data;
   } catch (error) {
     // error checking
-    console.error('Login error:', error.response ? error.response.data : error.message);
+    console.error(
+      'Login error:',
+      error.response ? error.response.data : error.message,
+    );
     throw error;
   }
 };
@@ -21,7 +24,10 @@ export const signup = async (credentials) => {
     return response.data;
   } catch (error) {
     // error checking
-    console.error('Signup error:', error.response ? error.response.data : error.message);
+    console.error(
+      'Signup error:',
+      error.response ? error.response.data : error.message,
+    );
     throw error;
   }
 };

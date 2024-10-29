@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // handles logins 
+  // handles logins
   const handleLogin = async (credentials) => {
     try {
       const data = await login(credentials);
@@ -58,7 +58,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, handleLogin, handleSignup, handleLogout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, handleLogin, handleSignup, handleLogout }}
+    >
       {children}
     </AuthContext.Provider>
   );

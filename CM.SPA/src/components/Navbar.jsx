@@ -76,26 +76,43 @@ export default function Navbar() {
             >
               Signed in as {user?.username}
             </Typography>
-            <Button onClick={handleLogout} sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}>
+            <Button
+              onClick={handleLogout}
+              sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}
+            >
               Logout
             </Button>
           </>
         ) : (
           <>
-            <Button component={Link} to="/login" sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }} className={
-            location.pathname === '/login' ? 'MuiButton-root active' : ''
-          }>
+            <Button
+              component={Link}
+              to="/login"
+              sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/login' ? 'MuiButton-root active' : ''
+              }
+            >
               Login
             </Button>
-            <Button component={Link} to="/signup" sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }} className={
-            location.pathname === '/signup' ? 'MuiButton-root active' : ''
-          }>
+            <Button
+              component={Link}
+              to="/signup"
+              sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/signup' ? 'MuiButton-root active' : ''
+              }
+            >
               Signup
             </Button>
           </>
         )}
 
-        <Button component={Link} to="/cart" sx={{ color: 'inherit', fontWeight: 500 }}>
+        <Button
+          component={Link}
+          to="/cart"
+          sx={{ color: 'inherit', fontWeight: 500 }}
+        >
           <ShoppingCartIcon />
         </Button>
       </Toolbar>
