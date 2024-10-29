@@ -461,3 +461,6 @@ README.md
 
 #net8.0
 net8.0/
+
+appsettings.Development.json
+appsettings.json
