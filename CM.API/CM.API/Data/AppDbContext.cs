@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Rating> Ratings { get; set; }
     public DbSet<Showtime> Showtime { get; set; }
+    public DbSet<Ticket> Ticket { get; set; }
 
 
     // this is used to further configure the model
@@ -61,5 +62,10 @@ public class AppDbContext : DbContext
             new Rating { Id = 4, Name = "R" },
             new Rating { Id = 5, Name = "NC-17" }
         );
+
+        modelBuilder.Entity<Showtime>()
+           .HasMany(s => s.Tickets)
+           .WithOne(t => t.Showtime)
+           .HasForeignKey(t => t.ShowtimeId);
     }
 }
