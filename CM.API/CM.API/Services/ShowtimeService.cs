@@ -3,6 +3,7 @@ using CM.API.Models;
 using CM.API.Data;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace CM.API.Services;
 public class ShowtimeService : IShowtimeService
@@ -50,6 +51,9 @@ public class ShowtimeService : IShowtimeService
 
     public List<Showtime> GetShowtimesByMovieId(int movieId)
     {
-        return _context.Showtime.Where(s => s.MovieId == movieId).ToList();
+        return _context.Showtime
+        .Include(s => s.Tickets)
+        .Where(s => s.MovieId == movieId)
+        .ToList();
     }
 }
