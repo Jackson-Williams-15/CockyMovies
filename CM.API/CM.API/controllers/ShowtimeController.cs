@@ -53,7 +53,7 @@ public class ShowtimesController : ControllerBase
     {
         var showtimes = _showtimeService.GetShowtimesByMovieId(movieId);
 
-        if (!showtimes.Any())
+        if (showtimes.Count == 0)
         {
             return NotFound("No showtimes found for this movie.");
         }
