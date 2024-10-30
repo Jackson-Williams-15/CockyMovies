@@ -19,30 +19,30 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         // This makes the title required
-            modelBuilder.Entity<Movie>()
-                .Property(m => m.Title)
-                .IsRequired();
+        modelBuilder.Entity<Movie>()
+            .Property(m => m.Title)
+            .IsRequired();
 
         modelBuilder.Entity<Movie>()
        .HasMany(m => m.Genres)
        .WithMany(g => g.Movies)
        .UsingEntity(j => j.ToTable("MovieGenres"));
 
-            // User entity
-            modelBuilder.Entity<User>()
-                .Property(u => u.Email)
-                .IsRequired();
+        // User entity
+        modelBuilder.Entity<User>()
+            .Property(u => u.Email)
+            .IsRequired();
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Username)
-                .IsRequired();
+        modelBuilder.Entity<User>()
+            .Property(u => u.Username)
+            .IsRequired();
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.DateOfBirth)
-                .IsRequired();
+        modelBuilder.Entity<User>()
+            .Property(u => u.DateOfBirth)
+            .IsRequired();
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Password)
-                .IsRequired();
+        modelBuilder.Entity<User>()
+            .Property(u => u.Password)
+            .IsRequired();
     }
 }
