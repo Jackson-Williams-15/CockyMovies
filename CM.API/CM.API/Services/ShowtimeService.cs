@@ -23,9 +23,14 @@ public class ShowtimeService : IShowtimeService
             return false;
         }
 
-        if (showtime.Tickets == null)
+        // Create tickets based on the capacity of the showtime
+        for (int i = 0; i < showtime.Capacity; i++)
         {
-            showtime.Tickets = new List<Ticket>();
+            showtime.Tickets.Add(new Ticket
+            {
+                Price = 10.00m, // default price
+                Showtime = showtime
+            });
         }
 
         _context.Showtime.Add(showtime);
