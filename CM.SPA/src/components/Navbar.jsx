@@ -7,6 +7,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Button } from '@mui/material';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import LogoutIcon from '@mui/icons-material/Logout';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -71,16 +72,21 @@ export default function Navbar() {
               sx={{
                 color: 'inherit',
                 fontWeight: 500,
-                marginRight: '20px',
+                marginRight: '10px',
               }}
             >
               Signed in as {user?.username}
             </Typography>
             <Button
               onClick={handleLogout}
-              sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}
+              sx={{
+                color: 'inherit',
+                fontWeight: 500,
+                marginLeft: '10px',
+                marginRight: '20px',
+              }}
             >
-              Logout
+              <LogoutIcon />
             </Button>
           </>
         ) : (
@@ -111,7 +117,7 @@ export default function Navbar() {
         <Button
           component={Link}
           to="/cart"
-          sx={{ color: 'inherit', fontWeight: 500 }}
+          sx={{ color: 'inherit', fontWeight: 500, marginLeft: '-25px' }}
         >
           <ShoppingCartIcon />
         </Button>
