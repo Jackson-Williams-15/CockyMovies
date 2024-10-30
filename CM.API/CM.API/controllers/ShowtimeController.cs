@@ -33,6 +33,7 @@ public class ShowtimesController : ControllerBase
             StartTime = showtimeDto.StartTime,
             MovieId = showtimeDto.MovieId,
             Movie = movie,
+            Capacity = showtimeDto.Capacity,
             Tickets = new List<Ticket>(),
         };
 
@@ -63,7 +64,8 @@ public class ShowtimesController : ControllerBase
             StartTime = s.StartTime,
             Tickets = s.Tickets.Select(t => new TicketDto
             {
-                Id = t.Id
+                Id = t.Id,
+                Price = t.Price
             }).ToList()
         }).ToList();
 
