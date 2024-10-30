@@ -97,6 +97,15 @@ export default function Showtimes() {
                 hour12: true,
               })}
             </Button>
+            <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
+              Tickets Available: {showtime.availableTickets}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
+              Ticket Price: $
+              {typeof showtime.ticketPrice === 'number'
+                ? showtime.ticketPrice.toFixed(2)
+                : 'N/A'}
+            </Typography>
           </ListItem>
         ))}
       </List>
