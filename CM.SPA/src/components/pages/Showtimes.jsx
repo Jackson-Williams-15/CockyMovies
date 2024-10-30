@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getShowtimes } from '../../Services/showtimeService';
 import { getMovies } from '../../Services/movieService';
 import {
@@ -9,11 +9,12 @@ import {
   CardContent,
   List,
   ListItem,
-  ListItemText,
+  Button,
 } from '@mui/material';
 
 export default function Showtimes() {
   const { movieId } = useParams();
+  const navigate = useNavigate();
   const [showtimes, setShowtimes] = useState([]);
   const [movie, setMovie] = useState(null);
 
@@ -53,6 +54,10 @@ export default function Showtimes() {
     );
   }
 
+  const handleShowtimeClick = (showtimeId) => {
+    navigate(`/tickets/${showtimeId}`);
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Card sx={{ mb: 4 }}>
@@ -79,8 +84,11 @@ export default function Showtimes() {
       <List>
         {showtimes.map((showtime) => (
           <ListItem key={showtime.id} sx={{ pl: 0 }}>
-            <ListItemText
-              primary={new Date(showtime.startTime).toLocaleString('en-US', {
+            <Button
+              variant="contained"
+              onClick={() => handleShowtimeClick(showtime.id)}
+            >
+              {new Date(showtime.startTime).toLocaleString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -88,7 +96,7 @@ export default function Showtimes() {
                 minute: 'numeric',
                 hour12: true,
               })}
-            />
+            </Button>
           </ListItem>
         ))}
       </List>
