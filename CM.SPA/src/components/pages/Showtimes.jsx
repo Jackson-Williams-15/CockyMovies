@@ -9,9 +9,7 @@ import {
   CardContent,
   List,
   ListItem,
-  ListItemText,
-  CircularProgress,
-  Box
+  ListItemText
 } from '@mui/material';
 
 export default function Showtimes() {
