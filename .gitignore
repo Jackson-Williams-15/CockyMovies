@@ -461,3 +461,7 @@ README.md
 
 #net8.0
 net8.0/
+
+# Ignore appsettings files
+appsettings.json
+appsettings.*.json
