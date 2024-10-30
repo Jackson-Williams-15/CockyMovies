@@ -9,7 +9,7 @@ import {
   CardContent,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from '@mui/material';
 
 export default function Showtimes() {
@@ -46,7 +46,11 @@ export default function Showtimes() {
   }, [movieId]);
 
   if (!movie) {
-    return <Typography variant="h6" align="center">Movie not found</Typography>;
+    return (
+      <Typography variant="h6" align="center">
+        Movie not found
+      </Typography>
+    );
   }
 
   return (
@@ -63,7 +67,8 @@ export default function Showtimes() {
             <strong>Rating:</strong> {movie.rating}
           </Typography>
           <Typography variant="body1" color="textSecondary">
-            <strong>Date Released:</strong> {new Date(movie.dateReleased).toLocaleDateString()}
+            <strong>Date Released:</strong>{' '}
+            {new Date(movie.dateReleased).toLocaleDateString()}
           </Typography>
         </CardContent>
       </Card>
@@ -74,14 +79,14 @@ export default function Showtimes() {
       <List>
         {showtimes.map((showtime) => (
           <ListItem key={showtime.id} sx={{ pl: 0 }}>
-            <ListItemText 
+            <ListItemText
               primary={new Date(showtime.startTime).toLocaleString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
                 hour: 'numeric',
                 minute: 'numeric',
-                hour12: true
+                hour12: true,
               })}
             />
           </ListItem>
