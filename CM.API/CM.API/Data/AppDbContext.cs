@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Genre> Genres { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Rating> Ratings { get; set; }
+    public DbSet<Showtime> Showtime { get; set; }
 
 
     // this is used to further configure the model
