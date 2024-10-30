@@ -33,7 +33,7 @@ public class ShowtimesController : ControllerBase
             StartTime = showtimeDto.StartTime,
             MovieId = showtimeDto.MovieId,
             Movie = movie,
-            Tickets = new List<Ticket>()
+            Tickets = new List<Ticket>(),
         };
 
         var success = _showtimeService.AddShowtime(showtime);

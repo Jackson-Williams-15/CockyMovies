@@ -1,37 +1,43 @@
 using CM.API.Interfaces;
 using CM.API.Models;
+using CM.API.Data;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CM.API.Services;
 public class ShowtimeService : IShowtimeService
 {
-    private readonly List<Showtime> _showtimes;
+    private readonly AppDbContext _context;
     private readonly IMovieService _movieService;
-    private int _nextId;
 
-    public ShowtimeService(IMovieService movieService)
+    public ShowtimeService(AppDbContext context, IMovieService movieService)
     {
-        _showtimes = new List<Showtime>();
+        _context = context;
         _movieService = movieService;
-        _nextId = 1;
     }
 
     public bool AddShowtime(Showtime showtime)
     {
-        if (_showtimes.Any(s => s.Id == showtime.Id))
+        if (_context.Showtime.Any(s => s.Id == showtime.Id))
         {
             return false;
         }
 
-        showtime.Id = _nextId++;
-        _showtimes.Add(showtime);
+         if (showtime.Tickets == null)
+    {
+        showtime.Tickets = new List<Ticket>();
+    }
+
+        _context.Showtime.Add(showtime);
+        _context.SaveChanges();
 
         // Update movie's showtimes list
         var movie = _movieService.GetMovieById(showtime.MovieId);
         if (movie != null)
         {
             movie.Showtimes.Add(showtime);
+            _context.Movies.Update(movie);
+            _context.SaveChanges();
         }
 
         return true;
@@ -39,6 +45,6 @@ public class ShowtimeService : IShowtimeService
 
     public List<Showtime> GetShowtimesByMovieId(int movieId)
     {
-        return _showtimes.Where(s => s.MovieId == movieId).ToList();
+        return _context.Showtime.Where(s => s.MovieId == movieId).ToList();
     }
 }
