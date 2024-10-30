@@ -31,10 +31,10 @@ public class AppDbContext : DbContext
        .WithMany(g => g.Movies)
        .UsingEntity(j => j.ToTable("MovieGenres"));
 
-       modelBuilder.Entity<Movie>()
-                .HasOne(m => m.Rating)
-                .WithMany()
-                .HasForeignKey(m => m.RatingId);
+        modelBuilder.Entity<Movie>()
+                 .HasOne(m => m.Rating)
+                 .WithMany()
+                 .HasForeignKey(m => m.RatingId);
 
         // User entity
         modelBuilder.Entity<User>()
@@ -53,13 +53,13 @@ public class AppDbContext : DbContext
             .Property(u => u.Password)
             .IsRequired();
 
-    // Data seed ratings
-    modelBuilder.Entity<Rating>().HasData(
-        new Rating { Id = 1, Name = "G" },
-        new Rating { Id = 2, Name = "PG" },
-        new Rating { Id = 3, Name = "PG-13" },
-        new Rating { Id = 4, Name = "R" },
-        new Rating { Id = 5, Name = "NC-17" }
-    );
+        // Data seed ratings
+        modelBuilder.Entity<Rating>().HasData(
+            new Rating { Id = 1, Name = "G" },
+            new Rating { Id = 2, Name = "PG" },
+            new Rating { Id = 3, Name = "PG-13" },
+            new Rating { Id = 4, Name = "R" },
+            new Rating { Id = 5, Name = "NC-17" }
+        );
     }
 }

@@ -23,10 +23,10 @@ public class ShowtimeService : IShowtimeService
             return false;
         }
 
-         if (showtime.Tickets == null)
-    {
-        showtime.Tickets = new List<Ticket>();
-    }
+        if (showtime.Tickets == null)
+        {
+            showtime.Tickets = new List<Ticket>();
+        }
 
         _context.Showtime.Add(showtime);
         _context.SaveChanges();
