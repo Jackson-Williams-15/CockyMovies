@@ -44,6 +44,7 @@ public class MovieService : IMovieService
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
             .ThenInclude(s => s.Tickets)
+            .Include(m => m.Rating)
             .FirstOrDefault(m => m.Id == id);
 
         return movie;
@@ -55,6 +56,7 @@ public class MovieService : IMovieService
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
             .ThenInclude(s => s.Tickets)
+            .Include(m => m.Rating)
             .ToList();
     }
 
