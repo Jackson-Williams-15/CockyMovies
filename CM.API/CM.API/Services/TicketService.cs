@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CM.API.Services
 {
-    public class TicketService : ITicketService 
+    public class TicketService : ITicketService {
         private readonly List<Ticket> _tickets;
         private readonly IMovieService _movieService;
         private int _nextId;
