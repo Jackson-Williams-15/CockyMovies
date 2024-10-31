@@ -1,3 +1,5 @@
+using CM.API.Models;
+
 public interface ICartService
 {
     bool AddTicketsToCart(int cartId, List<int> ticketIds);
