@@ -31,6 +31,8 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IShowtimeService, ShowtimeService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
+
 builder.Services.AddScoped<GenreRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
