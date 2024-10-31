@@ -4,11 +4,15 @@ import Typography from '@mui/material/Typography';
 import { Link, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { Button } from '@mui/material';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import LogoutIcon from '@mui/icons-material/Logout';
 import './Navbar.css';
-import { Button, IconButton } from '@mui/material';
 
 export default function Navbar() {
   const location = useLocation(); // Get the current path
+  const { isAuthenticated, user, handleLogout } = useContext(AuthContext);
 
   return (
     <AppBar position="sticky" enableColorOnDark>
@@ -46,22 +50,6 @@ export default function Navbar() {
         >
           Home
         </Button>
-
-        <Button
-          component={Link}
-          to="/about"
-          className={
-            location.pathname === '/about' ? 'MuiButton-root active' : ''
-          }
-          sx={{
-            color: 'inherit',
-            textDecoration: 'none',
-            fontWeight: 500,
-            marginRight: '20px',
-          }}
-        >
-          About
-        </Button>
         <Button
           component={Link}
           to="/movies"
@@ -78,9 +66,61 @@ export default function Navbar() {
           Movies
         </Button>
 
-        <IconButton component={Link} to="/cart" sx={{ color: 'inherit' }}>
+        {isAuthenticated ? (
+          <>
+            <Typography
+              sx={{
+                color: 'inherit',
+                fontWeight: 500,
+                marginRight: '10px',
+              }}
+            >
+              Signed in as {user?.username}
+            </Typography>
+            <Button
+              onClick={handleLogout}
+              sx={{
+                color: 'inherit',
+                fontWeight: 500,
+                marginLeft: '10px',
+                marginRight: '20px',
+              }}
+            >
+              <LogoutIcon />
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              component={Link}
+              to="/login"
+              sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/login' ? 'MuiButton-root active' : ''
+              }
+            >
+              Login
+            </Button>
+            <Button
+              component={Link}
+              to="/signup"
+              sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/signup' ? 'MuiButton-root active' : ''
+              }
+            >
+              Signup
+            </Button>
+          </>
+        )}
+
+        <Button
+          component={Link}
+          to="/cart"
+          sx={{ color: 'inherit', fontWeight: 500, marginLeft: '-25px' }}
+        >
           <ShoppingCartIcon />
-        </IconButton>
+        </Button>
       </Toolbar>
     </AppBar>
   );
