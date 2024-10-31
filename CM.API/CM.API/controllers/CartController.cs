@@ -11,14 +11,12 @@ public class CartController : ControllerBase
     [HttpPost("AddTicketToCart")]
     public IActionResult AddTicketToCart(int cartId, int ticketId)
     {
-        // Find the ticket
         var ticket = _tickets.FirstOrDefault(t => t.Id == ticketId);
         if (ticket == null)
         {
             return NotFound("Ticket not found.");
         }
 
-        // Find or create a new cart
         var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
         if (cart == null)
         {
@@ -26,7 +24,6 @@ public class CartController : ControllerBase
             _carts.Add(cart);
         }
 
-        // Add ticket to the cart
         cart.Tickets.Add(ticket);
 
         return Ok(new { message = "Ticket added to cart successfully.", success = true });
@@ -42,5 +39,25 @@ public class CartController : ControllerBase
         }
 
         return Ok(cart);
+    }
+
+    [HttpDelete("RemoveTicketFromCart")]
+    public IActionResult RemoveTicketFromCart(int cartId, int ticketId)
+    {
+        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
+        if (cart == null)
+        {
+            return NotFound("Cart not found.");
+        }
+
+        var ticket = cart.Tickets.FirstOrDefault(t => t.Id == ticketId);
+        if (ticket == null)
+        {
+            return NotFound("Ticket not found in cart.");
+        }
+
+        cart.Tickets.Remove(ticket);
+
+        return Ok(new { message = "Ticket removed from cart successfully.", success = true });
     }
 }

@@ -22,16 +22,12 @@ public class CartService : ICartService
 
         foreach (var ticketId in ticketIds)
         {
-            // Find the ticket associated with the ticketId
             var ticket = _showtimes.SelectMany(s => s.Tickets).FirstOrDefault(t => t.Id == ticketId);
-            
-            // Check if the ticket is valid and if the showtime capacity has been reached
             if (ticket == null || ticket.Showtime.Tickets.Count >= ticket.Showtime.Capacity)
             {
                 return false; // Cannot add ticket if capacity is reached or ticket not found
             }
 
-            // Add the ticket directly to the cart's list of tickets
             cart.Tickets.Add(ticket);
         }
 
@@ -42,5 +38,24 @@ public class CartService : ICartService
     public Cart GetCartById(int cartId)
     {
         return _carts.FirstOrDefault(c => c.CartId == cartId);
+    }
+
+    // Removes ticket from the cart
+    public bool RemoveTicketFromCart(int cartId, int ticketId)
+    {
+        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
+        if (cart == null)
+        {
+            return false; // Cart not found
+        }
+
+        var ticket = cart.Tickets.FirstOrDefault(t => t.Id == ticketId);
+        if (ticket == null)
+        {
+            return false; // Ticket not found
+        }
+
+        cart.Tickets.Remove(ticket);
+        return true;
     }
 }

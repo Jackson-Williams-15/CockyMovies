@@ -1,12 +1,28 @@
-using CM.API.Models;
+using System.Collections.Generic;
+using System.Linq;
 
-public class Cart
+namespace CM.API.Models
 {
-    public int CartId { get; set; }
+    public class Cart
+    {
+        public int CartId { get; set; }
 
-    // List of tickets in the cart
-    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        // List of tickets in the cart
+        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 
-    // The total price of all tickets in the cart
-    public decimal TotalPrice => Tickets.Sum(ticket => ticket.Price);
+        // The total price of all tickets in the cart
+        public decimal TotalPrice => Tickets.Sum(ticket => ticket.Price);
+
+        // Removes ticket by ID
+        public bool RemoveTicket(int ticketId)
+        {
+            var ticketToRemove = Tickets.FirstOrDefault(ticket => ticket.Id == ticketId);
+            if (ticketToRemove != null)
+            {
+                Tickets.Remove(ticketToRemove);
+                return true;
+            }
+            return false;
+        }
+    }
 }
