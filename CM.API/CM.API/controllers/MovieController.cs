@@ -123,20 +123,20 @@ public class MoviesController : ControllerBase
     }
     // DELETE: api/movies/{id}
     [HttpDelete("{id}")]
-public IActionResult RemoveMovie(int id)
-{
-    var movie = _movieService.GetMovieById(id);
-    if (movie == null)
+    public IActionResult RemoveMovie(int id)
     {
-        return NotFound("Movie not found.");
-    }
+        var movie = _movieService.GetMovieById(id);
+        if (movie == null)
+        {
+            return NotFound("Movie not found.");
+        }
 
-    var success = _movieService.RemoveMovie(movie);
-    if (!success)
-    {
-        return BadRequest("Failed to remove the movie.");
-    }
+        var success = _movieService.RemoveMovie(movie);
+        if (!success)
+        {
+            return BadRequest("Failed to remove the movie.");
+        }
 
-    return Ok("Movie removed successfully.");
-}
+        return Ok("Movie removed successfully.");
+    }
 }
