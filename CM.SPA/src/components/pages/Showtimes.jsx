@@ -10,6 +10,8 @@ import {
   List,
   ListItem,
   Button,
+  CircularProgress,
+  Box,
 } from '@mui/material';
 
 export default function Showtimes() {
@@ -17,6 +19,7 @@ export default function Showtimes() {
   const navigate = useNavigate();
   const [showtimes, setShowtimes] = useState([]);
   const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchShowtimes = async () => {
@@ -39,12 +42,29 @@ export default function Showtimes() {
         }
       } catch (error) {
         console.error('Failed to fetch movie:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchShowtimes();
     fetchMovie();
   }, [movieId]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (!movie) {
     return (
