@@ -121,4 +121,22 @@ public class MoviesController : ControllerBase
 
         return Ok("Movie added successfully.");
     }
+    // DELETE: api/movies/{id}
+    [HttpDelete("{id}")]
+public IActionResult RemoveMovie(int id)
+{
+    var movie = _movieService.GetMovieById(id);
+    if (movie == null)
+    {
+        return NotFound("Movie not found.");
+    }
+
+    var success = _movieService.RemoveMovie(movie);
+    if (!success)
+    {
+        return BadRequest("Failed to remove the movie.");
+    }
+
+    return Ok("Movie removed successfully.");
+}
 }
