@@ -6,5 +6,5 @@ public class MovieCreateDto
     public DateTime DateReleased { get; set; }
     public List<int>? GenreIds { get; set; } // Just the list of genre IDs
     public string? ImageUrl { get; set; }
-
+    public int RatingId { get; set; }
 }

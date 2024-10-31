@@ -10,6 +10,7 @@ import Cart from './components/pages/Cart';
 import Theme from './Theme';
 import SignIn from './components/pages/SignIn';
 import Signup from './components/pages/Signup';
+import Tickets from './components/pages/Tickets';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/movies" element={<Movies />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/movies/:movieId/showtimes" element={<Showtimes />} />
+          <Route path="/tickets/:showtimeId" element={<Tickets />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>

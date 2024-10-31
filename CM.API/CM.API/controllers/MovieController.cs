@@ -34,7 +34,8 @@ public class MoviesController : ControllerBase
                 Id = g.Id,
                 Name = g.Name
             }).ToList(),
-            ImageUrl = m.ImageUrl
+            ImageUrl = m.ImageUrl,
+            Rating = m.Rating.Name
         }).ToList();
 
         return Ok(movieDtos);
@@ -73,7 +74,8 @@ public class MoviesController : ControllerBase
                 }).ToList()
             }).ToList(),
             // ImageUrl in the response
-            ImageUrl = movie.ImageUrl
+            ImageUrl = movie.ImageUrl,
+            Rating = movie.Rating.Name
         };
 
         return Ok(movieDto);
@@ -106,7 +108,8 @@ public class MoviesController : ControllerBase
             Genres = genres,
             // initialize Showtimes
             Showtimes = new List<Showtime>(),
-            ImageUrl = movieDto.ImageUrl
+            ImageUrl = movieDto.ImageUrl,
+            RatingId = movieDto.RatingId
         };
 
         var success = _movieService.AddMovie(movie);
@@ -119,4 +122,3 @@ public class MoviesController : ControllerBase
         return Ok("Movie added successfully.");
     }
 }
-
