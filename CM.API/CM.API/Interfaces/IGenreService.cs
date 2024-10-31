@@ -5,7 +5,7 @@ namespace CM.API.Interfaces;
 
 public interface IGenreService
 {
-    List<Genre> GetGenres();
-    Genre? GetGenreById(int id);
-    bool AddGenre(Genre genre);
+    Task<List<Genre>> GetGenres();
+    Task<Genre?> GetGenreById(int id);
+    Task<bool> AddGenre(Genre genre);
 }
