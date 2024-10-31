@@ -9,21 +9,48 @@ import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+
 export default function Movies() {
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const moviesData = await getMovies();
-        setMovies(moviesData);
+        const cachedMovies = localStorage.getItem('movies');
+        if (cachedMovies) {
+          setMovies(JSON.parse(cachedMovies));
+          setLoading(false);
+        } else {
+          const moviesData = await getMovies();
+          setMovies(moviesData);
+          localStorage.setItem('movies', JSON.stringify(moviesData));
+          setLoading(false);
+        }
       } catch (error) {
         console.error('Failed to fetch movies:', error);
+        setLoading(false);
       }
     };
 
     fetchMovies();
   }, []);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <div>
@@ -52,7 +79,6 @@ export default function Movies() {
                   </Typography>
                   <Typography
                     variant="body2"
-                    ariant="body2"
                     sx={{
                       maxHeight: 80,
                       overflow: 'hidden',
@@ -65,11 +91,6 @@ export default function Movies() {
                   >
                     {movie.description}
                   </Typography>
-                  {/*<Typography variant="subtitle2" color="text.secondary">
-                  {movie.genres && movie.genres.length > 0
-                    ? movie.genres.map(genre => genre.name).join(', ')
-                    : 'No genres available'}
-                </Typography>*/}
                 </CardContent>
                 <CardActions>
                   <Button
