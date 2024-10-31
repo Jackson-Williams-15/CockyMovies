@@ -5,8 +5,7 @@ using System.Linq;
 
 namespace CM.API.Services
 {
-    public class TicketService : ITicketService // Updated to implement ITicketService
-    {
+    public class TicketService : ITicketService 
         private readonly List<Ticket> _tickets;
         private readonly IMovieService _movieService;
         private int _nextId;
@@ -24,13 +23,13 @@ namespace CM.API.Services
             // Check if the ticket already exists
             if (_tickets.Any(t => t.Id == ticket.Id))
             {
-                return false; // Ticket with the same ID already exists
+                return false; 
             }
 
-            ticket.Id = _nextId++; // Assign a new ID
-            _tickets.Add(ticket); // Add ticket to the list
+            ticket.Id = _nextId++; 
+            _tickets.Add(ticket); 
 
-            // Optionally, you can handle related movie logic here if necessary
+            
 
             return true; // Return success
         }
@@ -38,7 +37,7 @@ namespace CM.API.Services
         // Get all tickets
         public List<Ticket> GetAllTickets()
         {
-            return _tickets; // Return all tickets
+            return _tickets; 
         }
  
         // Get tickets by showtime

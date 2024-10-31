@@ -7,6 +7,6 @@ namespace CM.API.Interfaces
     {
         bool AddTicket(Ticket ticket);
         List<Ticket> GetAllTickets();
-        List<Ticket> GetTicketsByMovieId(int movieId); // Ensure this method is defined here
+        List<Ticket> GetTicketsByMovieId(int movieId); 
     }
 }
