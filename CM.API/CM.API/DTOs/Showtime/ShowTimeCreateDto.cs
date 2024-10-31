@@ -5,4 +5,5 @@ public class ShowtimeCreateDto
 
     // Key to movie
     public int MovieId { get; set; }
+    public int Capacity { get; set; }
 }

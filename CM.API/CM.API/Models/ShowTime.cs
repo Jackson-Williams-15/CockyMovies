@@ -11,7 +11,7 @@ public class Showtime
 
     public required Movie Movie { get; set; }
 
-    public required ICollection<Ticket> Tickets { get; set; }
+    public required ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 
     // Max number of seats available
     public int Capacity { get; set; }

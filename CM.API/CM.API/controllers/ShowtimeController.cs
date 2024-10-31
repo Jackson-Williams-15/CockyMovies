@@ -33,7 +33,8 @@ public class ShowtimesController : ControllerBase
             StartTime = showtimeDto.StartTime,
             MovieId = showtimeDto.MovieId,
             Movie = movie,
-            Tickets = new List<Ticket>()
+            Capacity = showtimeDto.Capacity,
+            Tickets = new List<Ticket>(),
         };
 
         var success = _showtimeService.AddShowtime(showtime);
@@ -52,7 +53,7 @@ public class ShowtimesController : ControllerBase
     {
         var showtimes = _showtimeService.GetShowtimesByMovieId(movieId);
 
-        if (!showtimes.Any())
+        if (showtimes.Count == 0)
         {
             return NotFound("No showtimes found for this movie.");
         }
@@ -63,7 +64,8 @@ public class ShowtimesController : ControllerBase
             StartTime = s.StartTime,
             Tickets = s.Tickets.Select(t => new TicketDto
             {
-                Id = t.Id
+                Id = t.Id,
+                Price = t.Price
             }).ToList()
         }).ToList();
 

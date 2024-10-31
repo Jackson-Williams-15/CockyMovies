@@ -27,11 +27,11 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddSingleton<IMovieService, MovieService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
-builder.Services.AddSingleton<IShowtimeService, ShowtimeService>();
-builder.Services.AddSingleton<GenreRepository>();
+builder.Services.AddScoped<IShowtimeService, ShowtimeService>();
+builder.Services.AddScoped<GenreRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

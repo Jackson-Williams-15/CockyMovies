@@ -7,5 +7,5 @@ public class MovieDto
     public List<GenreDto>? Genres { get; set; }
     public List<ShowtimeDto> Showtimes { get; set; }
     public string? ImageUrl { get; set; }
-
+    public string Rating { get; set; }
 }
