@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using CM.API.Repositories;
-namespace CM.API.Services;
+using System.Threading.Tasks;
 
+namespace CM.API.Services;
 public class MovieService : IMovieService
 {
     private readonly AppDbContext _context;
@@ -18,7 +19,7 @@ public class MovieService : IMovieService
         _genreRepository = genreRepository;
     }
 
-    public bool AddMovie(Movie movie)
+    public async Task<bool> AddMovie(Movie movie)
     {
         // if movie already exists
         if (_context.Movies.Any(m => m.Id == movie.Id))
@@ -34,51 +35,50 @@ public class MovieService : IMovieService
 
         // add movie to the database
         _context.Movies.Add(movie);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 
-    public bool RemoveMovie(Movie movie)
+    public async Task<bool> RemoveMovie(Movie movie)
     {
-        var existingMovie = _context.Movies.Find(movie.Id);
+        var existingMovie = await _context.Movies.FindAsync(movie.Id);
         if (existingMovie == null)
         {
             return false;
         }
 
         _context.Movies.Remove(existingMovie);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 
-    public Movie? GetMovieById(int id)
+    public async Task<Movie?> GetMovieById(int id)
     {
-        var movie = _context.Movies
+        return await _context.Movies
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
             .ThenInclude(s => s.Tickets)
             .Include(m => m.Rating)
-            .FirstOrDefault(m => m.Id == id);
-
-        return movie;
+            .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public List<Movie> GetMovies()
+    public async Task<List<Movie>> GetMovies()
     {
-        return _context.Movies
+        return await _context.Movies
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
             .ThenInclude(s => s.Tickets)
             .Include(m => m.Rating)
-            .ToList();
+            .ToListAsync();
     }
 
-    public List<Genre> GetGenresByIds(List<int> genreIds)
+    public async Task<List<Genre>> GetGenresByIds(List<int> genreIds)
     {
         // Show in console the genre IDs 
         System.Console.WriteLine("Provided genre IDs: " + string.Join(", ", genreIds));
 
-        var fetchedGenres = _genreRepository.GetGenres()
+        var genres = await _genreRepository.GetGenres();
+        var fetchedGenres = genres
             .Where(g => genreIds.Contains(g.Id))
             .ToList();
 
