@@ -11,7 +11,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userData = await userService.getUserById(username);
+        const userData = await userService.getUserInfo(username);
         setUser(userData);
       } catch (error) {
         setError('Error fetching user data');
