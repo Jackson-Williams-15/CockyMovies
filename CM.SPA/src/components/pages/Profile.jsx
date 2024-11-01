@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Box,
+  CircularProgress,
+} from '@mui/material';
 import userService from '../../Services/userService';
 
 const Profile = () => {
@@ -25,23 +33,49 @@ const Profile = () => {
   }, [username]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!user) {
-    return <div>User not found</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
   }
 
   return (
-    <div>
-      <h1>{user.username}'s Profile</h1>
-      <p>Email: {user.email}</p>
-      <p>Date of Birth: {user.dateOfBirth}</p>
-    </div>
+    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+      <Card sx={{ maxWidth: 500, width: '100%', padding: 2, boxShadow: 3 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item></Grid>
+          <Grid item xs>
+            <Typography variant="h5" component="div">
+              {user?.username}'s Profile
+            </Typography>
+          </Grid>
+        </Grid>
+        <CardContent>
+          <Typography variant="subtitle1" color="text.secondary">
+            Email:
+          </Typography>
+          <Typography variant="body1">{user?.email}</Typography>
+
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle1" color="text.secondary">
+              Date of Birth:
+            </Typography>
+            <Typography variant="body1">
+              {user?.dateOfBirth || 'N/A'}
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
