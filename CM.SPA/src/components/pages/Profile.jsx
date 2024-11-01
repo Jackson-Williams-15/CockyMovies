@@ -70,7 +70,7 @@ const Profile = () => {
               Date of Birth:
             </Typography>
             <Typography variant="body1">
-              {user?.dateOfBirth || 'N/A'}
+              {new Date(user?.dateOfBirth).toLocaleDateString() || 'N/A'}
             </Typography>
           </Box>
         </CardContent>
