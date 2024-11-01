@@ -16,7 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<Rating> Ratings { get; set; }
     public DbSet<Showtime> Showtime { get; set; }
     public DbSet<Ticket> Ticket { get; set; }
-
+    public DbSet<Cart> Carts { get; set; }
 
     // this is used to further configure the model
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -67,5 +67,15 @@ public class AppDbContext : DbContext
            .HasMany(s => s.Tickets)
            .WithOne(t => t.Showtime)
            .HasForeignKey(t => t.ShowtimeId);
+
+        modelBuilder.Entity<Showtime>()
+             .HasOne(s => s.Movie)
+             .WithMany(m => m.Showtimes)
+             .HasForeignKey(s => s.MovieId);
+
+        modelBuilder.Entity<User>()
+             .HasOne(u => u.Cart)
+             .WithOne(c => c.User)
+             .HasForeignKey<Cart>(c => c.UserId);
     }
 }
