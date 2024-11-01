@@ -27,5 +27,5 @@ const getUserInfo = async () => {
 
 // Export the service functions
 export default {
-  getUserById,
+  getUserInfo,
 };
