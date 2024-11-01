@@ -5,24 +5,16 @@ namespace CM.API.Models
 {
     public class Cart
     {
-        public int CartId { get; set; }
+        public int Id { get; set; }
 
-        // List of tickets in the cart
-        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        // Foreign key for User
+        public int UserId { get; set; }
+        public User User { get; set; } // Navigation property for User
 
-        // The total price of all tickets in the cart
-        public decimal TotalPrice => Tickets.Sum(ticket => ticket.Price);
+        // Collection of tickets in the cart
+        public List<Ticket> Tickets { get; set; } = new List<Ticket>();
 
-        // Removes ticket by ID
-        public bool RemoveTicket(int ticketId)
-        {
-            var ticketToRemove = Tickets.FirstOrDefault(ticket => ticket.Id == ticketId);
-            if (ticketToRemove != null)
-            {
-                Tickets.Remove(ticketToRemove);
-                return true;
-            }
-            return false;
-        }
+        // DateTime for when the cart was created or updated
+        public DateTime UpdatedAt { get; set; }
     }
 }

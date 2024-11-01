@@ -19,7 +19,7 @@ public class ShowtimeService : IShowtimeService
 
     public bool AddShowtime(Showtime showtime)
     {
-        if (_context.Showtime.Any(s => s.Id == showtime.Id))
+        if (_context.Showtimes.Any(s => s.Id == showtime.Id))
         {
             return false;
         }
@@ -34,7 +34,7 @@ public class ShowtimeService : IShowtimeService
             });
         }
 
-        _context.Showtime.Add(showtime);
+        _context.Showtimes.Add(showtime);
         _context.SaveChanges();
 
         // Update movie's showtimes list
@@ -51,7 +51,7 @@ public class ShowtimeService : IShowtimeService
 
     public List<Showtime> GetShowtimesByMovieId(int movieId)
     {
-        return _context.Showtime
+        return _context.Showtimes
         .Include(s => s.Tickets)
         .Where(s => s.MovieId == movieId)
         .ToList();

@@ -1,61 +1,75 @@
+using CM.API.Data;
 using CM.API.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class CartService : ICartService
-{
-    private readonly List<Cart> _carts;
-    private readonly List<Showtime> _showtimes;
-
-    public CartService(List<Cart> carts, List<Showtime> showtimes)
     {
-        _carts = carts;
-        _showtimes = showtimes;
-    }
+        private readonly AppDbContext _context;
 
-    // Add tickets directly to the cart
-    public bool AddTicketsToCart(int cartId, List<int> ticketIds)
-    {
-        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
-        if (cart == null)
+        public CartService(AppDbContext context)
         {
-            return false;
+            _context = context;
         }
 
-        foreach (var ticketId in ticketIds)
+        // Get cart by user ID
+        public async Task<CartDto> GetCartByUserIdAsync(int userId)
         {
-            var ticket = _showtimes.SelectMany(s => s.Tickets).FirstOrDefault(t => t.Id == ticketId);
-            if (ticket == null || ticket.Showtime.Tickets.Count >= ticket.Showtime.Capacity)
+            var cart = await _context.Carts
+                .Include(c => c.Tickets)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null)
+                throw new Exception("Cart not found");
+
+            return new CartDto
             {
-                return false; // Cannot add ticket if capacity is reached or ticket not found
+                UserId = cart.UserId,
+                Tickets = cart.Tickets.Select(t => new TicketDto
+                {
+                    Id = t.Id,
+                    Price = t.Price,
+                    ShowtimeId = t.ShowtimeId
+                }).ToList(),
+                UpdatedAt = cart.UpdatedAt
+            };
+        }
+
+        // Add a ticket to the cart
+        public async Task AddTicketToCartAsync(int userId, int ticketId)
+        {
+            var cart = await _context.Carts
+                .Include(c => c.Tickets)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            var ticket = await _context.Tickets.FindAsync(ticketId);
+            if (ticket == null) throw new Exception("Ticket not found");
+
+            if (cart == null)
+            {
+                cart = new Cart { UserId = userId, Tickets = new List<Ticket>(), UpdatedAt = DateTime.UtcNow };
+                _context.Carts.Add(cart);
             }
 
             cart.Tickets.Add(ticket);
+            cart.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
         }
 
-        return true;
-    }
-
-    // Retrieve the cart by its ID
-    public Cart GetCartById(int cartId)
-    {
-        return _carts.FirstOrDefault(c => c.CartId == cartId);
-    }
-
-    // Removes ticket from the cart
-    public bool RemoveTicketFromCart(int cartId, int ticketId)
-    {
-        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
-        if (cart == null)
+        // Remove a ticket from the cart
+        public async Task RemoveTicketFromCartAsync(int userId, int ticketId)
         {
-            return false; // Cart not found
-        }
+            var cart = await _context.Carts
+                .Include(c => c.Tickets)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
 
-        var ticket = cart.Tickets.FirstOrDefault(t => t.Id == ticketId);
-        if (ticket == null)
-        {
-            return false; // Ticket not found
-        }
+            if (cart == null) throw new Exception("Cart not found");
 
-        cart.Tickets.Remove(ticket);
-        return true;
+            var ticket = cart.Tickets.FirstOrDefault(t => t.Id == ticketId);
+            if (ticket == null) throw new Exception("Ticket not found in cart");
+
+            cart.Tickets.Remove(ticket);
+            cart.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
     }
-}

@@ -5,59 +5,52 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class CartController : ControllerBase
 {
-    private List<Cart> _carts = new List<Cart>();
-    private List<Ticket> _tickets = new List<Ticket>();
+    private readonly ICartService _cartService;
 
-    [HttpPost("AddTicketToCart")]
-    public IActionResult AddTicketToCart(int cartId, int ticketId)
+    public CartController(ICartService cartService)
     {
-        var ticket = _tickets.FirstOrDefault(t => t.Id == ticketId);
-        if (ticket == null)
-        {
-            return NotFound("Ticket not found.");
-        }
-
-        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
-        if (cart == null)
-        {
-            cart = new Cart { CartId = cartId };
-            _carts.Add(cart);
-        }
-
-        cart.Tickets.Add(ticket);
-
-        return Ok(new { message = "Ticket added to cart successfully.", success = true });
+        _cartService = cartService;
     }
 
-    [HttpGet("GetCartById/{cartId}")]
-    public IActionResult GetCartById(int cartId)
-    {
-        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
-        if (cart == null)
+    [HttpGet("{userId}")]
+        public async Task<ActionResult<CartDto>> GetCart(int userId)
         {
-            return NotFound("Cart not found.");
+            try
+            {
+                var cart = await _cartService.GetCartByUserIdAsync(userId);
+                return Ok(cart);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        return Ok(cart);
-    }
-
-    [HttpDelete("RemoveTicketFromCart")]
-    public IActionResult RemoveTicketFromCart(int cartId, int ticketId)
-    {
-        var cart = _carts.FirstOrDefault(c => c.CartId == cartId);
-        if (cart == null)
+        [HttpPost("{userId}/add/{ticketId}")]
+        public async Task<ActionResult> AddTicketToCart(int userId, int ticketId)
         {
-            return NotFound("Cart not found.");
+            try
+            {
+                await _cartService.AddTicketToCartAsync(userId, ticketId);
+                return Ok("Ticket added to cart");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        var ticket = cart.Tickets.FirstOrDefault(t => t.Id == ticketId);
-        if (ticket == null)
+        [HttpDelete("{userId}/remove/{ticketId}")]
+        public async Task<ActionResult> RemoveTicketFromCart(int userId, int ticketId)
         {
-            return NotFound("Ticket not found in cart.");
+            try
+            {
+                await _cartService.RemoveTicketFromCartAsync(userId, ticketId);
+                return Ok("Ticket removed from cart");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
-        cart.Tickets.Remove(ticket);
-
-        return Ok(new { message = "Ticket removed from cart successfully.", success = true });
-    }
 }

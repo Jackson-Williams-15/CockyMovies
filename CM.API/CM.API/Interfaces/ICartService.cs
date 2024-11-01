@@ -1,8 +1,6 @@
-using CM.API.Models;
-
 public interface ICartService
 {
-    bool AddTicketsToCart(int cartId, List<int> ticketIds);
-    Cart GetCartById(int cartId);
-    bool RemoveTicketFromCart(int cartId, int ticketId); 
+    Task<CartDto> GetCartByUserIdAsync(int userId);
+    Task AddTicketToCartAsync(int userId, int ticketId);
+    Task RemoveTicketFromCartAsync(int userId, int ticketId);
 }
