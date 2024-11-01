@@ -7,59 +7,71 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CM.API.Services
+namespace CM.API.Services;
+public class AccountService : IAccountService
 {
-    public class AccountService : IAccountService
+    private readonly AppDbContext _context;
+    private readonly ILogger<AccountService> _logger;
+
+    public AccountService(AppDbContext context, ILogger<AccountService> logger)
     {
-        private readonly AppDbContext _context;
-        private readonly ILogger<AccountService> _logger;
+        _context = context;
+        _logger = logger;
+    }
 
-        public AccountService(AppDbContext context, ILogger<AccountService> logger)
+    public async Task<User> Authenticate(string username, string password)
+    {
+        _logger.LogInformation("Attempting to authenticate user: {Username}", username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+        if (user == null)
         {
-            _context = context;
-            _logger = logger;
+            _logger.LogWarning("User not found: {Username}", username);
+            return null;
         }
 
-        public async Task<User> Authenticate(string username, string password)
+        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
-            _logger.LogInformation("Attempting to authenticate user: {Username}", username);
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-
-            if (user == null)
-            {
-                _logger.LogWarning("User not found: {Username}", username);
-                return null;
-            }
-
-            if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
-            {
-                _logger.LogWarning("Invalid password for user: {Username}", username);
-                return null;
-            }
-
-            // Authentication successful
-            _logger.LogInformation("User authenticated: {Username}", username);
-            return user;
+            _logger.LogWarning("Invalid password for user: {Username}", username);
+            return null;
         }
 
-        public async Task<User> Register(string email, string username, string password, DateTime dateOfBirth)
+        // Authentication successful
+        _logger.LogInformation("User authenticated: {Username}", username);
+        return user;
+    }
+
+    public async Task<User> Register(string email, string username, string password, DateTime dateOfBirth)
+    {
+        _logger.LogInformation("Registering user: {Username}", username);
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+        var user = new User
         {
-            _logger.LogInformation("Registering user: {Username}", username);
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            Email = email,
+            Username = username,
+            Password = hashedPassword,
+            DateOfBirth = dateOfBirth
+        };
 
-            var user = new User
-            {
-                Email = email,
-                Username = username,
-                Password = hashedPassword,
-                DateOfBirth = dateOfBirth
-            };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+        _logger.LogInformation("User registered: {Username}", username);
+        return user;
+    }
 
-            _logger.LogInformation("User registered: {Username}", username);
-            return user;
+    public async Task<User> GetUserByUsername(string username)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+    }
+
+    public async Task<User> GetUserById(string userId)
+    {
+        if (int.TryParse(userId, out int parsedUserId))
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
         }
+        return null;
     }
 }

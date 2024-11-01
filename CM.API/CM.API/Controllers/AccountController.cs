@@ -8,84 +8,118 @@ using CM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CM.API.Controllers
+namespace CM.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AccountController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AccountController : ControllerBase
+    private readonly IAccountService _accountService;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<AccountController> _logger;
+
+    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger)
     {
-        private readonly IAccountService _accountService;
-        private readonly IConfiguration _configuration;
+        _accountService = accountService;
+        _configuration = configuration;
+        _logger = logger;
+    }
 
-        public AccountController(IAccountService accountService, IConfiguration configuration)
+    [HttpPost("signup")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
+    {
+        var user = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
+
+        if (user == null)
+            return BadRequest(new { message = "User registration failed" });
+
+        var userDto = new UserDto
         {
-            _accountService = accountService;
-            _configuration = configuration;
+            Id = user.Id,
+            Email = user.Email,
+            Username = user.Username,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return Ok(userDto);
+    }
+
+    [HttpPost("login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
+    {
+        var user = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
+
+        if (user == null)
+            return Unauthorized(new { message = "Invalid username or password" });
+
+        var token = GenerateJwtToken(user);
+
+        var userDto = new UserDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Username = user.Username,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return Ok(new { token, user = userDto });
+    }
+
+    [Authorize]
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        // Extract the username from the JWT token claims
+        var username = User.FindFirstValue(ClaimTypes.Name);
+        _logger.LogInformation("Extracted username from token: {Username}", username);
+
+        if (string.IsNullOrEmpty(username))
+        {
+            return Unauthorized(new { message = "Invalid token" });
         }
 
-        [HttpPost("signup")]
-        [AllowAnonymous]
-        public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
+        var user = await _accountService.GetUserByUsername(username);
+        if (user == null)
         {
-            var user = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
-
-            if (user == null)
-                return BadRequest(new { message = "User registration failed" });
-
-            var userDto = new UserDto
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Username = user.Username,
-                DateOfBirth = user.DateOfBirth
-            };
-
-            return Ok(userDto);
+            _logger.LogWarning("User not found for username: {Username}", username);
+            return NotFound(new { message = "User not found" });
         }
 
-        [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
+        var userDto = new UserDto
         {
-            var user = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
+            Id = user.Id,
+            Email = user.Email,
+            Username = user.Username,
+            DateOfBirth = user.DateOfBirth
+        };
 
-            if (user == null)
-                return Unauthorized(new { message = "Invalid username or password" });
+        return Ok(userDto);
+    }
 
-            var token = GenerateJwtToken(user);
-
-            var userDto = new UserDto
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Username = user.Username,
-                DateOfBirth = user.DateOfBirth
-            };
-
-            return Ok(new { token, user = userDto });
-        }
-
-        private string GenerateJwtToken(User user)
+    private string GenerateJwtToken(User user)
+    {
+        var claims = new[]
         {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+        new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(ClaimTypes.Name, user.Username)
+    };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Issuer"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds);
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Issuer"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: creds);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

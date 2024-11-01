@@ -68,7 +68,9 @@ export default function Navbar() {
 
         {isAuthenticated ? (
           <>
-            <Typography
+            <Button
+              component={Link}
+              to={`/profile/${user?.username}`}
               sx={{
                 color: 'inherit',
                 fontWeight: 500,
@@ -76,7 +78,7 @@ export default function Navbar() {
               }}
             >
               Signed in as {user?.username}
-            </Typography>
+            </Button>
             <Button
               onClick={handleLogout}
               sx={{

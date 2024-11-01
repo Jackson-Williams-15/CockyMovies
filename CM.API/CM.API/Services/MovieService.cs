@@ -38,6 +38,19 @@ public class MovieService : IMovieService
         return true;
     }
 
+    public bool RemoveMovie(Movie movie)
+    {
+        var existingMovie = _context.Movies.Find(movie.Id);
+        if (existingMovie == null)
+        {
+            return false;
+        }
+
+        _context.Movies.Remove(existingMovie);
+        _context.SaveChanges();
+        return true;
+    }
+
     public Movie? GetMovieById(int id)
     {
         var movie = _context.Movies
