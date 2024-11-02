@@ -5,8 +5,9 @@ namespace CM.API.Interfaces
 {
     public interface ITicketService
     {
-        bool AddTicket(Ticket ticket);
-        List<Ticket> GetAllTickets();
-        List<Ticket> GetTicketsByMovieId(int movieId); 
+        Task<bool> AddTicket(Ticket ticket);
+        Task<List<Ticket>> GetAllTickets();
+        Task<List<Ticket>> GetTicketsByMovieId(int movieId);
+        Task<TicketDto> GetTicketById(int id);
     }
 }
