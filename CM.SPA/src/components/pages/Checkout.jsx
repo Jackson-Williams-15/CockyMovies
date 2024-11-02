@@ -8,13 +8,15 @@ const Checkout = () => {
   ]);
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0,
+    );
   };
 
   const handleCheckout = (e) => {
     e.preventDefault();
-    alert("Payment submitted");
-    // Here you could add functionality to integrate with a payment processor
+    alert('Payment submitted');
   };
 
   return (
@@ -22,14 +24,16 @@ const Checkout = () => {
       <h2>Checkout</h2>
       <div className="cart-items">
         <h3>Your Cart</h3>
-        {cartItems.map(item => (
+        {cartItems.map((item) => (
           <div key={item.id} className="cart-item">
             <span>{item.name}</span>
-            <span>{item.quantity} x ${item.price}</span>
+            <span>
+              {item.quantity} x ${item.price}
+            </span>
           </div>
         ))}
       </div>
-      
+
       <div className="total-amount">
         <h3>Total: ${calculateTotal()}</h3>
       </div>
