@@ -22,6 +22,25 @@ namespace CM.API.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("CM.API.Models.Cart", b =>
+                {
+                    b.Property<int>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CartId"));
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("CM.API.Models.Genre", b =>
                 {
                     b.Property<int>("Id")
@@ -147,6 +166,9 @@ namespace CM.API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
@@ -154,6 +176,8 @@ namespace CM.API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartId");
 
                     b.HasIndex("ShowtimeId");
 
@@ -205,6 +229,17 @@ namespace CM.API.Migrations
                     b.ToTable("MovieGenres", (string)null);
                 });
 
+            modelBuilder.Entity("CM.API.Models.Cart", b =>
+                {
+                    b.HasOne("CM.API.Models.User", "User")
+                        .WithOne("Cart")
+                        .HasForeignKey("CM.API.Models.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CM.API.Models.Movie", b =>
                 {
                     b.HasOne("CM.API.Models.Rating", "Rating")
@@ -229,6 +264,10 @@ namespace CM.API.Migrations
 
             modelBuilder.Entity("CM.API.Models.Ticket", b =>
                 {
+                    b.HasOne("CM.API.Models.Cart", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("CartId");
+
                     b.HasOne("CM.API.Models.Showtime", "Showtime")
                         .WithMany("Tickets")
                         .HasForeignKey("ShowtimeId")
@@ -253,6 +292,11 @@ namespace CM.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CM.API.Models.Cart", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
             modelBuilder.Entity("CM.API.Models.Movie", b =>
                 {
                     b.Navigation("Showtimes");
@@ -261,6 +305,12 @@ namespace CM.API.Migrations
             modelBuilder.Entity("CM.API.Models.Showtime", b =>
                 {
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("CM.API.Models.User", b =>
+                {
+                    b.Navigation("Cart")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
