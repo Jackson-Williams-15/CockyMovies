@@ -1,38 +1,42 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CM.API.Models;
 using CM.API.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace CM.API.Repositories;
-public class GenreRepository
+namespace CM.API.Repositories
 {
-    private readonly AppDbContext _context;
-
-    public GenreRepository(AppDbContext context)
+    public class GenreRepository
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public List<Genre> GetGenres()
-    {
-        return _context.Genres.ToList();
-    }
-
-    public Genre? GetGenreById(int id)
-    {
-        return _context.Genres.FirstOrDefault(g => g.Id == id);
-    }
-
-    public bool AddGenre(Genre genre)
-    {
-        // Genre already exists
-        if (_context.Genres.Any(g => g.Name.ToLower() == genre.Name.ToLower()))
+        public GenreRepository(AppDbContext context)
         {
-            return false;
+            _context = context;
         }
 
-        _context.Genres.Add(genre);
-        _context.SaveChanges();
-        return true;
+        public async Task<List<Genre>> GetGenres()
+        {
+            return await _context.Genres.ToListAsync();
+        }
+
+        public async Task<Genre?> GetGenreById(int id)
+        {
+            return await _context.Genres.FirstOrDefaultAsync(g => g.Id == id);
+        }
+
+        public async Task<bool> AddGenre(Genre genre)
+        {
+            // Genre already exists
+            if (await _context.Genres.AnyAsync(g => g.Name.ToLower() == genre.Name.ToLower()))
+            {
+                return false;
+            }
+
+            _context.Genres.Add(genre);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
