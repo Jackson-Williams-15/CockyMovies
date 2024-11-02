@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Typography, CircularProgress, Box } from '@mui/material';
 
 const Tickets = () => {
   const { showtimeId } = useParams();
+  const navigate = useNavigate();
   const [showtime, setShowtime] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [cartId, setCartId] = useState(null);
 
   useEffect(() => {
     const fetchShowtime = async () => {
@@ -22,28 +22,20 @@ const Tickets = () => {
       }
     };
 
-    const fetchCartId = async () => {
-      try {
-        const response = await axios.get('/api/Account/profile', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setCartId(response.data.cartId);
-      } catch (error) {
-        setError('Failed to load user cart. Please try again.');
-      }
-    };
-
     fetchShowtime();
-    fetchCartId();
   }, [showtimeId]);
 
-  const handleAddTicketToCart = async (ticketId) => {
+  const handleAddTicketToCart = async (ticketId, quantity) => {
     try {
+      const cartId = localStorage.getItem('cartId');
       await axios.post('/api/Cart/AddTicketToCart', {
         cartId,
-        ticketId,
+        ticketId: [ticketId],
+        quantity,
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       alert('Ticket added to cart successfully.');
     } catch (error) {
@@ -93,7 +85,7 @@ const Tickets = () => {
       </Typography>
       <Button
         variant="contained"
-        onClick={() => handleAddTicketToCart(showtime.tickets[0]?.id)}
+        onClick={() => handleAddTicketToCart(showtime.tickets[0]?.id, 1)}
       >
         Add Ticket to Cart
       </Button>
