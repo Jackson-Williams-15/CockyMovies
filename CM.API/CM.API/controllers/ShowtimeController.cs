@@ -27,9 +27,9 @@ public class ShowtimesController : ControllerBase
 
     // POST: api/showtimes
     [HttpPost]
-    public IActionResult AddShowtime([FromBody] ShowtimeCreateDto showtimeDto)
+    public async Task<IActionResult> AddShowtime([FromBody] ShowtimeCreateDto showtimeDto)
     {
-        var movie = _movieService.GetMovieById(showtimeDto.MovieId);
+        var movie = await _movieService.GetMovieById(showtimeDto.MovieId);
 
         if (movie == null)
         {
@@ -45,7 +45,7 @@ public class ShowtimesController : ControllerBase
             Tickets = new List<Ticket>(),
         };
 
-        var success = _showtimeService.AddShowtime(showtime);
+        var success = await _showtimeService.AddShowtime(showtime);
 
         if (!success)
         {
@@ -57,9 +57,9 @@ public class ShowtimesController : ControllerBase
 
     // GET: api/showtimes/movie/{movieId}
     [HttpGet("movie/{movieId}")]
-    public IActionResult GetShowtimesByMovieId(int movieId)
+    public async Task<IActionResult> GetShowtimesByMovieId(int movieId)
     {
-        var showtimes = _showtimeService.GetShowtimesByMovieId(movieId);
+        var showtimes = await _showtimeService.GetShowtimesByMovieId(movieId);
 
         if (showtimes.Count == 0)
         {

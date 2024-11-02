@@ -3,6 +3,7 @@ using CM.API.Models;
 using CM.API.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace CM.API.Services;
@@ -17,9 +18,9 @@ public class ShowtimeService : IShowtimeService
         _movieService = movieService;
     }
 
-    public bool AddShowtime(Showtime showtime)
+    public async Task<bool> AddShowtime(Showtime showtime)
     {
-        if (_context.Showtime.Any(s => s.Id == showtime.Id))
+        if (await _context.Showtime.AnyAsync(s => s.Id == showtime.Id))
         {
             return false;
         }
@@ -35,25 +36,25 @@ public class ShowtimeService : IShowtimeService
         }
 
         _context.Showtime.Add(showtime);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         // Update movie's showtimes list
-        var movie = _movieService.GetMovieById(showtime.MovieId);
+        var movie = await _movieService.GetMovieById(showtime.MovieId);
         if (movie != null)
         {
             movie.Showtimes.Add(showtime);
             _context.Movies.Update(movie);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         return true;
     }
 
-    public List<Showtime> GetShowtimesByMovieId(int movieId)
+    public async Task<List<Showtime>> GetShowtimesByMovieId(int movieId)
     {
-        return _context.Showtime
-        .Include(s => s.Tickets)
-        .Where(s => s.MovieId == movieId)
-        .ToList();
+        return await _context.Showtime
+            .Include(s => s.Tickets)
+            .Where(s => s.MovieId == movieId)
+            .ToListAsync();
     }
 }

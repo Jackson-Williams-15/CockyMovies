@@ -14,19 +14,19 @@ public class GenreService : IGenreService
         _genreRepository = genreRepository;
     }
 
-    public List<Genre> GetGenres()
+    public async Task<List<Genre>> GetGenres()
     {
-        return _genreRepository.GetGenres();
+        return await _genreRepository.GetGenres();
     }
 
-    public Genre? GetGenreById(int id)
+    public async Task<Genre?> GetGenreById(int id)
     {
-        return _genreRepository.GetGenreById(id);
+        return await _genreRepository.GetGenreById(id);
     }
 
-    public bool AddGenre(Genre genre)
+    public async Task<bool> AddGenre(Genre genre)
     {
-        return _genreRepository.AddGenre(genre);
+        return await _genreRepository.AddGenre(genre);
     }
 }
 
