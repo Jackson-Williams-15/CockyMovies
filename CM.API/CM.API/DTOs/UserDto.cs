@@ -5,5 +5,5 @@ public class UserDto
     public string Email { get; set; }
     public string Username { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public Cart Cart { get; set; }
+    public CartDto Cart { get; set; }
 }

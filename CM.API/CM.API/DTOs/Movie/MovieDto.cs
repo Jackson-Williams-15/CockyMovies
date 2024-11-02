@@ -4,8 +4,8 @@ public class MovieDto
     public string Title { get; set; }
     public string? Description { get; set; }
     public DateTime DateReleased { get; set; }
-    public List<GenreDto>? Genres { get; set; }
-    public List<ShowtimeDto> Showtimes { get; set; }
+    public List<GenreDto>? Genres { get; set; } = new List<GenreDto>();
+    public List<ShowtimeDto> Showtimes { get; set; } = new List<ShowtimeDto>();
     public string? ImageUrl { get; set; }
-    public string Rating { get; set; }
+    public string Rating { get; set; } = string.Empty;
 }
