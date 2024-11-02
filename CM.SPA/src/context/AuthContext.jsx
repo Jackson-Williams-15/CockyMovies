@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
       const data = await login(credentials);
       if (data.token) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('cartId', data.cartId);
         localStorage.setItem('user', JSON.stringify(data.user));
         setIsAuthenticated(true);
         setUser(data.user);
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children }) => {
       const data = await signup(credentials);
       if (data.token) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('cartId', data.cartId);
         localStorage.setItem('user', JSON.stringify(data.user));
         setIsAuthenticated(true);
         setUser(data.user);
