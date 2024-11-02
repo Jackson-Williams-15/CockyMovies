@@ -13,113 +13,125 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CM.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AccountController : ControllerBase
-{
-    private readonly IAccountService _accountService;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<AccountController> _logger;
-
-    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
     {
-        _accountService = accountService;
-        _configuration = configuration;
-        _logger = logger;
-    }
+        private readonly IAccountService _accountService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<AccountController> _logger;
+        private readonly ICartService _cartService;
 
-    [HttpPost("signup")]
-    [AllowAnonymous]
-    public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
-    {
-        var user = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
-
-        if (user == null)
-            return BadRequest(new { message = "User registration failed" });
-
-        var userDto = new UserDto
+        public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger, ICartService cartService)
         {
-            Id = user.Id,
-            Email = user.Email,
-            Username = user.Username,
-            DateOfBirth = user.DateOfBirth
-        };
-
-        return Ok(userDto);
-    }
-
-    [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
-    {
-        var user = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
-
-        if (user == null)
-            return Unauthorized(new { message = "Invalid username or password" });
-
-        var token = GenerateJwtToken(user);
-
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Username = user.Username,
-            DateOfBirth = user.DateOfBirth
-        };
-
-        return Ok(new { token, user = userDto });
-    }
-
-    [Authorize]
-    [HttpGet("profile")]
-    public async Task<IActionResult> GetProfile()
-    {
-        // Extract the username from the JWT token claims
-        var username = User.FindFirstValue(ClaimTypes.Name);
-        _logger.LogInformation("Extracted username from token: {Username}", username);
-
-        if (string.IsNullOrEmpty(username))
-        {
-            return Unauthorized(new { message = "Invalid token" });
+            _accountService = accountService;
+            _cartService = cartService;
+            _configuration = configuration;
+            _logger = logger;
         }
 
-        var user = await _accountService.GetUserByUsername(username);
-        if (user == null)
+        [HttpPost("signup")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
         {
-            _logger.LogWarning("User not found for username: {Username}", username);
-            return NotFound(new { message = "User not found" });
+            var userDto = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
+
+            if (userDto == null)
+                return BadRequest(new { message = "User registration failed" });
+
+            var cart = await _cartService.GetCartByUserId(userDto.Id);
+
+            return Ok(new { user = userDto, cartId = cart?.CartId });
         }
 
-        var userDto = new UserDto
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
         {
-            Id = user.Id,
-            Email = user.Email,
-            Username = user.Username,
-            DateOfBirth = user.DateOfBirth
-        };
+            var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
 
-        return Ok(userDto);
-    }
+            if (userDto == null)
+                return Unauthorized(new { message = "Invalid username or password" });
 
-    private string GenerateJwtToken(User user)
-    {
-        var claims = new[]
+            var cart = await _cartService.GetCartByUserId(userDto.Id);
+            var token = GenerateJwtToken(userDto);
+
+            return Ok(new { token, user = userDto, cartId = cart?.CartId });
+        }
+
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
         {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(ClaimTypes.Name, user.Username)
-    };
+            // Extract the username from the JWT token claims
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            _logger.LogInformation("Extracted username from token: {Username}", username);
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized(new { message = "Invalid token" });
+            }
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Issuer"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: creds);
+            var user = await _accountService.GetUserByUsername(username);
+            if (user == null)
+            {
+                _logger.LogWarning("User not found for username: {Username}", username);
+                return NotFound(new { message = "User not found" });
+            }
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Username = user.Username,
+                DateOfBirth = user.DateOfBirth,
+                Cart = new CartDto
+                {
+                    CartId = user.Cart.CartId,
+                    UserId = user.Cart.UserId,
+                    Tickets = user.Cart.Tickets.Select(t => new CartTicketDto
+                    {
+                        Id = t.Id,
+                        Price = t.Price,
+                        Showtime = new ShowtimeDto
+                        {
+                            Id = t.Showtime.Id,
+                            StartTime = t.Showtime.StartTime,
+                            Movie = new MovieDto
+                            {
+                                Id = t.Showtime.Movie.Id,
+                                Title = t.Showtime.Movie.Title,
+                                Description = t.Showtime.Movie.Description,
+                                DateReleased = t.Showtime.Movie.DateReleased,
+                                Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
+                            }
+                        }
+                    }).ToList()
+                }
+            };
+
+            return Ok(userDto);
+        }
+
+        private string GenerateJwtToken(UserDto user)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Issuer"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
-}
