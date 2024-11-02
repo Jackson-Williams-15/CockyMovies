@@ -6,6 +6,8 @@ namespace CM.API.Models
     public class Cart
     {
         public int CartId { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
 
         // List of tickets in the cart
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
