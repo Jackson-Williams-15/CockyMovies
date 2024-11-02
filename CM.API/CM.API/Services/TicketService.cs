@@ -1,51 +1,59 @@
+using CM.API.Data;
 using CM.API.Interfaces;
 using CM.API.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CM.API.Services
 {
-    public class TicketService : ITicketService {
-        private readonly List<Ticket> _tickets;
-        private readonly IMovieService _movieService;
-        private int _nextId;
+    public class TicketService : ITicketService
+    {
+        private readonly AppDbContext _context;
 
-        public TicketService(IMovieService movieService)
+        public TicketService(AppDbContext context)
         {
-            _tickets = new List<Ticket>();
-            _movieService = movieService;
-            _nextId = 1;
+            _context = context;
         }
 
-        // Add a new ticket
-        public bool AddTicket(Ticket ticket)
+        public async Task<bool> AddTicket(Ticket ticket)
         {
-            // Check if the ticket already exists
-            if (_tickets.Any(t => t.Id == ticket.Id))
+             // Check if the ticket already exists
+            if (await _context.Ticket.AnyAsync(t => t.Id == ticket.Id))
             {
-                return false; 
+                return false;
             }
 
-            ticket.Id = _nextId++; 
-            _tickets.Add(ticket); 
-
-            
-
-            return true; // Return success
+            _context.Ticket.Add(ticket);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         // Get all tickets
-        public List<Ticket> GetAllTickets()
+        public async Task<List<Ticket>> GetAllTickets()
         {
-            return _tickets; 
+            return await _context.Ticket.ToListAsync();
         }
- 
+
         // Get tickets by showtime
-        public List<Ticket> GetTicketsByMovieId(int movieId)
+        public async Task<List<Ticket>> GetTicketsByMovieId(int movieId)
         {
-
-            return _tickets.Where(t => t.Showtime.MovieId == movieId).ToList(); 
+            return await _context.Ticket
+                                 .Where(t => t.Showtime.MovieId == movieId)
+                                 .ToListAsync();
         }
 
+        public async Task<TicketDto> GetTicketById(int id)
+        {
+            var ticket = await _context.Ticket.FindAsync(id);
+            if (ticket == null) return null;
+
+            return new TicketDto
+            {
+                Id = ticket.Id,
+                Price = ticket.Price
+            };
+        }
     }
 }
