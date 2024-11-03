@@ -60,9 +60,11 @@ const Cart = () => {
         acc[ticketKey] = {
           ...ticket,
           quantity: 0,
+          totalPrice: 0,
         };
       }
-      acc[ticketKey].quantity += 1;
+      acc[ticketKey].quantity += ticket.quantity;
+      acc[ticketKey].totalPrice += ticket.price * ticket.quantity;
       return acc;
     }, {});
     return Object.values(groupedTickets);
@@ -73,6 +75,10 @@ const Cart = () => {
   }
 
   const groupedTickets = groupTicketsByShowtime(cart.tickets);
+  const overallTotalPrice = groupedTickets.reduce(
+    (acc, ticket) => acc + ticket.totalPrice,
+    0,
+  );
 
   return (
     <div>
@@ -90,6 +96,7 @@ const Cart = () => {
             </p>
             <p>Price: ${ticket.price}</p>
             <p>Quantity: {ticket.quantity}</p>
+            <p>Total Price: ${ticket.totalPrice.toFixed(2)}</p>
             <button
               onClick={() => handleRemoveTicket(ticket.id)}
               style={buttonStyle}
@@ -99,7 +106,7 @@ const Cart = () => {
           </div>
         ))}
       </div>
-      <h3>Total: ${cart.totalPrice}</h3>
+      <h3>Total: ${overallTotalPrice.toFixed(2)}</h3>
       {/* Checkout button at the bottom */}
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <button onClick={handleCheckout} style={buttonStyle}>
@@ -110,7 +117,6 @@ const Cart = () => {
   );
 };
 
-// Button styling
 const buttonStyle = {
   padding: '10px 20px',
   backgroundColor: '#4CAF50',
