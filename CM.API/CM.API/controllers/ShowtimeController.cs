@@ -61,23 +61,12 @@ public class ShowtimesController : ControllerBase
     {
         var showtimes = await _showtimeService.GetShowtimesByMovieId(movieId);
 
-        if (showtimes.Count == 0)
+        if (showtimes == null || showtimes.Count == 0)
         {
-            return NotFound("No showtimes found for this movie.");
+            return NotFound("No showtimes found for the specified movie.");
         }
 
-        var showtimeDtos = showtimes.Select(s => new ShowtimeDto
-        {
-            Id = s.Id,
-            StartTime = s.StartTime,
-            Tickets = s.Tickets.Select(t => new TicketDto
-            {
-                Id = t.Id,
-                Price = t.Price
-            }).ToList()
-        }).ToList();
-
-        return Ok(showtimeDtos);
+        return Ok(showtimes);
     }
 
     // GET: api/showtimes/{id}
@@ -94,69 +83,27 @@ public class ShowtimesController : ControllerBase
             _logger.LogWarning($"Showtime with ID {id} not found.");
             return NotFound("Showtime not found.");
         }
-        else
-        {
-            _logger.LogInformation($"Showtime with ID {id} found with start time {showtime.StartTime}");
-        }
 
-        if (showtime.Movie == null)
+        var showtimeDto = new ShowtimeDto
         {
-            _logger.LogWarning($"Showtime with ID {id} has no associated movie.");
-            return BadRequest("Showtime does not have an associated movie.");
-        }
-        else
-        {
-            _logger.LogInformation($"Associated movie with ID {showtime.Movie.Id} and title '{showtime.Movie.Title}' found.");
-        }
-
-        if (showtime.Tickets == null)
-        {
-            _logger.LogWarning($"Showtime with ID {id} has a null Tickets collection.");
-        }
-        else
-        {
-            _logger.LogInformation($"Showtime with ID {id} has {showtime.Tickets.Count} tickets.");
-        }
-
-        try
-        {
-            _logger.LogInformation("Creating ShowtimeDto...");
-
-            // Log details of the movie object
-            _logger.LogInformation($"Movie details: ID = {showtime.Movie.Id}, Title = {showtime.Movie.Title}, Description = {showtime.Movie.Description}, Rating = {showtime.Movie.Rating}, DateReleased = {showtime.Movie.DateReleased}");
-
-            var movieDto = new MovieDto
+            Id = showtime.Id,
+            StartTime = showtime.StartTime,
+            Movie = new MovieDto
             {
                 Id = showtime.Movie.Id,
                 Title = showtime.Movie.Title,
                 Description = showtime.Movie.Description,
                 Rating = showtime.Movie.Rating?.ToString() ?? "Unrated",
                 DateReleased = showtime.Movie.DateReleased
-            };
-            _logger.LogInformation($"MovieDto created with ID {movieDto.Id}, Title {movieDto.Title}");
-
-            var ticketDtos = showtime.Tickets?.Select(t => new TicketDto
+            },
+            Tickets = showtime.Tickets.Select(t => new TicketDto
             {
                 Id = t.Id,
                 Price = t.Price
-            }).ToList() ?? new List<TicketDto>();
-            _logger.LogInformation($"TicketDtos created with count {ticketDtos.Count}");
+            }).ToList(),
+            AvailableTickets = showtime.TicketsAvailable
+        };
 
-            var showtimeDto = new ShowtimeDto
-            {
-                Id = showtime.Id,
-                StartTime = showtime.StartTime,
-                Movie = movieDto,
-                Tickets = ticketDtos
-            };
-            _logger.LogInformation($"ShowtimeDto created with ID {showtimeDto.Id}, StartTime {showtimeDto.StartTime}, Movie ID {showtimeDto.Movie.Id}, and {showtimeDto.Tickets.Count} tickets.");
-
-            return Ok(showtimeDto);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while creating the ShowtimeDto.");
-            return StatusCode(500, "Internal server error");
-        }
+        return Ok(showtimeDto);
     }
 }
