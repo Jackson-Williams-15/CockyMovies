@@ -36,10 +36,25 @@ const Cart = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setCart((prevCart) => ({
-        ...prevCart,
-        tickets: prevCart.tickets.filter((ticket) => ticket.id !== ticketId),
-      }));
+
+      setCart((prevCart) => {
+        const updatedTickets = prevCart.tickets
+          .map((ticket) => {
+            if (ticket.id === ticketId) {
+              return {
+                ...ticket,
+                quantity: ticket.quantity - 1,
+              };
+            }
+            return ticket;
+          })
+          .filter((ticket) => ticket.quantity > 0);
+
+        return {
+          ...prevCart,
+          tickets: updatedTickets,
+        };
+      });
     } catch (error) {
       setError('Failed to remove the ticket. Please try again.');
     }
