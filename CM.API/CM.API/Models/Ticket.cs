@@ -8,5 +8,6 @@ public class Ticket
     // Foreign key for the associated showtime
     public int ShowtimeId { get; set; }
     public required Showtime Showtime { get; set; }
+    public int Quantity { get; set; }
 
 }
