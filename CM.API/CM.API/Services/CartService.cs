@@ -14,37 +14,58 @@ public class CartService : ICartService
         _context = context;
     }
 
-    public async Task<bool> AddTicketToCart(int cartId, List<int> ticketId, int quantity)
-{
-    var cart = await _context.Carts.Include(c => c.Tickets).FirstOrDefaultAsync(c => c.CartId == cartId);
-    if (cart == null)
+    public async Task<bool> AddTicketToCart(int cartId, List<int> ticketIds, int quantity)
     {
-        return false;
-    }
-
-    var tickets = await _context.Ticket.Include(t => t.Showtime).ThenInclude(s => s.Movie)
-        .Where(t => ticketId.Contains(t.Id)).ToListAsync();
-    if (tickets == null || tickets.Count == 0 || tickets.Any(t => t.Showtime.Tickets.Count + quantity > t.Showtime.Capacity))
-    {
-        return false; // Cannot add ticket if capacity is reached or ticket not found
-    }
-
-    foreach (var ticket in tickets)
-    {
-        for (int i = 0; i < quantity; i++)
+        var cart = await _context.Carts.Include(c => c.Tickets).FirstOrDefaultAsync(c => c.CartId == cartId);
+        if (cart == null)
         {
+            Console.WriteLine($"Cart with ID {cartId} not found.");
+            return false;
+        }
+
+        var ticketId = ticketIds.FirstOrDefault();
+        var ticket = await _context.Ticket.Include(t => t.Showtime)
+                                          .FirstOrDefaultAsync(t => t.Id == ticketId);
+
+        if (ticket == null)
+        {
+            Console.WriteLine($"Ticket with ID {ticketId} not found.");
+            return false;
+        }
+
+        if (ticket.Showtime.TicketsAvailable < quantity)
+        {
+            Console.WriteLine($"Capacity reached for showtime ID: {ticket.Showtime.Id}. Available: {ticket.Showtime.TicketsAvailable}, Requested: {quantity}");
+            return false;
+        }
+
+        // Check if ticket already exists in cart for the same showtime
+        var existingCartTicket = cart.Tickets.FirstOrDefault(t => t.ShowtimeId == ticket.ShowtimeId);
+
+        if (existingCartTicket != null)
+        {
+            // Update the quantity of ticket
+            existingCartTicket.Quantity += quantity;
+        }
+        else
+        {
+            //New ticket entry
             cart.Tickets.Add(new Ticket
             {
                 Price = ticket.Price,
                 ShowtimeId = ticket.ShowtimeId,
+                Quantity = quantity,
                 Showtime = ticket.Showtime
             });
         }
+
+        // Lower the available tickets
+        ticket.Showtime.TicketsAvailable -= quantity;
+
+        await _context.SaveChangesAsync();
+        return true;
     }
 
-    await _context.SaveChangesAsync();
-    return true;
-}
     public async Task<CartDto> GetCartById(int cartId)
     {
         var cart = await _context.Carts
@@ -66,6 +87,7 @@ public class CartService : ICartService
             {
                 Id = t.Id,
                 Price = t.Price,
+                Quantity = t.Quantity,
                 Showtime = t.Showtime != null ? new ShowtimeDto
                 {
                     Id = t.Showtime.Id,
@@ -117,16 +139,20 @@ public class CartService : ICartService
         var cart = await _context.Carts.Include(c => c.Tickets).FirstOrDefaultAsync(c => c.CartId == cartId);
         if (cart == null)
         {
+            Console.WriteLine($"Cart with ID {cartId} not found.");
             return false; // Cart not found
         }
 
         var ticket = cart.Tickets.FirstOrDefault(t => t.Id == ticketId);
         if (ticket == null)
         {
+            Console.WriteLine($"Ticket with ID {ticketId} not found in cart.");
             return false; // Ticket not found
         }
 
         cart.Tickets.Remove(ticket);
+        ticket.Showtime.TicketsAvailable++;
+        Console.WriteLine($"Ticket removed from cart. Showtime ID: {ticket.Showtime.Id}, TicketsAvailable: {ticket.Showtime.TicketsAvailable}");
         await _context.SaveChangesAsync();
         return true;
     }
