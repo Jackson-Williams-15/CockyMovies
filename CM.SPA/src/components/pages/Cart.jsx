@@ -33,8 +33,7 @@ const Cart = () => {
       await axios.delete('/api/Cart/RemoveTicketFromCart', {
         params: { cartId, ticketId },
         headers: {
-        Authorization:
-        `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       setCart((prevCart) => ({
@@ -51,23 +50,46 @@ const Cart = () => {
     navigate('/checkout');
   };
 
+  // Group tickets by showtime
+  const groupTicketsByShowtime = (tickets) => {
+    const groupedTickets = tickets.reduce((acc, ticket) => {
+      const showtimeId = ticket.showtime.id;
+      // Use showtimeId and price as key
+      const ticketKey = `${showtimeId}-${ticket.price}`;
+      if (!acc[ticketKey]) {
+        acc[ticketKey] = {
+          ...ticket,
+          quantity: 0,
+        };
+      }
+      acc[ticketKey].quantity += 1;
+      return acc;
+    }, {});
+    return Object.values(groupedTickets);
+  };
+
   if (!cart) {
     return <div>Loading cart...</div>;
   }
+
+  const groupedTickets = groupTicketsByShowtime(cart.tickets);
 
   return (
     <div>
       <h1>Your Cart</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <div>
-        {cart.tickets.map((ticket) => (
+        {groupedTickets.map((ticket) => (
           <div
-            key={ticket.id}
+            key={`${ticket.showtime.id}-${ticket.price}`}
             style={{ borderBottom: '1px solid #ccc', marginBottom: '10px' }}
           >
             <p>Movie: {ticket.showtime.movie.title}</p>
-            <p>Showtime: {new Date(ticket.showtime.startTime).toLocaleString()}</p>
+            <p>
+              Showtime: {new Date(ticket.showtime.startTime).toLocaleString()}
+            </p>
             <p>Price: ${ticket.price}</p>
+            <p>Quantity: {ticket.quantity}</p>
             <button
               onClick={() => handleRemoveTicket(ticket.id)}
               style={buttonStyle}
