@@ -19,7 +19,7 @@ namespace CM.API.Services
 
         public async Task<bool> AddTicket(Ticket ticket)
         {
-             // Check if the ticket already exists
+            // Check if the ticket already exists
             if (await _context.Ticket.AnyAsync(t => t.Id == ticket.Id))
             {
                 return false;
