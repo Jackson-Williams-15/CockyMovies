@@ -136,7 +136,11 @@ public class CartService : ICartService
 
     public async Task<bool> RemoveTicketFromCart(int cartId, int ticketId)
     {
-        var cart = await _context.Carts.Include(c => c.Tickets).FirstOrDefaultAsync(c => c.CartId == cartId);
+        var cart = await _context.Carts
+            .Include(c => c.Tickets)
+            .ThenInclude(t => t.Showtime)
+            .FirstOrDefaultAsync(c => c.CartId == cartId);
+
         if (cart == null)
         {
             Console.WriteLine($"Cart with ID {cartId} not found.");
@@ -150,8 +154,24 @@ public class CartService : ICartService
             return false; // Ticket not found
         }
 
-        cart.Tickets.Remove(ticket);
-        ticket.Showtime.TicketsAvailable++;
+        if (ticket.Showtime == null)
+        {
+            Console.WriteLine($"Showtime for ticket with ID {ticketId} is null.");
+            return false;
+        }
+
+        if (ticket.Quantity > 1)
+        {
+            ticket.Quantity -= 1;
+            ticket.Showtime.TicketsAvailable += 1;
+        }
+        else
+        {
+            cart.Tickets.Remove(ticket);
+            // Adjust the available tickets based on the quantity
+            ticket.Showtime.TicketsAvailable += ticket.Quantity;
+        }
+
         Console.WriteLine($"Ticket removed from cart. Showtime ID: {ticket.Showtime.Id}, TicketsAvailable: {ticket.Showtime.TicketsAvailable}");
         await _context.SaveChangesAsync();
         return true;
