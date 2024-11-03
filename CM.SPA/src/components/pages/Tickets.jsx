@@ -7,7 +7,9 @@ import {
   CircularProgress,
   Box,
   TextField,
+  AlertTitle,
 } from '@mui/material';
+import Alert from '@mui/material/Alert';
 
 const Tickets = () => {
   const { showtimeId } = useParams();
@@ -15,6 +17,11 @@ const Tickets = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [alert, setAlert] = useState({
+    show: false,
+    severity: '',
+    message: '',
+  });
 
   useEffect(() => {
     const fetchShowtime = async () => {
@@ -50,9 +57,17 @@ const Tickets = () => {
           },
         },
       );
-      alert('Tickets added to cart successfully.');
+      setAlert({
+        show: true,
+        severity: 'success',
+        message: 'Your tickets were added to your cart.',
+      });
     } catch (error) {
-      setError('Failed to add tickets to cart. Please try again.');
+      setAlert({
+        show: true,
+        severity: 'error',
+        message: 'There was an error adding your tickets.',
+      });
     }
   };
 
@@ -84,7 +99,16 @@ const Tickets = () => {
   }
 
   return (
-    <div>
+    <Box
+      sx={{
+        padding: (theme) => theme.spacing(3), // Adds responsive padding using theme spacing
+        maxWidth: 'md', // Limits width without hardcoding
+        margin: '0 auto', // Centers the container horizontally
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2, // Adds gap between elements for consistent spacing
+      }}
+    >
       <Typography variant="h4">Showtime Details</Typography>
       <Typography variant="body1">Movie: {showtime.movie.title}</Typography>
       <Typography variant="body1">
@@ -110,7 +134,27 @@ const Tickets = () => {
       >
         Add Tickets to Cart
       </Button>
-    </div>
+      {alert.show && (
+        <Box
+          sx={{
+            marginTop: 2,
+            width: '100%', // Full width for alignment within container
+            display: 'flex',
+            justifyContent: 'center', // Centers the alert within the container
+          }}
+        >
+          <Alert
+            severity={alert.severity}
+            onClose={() => setAlert({ ...alert, show: false })}
+          >
+            <AlertTitle>
+              {alert.severity === 'success' ? 'Success' : 'Error'}
+            </AlertTitle>
+            {alert.message}
+          </Alert>
+        </Box>
+      )}
+    </Box>
   );
 };
 
