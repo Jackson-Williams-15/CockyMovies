@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Button, Typography, CircularProgress, Box } from '@mui/material';
+import {
+  Button,
+  Typography,
+  CircularProgress,
+  Box,
+  TextField,
+} from '@mui/material';
 
 const Tickets = () => {
   const { showtimeId } = useParams();
-  const navigate = useNavigate();
   const [showtime, setShowtime] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchShowtime = async () => {
@@ -28,18 +34,22 @@ const Tickets = () => {
   const handleAddTicketToCart = async (ticketId, quantity) => {
     try {
       const cartId = localStorage.getItem('cartId');
-      await axios.post('/api/Cart/AddTicketToCart', {
-        cartId,
-        ticketId: [ticketId],
-        quantity,
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+      await axios.post(
+        '/api/Cart/AddTicketToCart',
+        {
+          cartId,
+          ticketId: [ticketId],
+          quantity,
         },
-      });
-      alert('Ticket added to cart successfully.');
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        },
+      );
+      alert('Tickets added to cart successfully.');
     } catch (error) {
-      setError('Failed to add ticket to cart. Please try again.');
+      setError('Failed to add tickets to cart. Please try again.');
     }
   };
 
@@ -83,11 +93,19 @@ const Tickets = () => {
       <Typography variant="body1">
         Ticket Price: ${showtime.tickets[0]?.price.toFixed(2)}
       </Typography>
+      <TextField
+        label="Quantity"
+        type="number"
+        value={quantity}
+        onChange={(e) => setQuantity(parseInt(e.target.value))}
+        inputProps={{ min: 1, max: showtime.tickets.length }}
+        sx={{ mb: 2 }}
+      />
       <Button
         variant="contained"
-        onClick={() => handleAddTicketToCart(showtime.tickets[0]?.id, 1)}
+        onClick={() => handleAddTicketToCart(showtime.tickets[0]?.id, quantity)}
       >
-        Add Ticket to Cart
+        Add Tickets to Cart
       </Button>
     </div>
   );
