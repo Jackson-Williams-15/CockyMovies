@@ -17,6 +17,9 @@ public class AppDbContext : DbContext
     public DbSet<Showtime> Showtime { get; set; }
     public DbSet<Ticket> Ticket { get; set; }
     public DbSet<Cart> Carts { get; set; }
+    public DbSet<OrderResult> OrderResult { get; set; }
+    public DbSet<PaymentDetails> PaymentDetails { get; set; }
+    public DbSet<CheckoutRequest> CheckoutRequest { get; set; }
 
     // this is used to further configure the model
     protected override void OnModelCreating(ModelBuilder modelBuilder)
