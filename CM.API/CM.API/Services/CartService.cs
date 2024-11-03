@@ -15,28 +15,36 @@ public class CartService : ICartService
     }
 
     public async Task<bool> AddTicketToCart(int cartId, List<int> ticketId, int quantity)
+{
+    var cart = await _context.Carts.Include(c => c.Tickets).FirstOrDefaultAsync(c => c.CartId == cartId);
+    if (cart == null)
     {
-        var cart = await _context.Carts.Include(c => c.Tickets).FirstOrDefaultAsync(c => c.CartId == cartId);
-        if (cart == null)
-        {
-            return false;
-        }
-
-        var ticket = await _context.Ticket.Include(t => t.Showtime).ThenInclude(s => s.Movie).FirstOrDefaultAsync(t => ticketId.Contains(t.Id));
-        if (ticket == null || ticket.Showtime.Tickets.Count + quantity > ticket.Showtime.Capacity)
-        {
-            return false; // Cannot add ticket if capacity is reached or ticket not found
-        }
-
-        for (int i = 0; i < quantity; i++)
-        {
-            cart.Tickets.Add(ticket);
-        }
-
-        await _context.SaveChangesAsync();
-        return true;
+        return false;
     }
 
+    var tickets = await _context.Ticket.Include(t => t.Showtime).ThenInclude(s => s.Movie)
+        .Where(t => ticketId.Contains(t.Id)).ToListAsync();
+    if (tickets == null || tickets.Count == 0 || tickets.Any(t => t.Showtime.Tickets.Count + quantity > t.Showtime.Capacity))
+    {
+        return false; // Cannot add ticket if capacity is reached or ticket not found
+    }
+
+    foreach (var ticket in tickets)
+    {
+        for (int i = 0; i < quantity; i++)
+        {
+            cart.Tickets.Add(new Ticket
+            {
+                Price = ticket.Price,
+                ShowtimeId = ticket.ShowtimeId,
+                Showtime = ticket.Showtime
+            });
+        }
+    }
+
+    await _context.SaveChangesAsync();
+    return true;
+}
     public async Task<CartDto> GetCartById(int cartId)
     {
         var cart = await _context.Carts
