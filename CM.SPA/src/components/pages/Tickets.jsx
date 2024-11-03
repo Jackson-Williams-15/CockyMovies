@@ -31,14 +31,17 @@ const Tickets = () => {
     fetchShowtime();
   }, [showtimeId]);
 
-  const handleAddTicketToCart = async (ticketId, quantity) => {
+  const handleAddTicketToCart = async (quantity) => {
     try {
       const cartId = localStorage.getItem('cartId');
+      const ticketIds = showtime.tickets
+        .slice(0, quantity)
+        .map((ticket) => ticket.id);
       await axios.post(
         '/api/Cart/AddTicketToCart',
         {
           cartId,
-          ticketId: [ticketId],
+          ticketId: ticketIds,
           quantity,
         },
         {
@@ -88,7 +91,7 @@ const Tickets = () => {
         Start Time: {new Date(showtime.startTime).toLocaleString()}
       </Typography>
       <Typography variant="body1">
-        Available Tickets: {showtime.tickets.length}
+        Available Tickets: {showtime.availableTickets}
       </Typography>
       <Typography variant="body1">
         Ticket Price: ${showtime.tickets[0]?.price.toFixed(2)}
@@ -103,7 +106,7 @@ const Tickets = () => {
       />
       <Button
         variant="contained"
-        onClick={() => handleAddTicketToCart(showtime.tickets[0]?.id, quantity)}
+        onClick={() => handleAddTicketToCart(quantity)}
       >
         Add Tickets to Cart
       </Button>
