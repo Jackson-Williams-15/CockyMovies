@@ -118,9 +118,6 @@ export default function Showtimes() {
               })}
             </Button>
             <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
-              Tickets Available: {showtime.availableTickets}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
               Ticket Price: $
               {typeof showtime.ticketPrice === 'number'
                 ? showtime.ticketPrice.toFixed(2)
