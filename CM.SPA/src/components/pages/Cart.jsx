@@ -31,7 +31,11 @@ const Cart = () => {
     try {
       const cartId = localStorage.getItem('cartId');
       await axios.delete('/api/Cart/RemoveTicketFromCart', {
-        data: { cartId, ticketId },
+        params: { cartId, ticketId },
+        headers: {
+        Authorization:
+        `Bearer ${localStorage.getItem('token')}`,
+        },
       });
       setCart((prevCart) => ({
         ...prevCart,
