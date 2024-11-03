@@ -61,7 +61,7 @@ public class CartController : ControllerBase
     }
 
     [HttpDelete("RemoveTicketFromCart")]
-    public async Task<IActionResult> RemoveTicketFromCart(int cartId, int ticketId)
+    public async Task<IActionResult> RemoveTicketFromCart([FromQuery] int cartId, [FromQuery] int ticketId)
     {
         var result = await _cartService.RemoveTicketFromCart(cartId, ticketId);
         if (!result)
