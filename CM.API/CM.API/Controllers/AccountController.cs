@@ -85,7 +85,7 @@ public class AccountController : ControllerBase
             Email = user.Email,
             Username = user.Username,
             DateOfBirth = user.DateOfBirth,
-            Cart = new CartDto
+            Cart = user.Cart != null ? new CartDto
             {
                 CartId = user.Cart.CartId,
                 UserId = user.Cart.UserId,
@@ -107,7 +107,7 @@ public class AccountController : ControllerBase
                         }
                     }
                 }).ToList()
-            }
+            } : null
         };
 
         return Ok(userDto);
