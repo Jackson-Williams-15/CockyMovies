@@ -7,8 +7,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 // Disable HTTPS Redirection Middleware (for local dev)
 builder.Services.AddHttpsRedirection(options =>
@@ -34,15 +38,17 @@ builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IShowtimeService, ShowtimeService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 builder.Services.AddScoped<GenreRepository>();
 builder.Services.AddControllers();
 
-/*builder.Services.AddControllers()
+builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-    });*/
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -73,6 +79,21 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    // Log the request path and method
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("Handling request: {Path} {Method}", context.Request.Path, context.Request.Method);
+
+    // Log the request body
+    context.Request.EnableBuffering();
+    var body = await new StreamReader(context.Request.Body).ReadToEndAsync();
+    context.Request.Body.Position = 0;
+    logger.LogInformation("Request body: {Body}", body);
+
+    await next.Invoke();
+});
 
 // Configure cors and frontend URL
 app.UseCors(x => x
