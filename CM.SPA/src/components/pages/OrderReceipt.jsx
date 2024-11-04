@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Container, Box, Typography, Paper, List, ListItem, CircularProgress, Alert } from '@mui/material';
+import {
+  Container,
+  Box,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
 
 const OrderReceipt = ({ orderId }) => {
   const [order, setOrder] = useState(null);
@@ -25,7 +34,12 @@ const OrderReceipt = ({ orderId }) => {
 
   if (!order) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
         <CircularProgress />
       </Box>
     );

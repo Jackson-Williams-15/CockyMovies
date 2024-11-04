@@ -41,28 +41,28 @@ const Checkout = () => {
 
   const handleCheckout = async (e) => {
     e.preventDefault();
-  
+
     if (!validatePaymentDetails()) {
       setError('Invalid payment details.');
       return;
     }
-  
+
     try {
       const cartId = parseInt(localStorage.getItem('cartId'), 10);
       const userIdStr = localStorage.getItem('id');
-  
+
       if (!userIdStr) {
         setError('User ID is not found in localStorage.');
         return;
       }
-  
+
       const userId = parseInt(userIdStr, 10);
-  
+
       if (isNaN(userId)) {
         setError('User ID is invalid.');
         return;
       }
-  
+
       const response = await axios.post(
         '/api/Checkout/ProcessCheckout',
         {
@@ -77,7 +77,7 @@ const Checkout = () => {
           },
         },
       );
-  
+
       if (response.data.success) {
         const orderId = response.data.orderId;
         navigate(`/order-success/${orderId}`);

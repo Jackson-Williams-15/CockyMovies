@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('cartId', data.cartId);
         localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('id', userData.id);
         setIsAuthenticated(true);
         setUser(data.user);
       } else {
@@ -43,7 +42,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('cartId', data.cartId);
         localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('id', userData.id);
         setIsAuthenticated(true);
         setUser(data.user);
       } else {

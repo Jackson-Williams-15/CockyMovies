@@ -9,7 +9,12 @@ export default function OrderSuccess() {
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Box textAlign="center" mb={4}>
-        <Typography variant="h3" component="h1" gutterBottom color="success.main">
+        <Typography
+          variant="h3"
+          component="h1"
+          gutterBottom
+          color="success.main"
+        >
           Order Success
         </Typography>
         <Typography variant="body1" color="text.secondary">

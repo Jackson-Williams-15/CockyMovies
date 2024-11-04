@@ -11,7 +11,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import './Navbar.css';
 
 export default function Navbar() {
-  const location = useLocation(); // Get the current path
+  const location = useLocation();
   const { isAuthenticated, user, handleLogout } = useContext(AuthContext);
 
   return (
