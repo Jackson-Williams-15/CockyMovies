@@ -4,6 +4,7 @@ using CM.API.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 [ApiController]
@@ -79,16 +80,40 @@ public class CheckoutController : ControllerBase
             Success = true,
             Details = "Order processed successfully.",
             TotalPrice = cart.TotalPrice,
-            Tickets = cart.Tickets.Select(t => new OrderTicket
-            {
-                TicketId = t.Id,
-                ShowtimeId = t.ShowtimeId,
-                Price = t.Price,
-                Showtime = _context.Showtime.FirstOrDefault(s => s.Id == t.ShowtimeId),
-                Movie = _context.Movies.FirstOrDefault(m => m.Id == t.Showtime.Movie.Id)
-            }).ToList(),
+            Tickets = new List<OrderTicket>(),
             UserId = request.UserId // Set the UserId
         };
+
+        foreach (var ticket in cart.Tickets)
+        {
+            var showtime = await _context.Showtime.AsNoTracking().FirstOrDefaultAsync(s => s.Id == ticket.ShowtimeId);
+            if (showtime == null)
+            {
+                _logger.LogWarning("Showtime not found for TicketId: {TicketId}, ShowtimeId: {ShowtimeId}", ticket.Id, ticket.ShowtimeId);
+                continue;
+            }
+
+            var movie = await _context.Movies.AsNoTracking().FirstOrDefaultAsync(m => m.Id == showtime.MovieId);
+            if (movie == null)
+            {
+                _logger.LogWarning("Movie not found for ShowtimeId: {ShowtimeId}", showtime.Id);
+                continue;
+            }
+
+            _logger.LogInformation("Creating OrderTicket for TicketId: {TicketId}, ShowtimeId: {ShowtimeId}, MovieId: {MovieId}", ticket.Id, ticket.ShowtimeId, movie.Id);
+
+            var orderTicket = new OrderTicket
+            {
+                TicketId = ticket.Id,
+                ShowtimeId = ticket.ShowtimeId,
+                MovieId = movie.Id,
+                Price = ticket.Price,
+                Showtime = showtime,
+                Movie = movie
+            };
+
+            order.Tickets.Add(orderTicket);
+        }
 
         _context.OrderResult.Add(order);
 
@@ -103,6 +128,6 @@ public class CheckoutController : ControllerBase
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Checkout processed successfully for cart: {CartId}", request.CartId);
-        return Ok(new { message = "Checkout processed successfully.", success = true });
+        return Ok(new { message = "Checkout processed successfully.", success = true, orderId = order.Id });
     }
 }
