@@ -101,6 +101,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<OrderTicket>()
                 .HasOne(ot => ot.Movie)
                 .WithMany()
-                .HasForeignKey(ot => ot.ShowtimeId);
+                .HasForeignKey(ot => ot.MovieId);
     }
 }
