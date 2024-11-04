@@ -7,5 +7,4 @@ public interface ICartService
     Task<bool> RemoveTicketFromCart(int cartId, int ticketId);
     Task<Cart> GetCartByUserId(int userId);
     Task<Cart> GetCartForCurrentUser(string userEmail);
-    Task<OrderResult> CheckoutAsync(int cartId, PaymentDetails paymentDetails);
 }

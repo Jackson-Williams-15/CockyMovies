@@ -71,16 +71,4 @@ public class CartController : ControllerBase
 
         return Ok(new { message = "Ticket removed from cart successfully.", success = true });
     }
-    [HttpPost("Checkout")]
-    public async Task<IActionResult> Checkout([FromBody] CheckoutRequest request)
-    {
-        var result = await _cartService.CheckoutAsync(request.CartId, request.PaymentDetails);
-
-        if (!result.Success)
-        {
-            return BadRequest(result.Details);
-        }
-
-        return Ok(new { detail = "Checkout successful.", orderId = result.OrderId, success = true });
-    }
 }
