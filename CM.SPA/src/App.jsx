@@ -30,7 +30,7 @@ function App() {
           <Route path="/tickets/:showtimeId" element={<Tickets />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/order-success/:orderId" element={<OrderSuccess />} />
           <Route path="/profile/:username" element={<Profile />} />
         </Routes>
       </ThemeProvider>
