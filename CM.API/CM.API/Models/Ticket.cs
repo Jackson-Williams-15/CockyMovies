@@ -9,5 +9,6 @@ public class Ticket
     public int ShowtimeId { get; set; }
     public required Showtime Showtime { get; set; }
     public int Quantity { get; set; }
+    public bool IsSold { get; set; }
 
 }
