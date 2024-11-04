@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {
+  Container,
+  Box,
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  Divider,
+  List,
+  ListItem,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
 
 const Checkout = () => {
   const [cart, setCart] = useState(null);
@@ -27,7 +40,6 @@ const Checkout = () => {
         setError('Failed to load cart. Please try again.');
       }
     };
-
     fetchCart();
   }, []);
 
@@ -50,14 +62,11 @@ const Checkout = () => {
     try {
       const cartId = parseInt(localStorage.getItem('cartId'), 10);
       const userIdStr = localStorage.getItem('id');
-
       if (!userIdStr) {
         setError('User ID is not found in localStorage.');
         return;
       }
-
       const userId = parseInt(userIdStr, 10);
-
       if (isNaN(userId)) {
         setError('User ID is invalid.');
         return;
@@ -112,11 +121,7 @@ const Checkout = () => {
       const showtimeId = ticket.showtime.id;
       const ticketKey = `${showtimeId}-${ticket.price}`;
       if (!acc[ticketKey]) {
-        acc[ticketKey] = {
-          ...ticket,
-          quantity: 0,
-          totalPrice: 0,
-        };
+        acc[ticketKey] = { ...ticket, quantity: 0, totalPrice: 0 };
       }
       acc[ticketKey].quantity += ticket.quantity;
       acc[ticketKey].totalPrice += ticket.price * ticket.quantity;
@@ -126,7 +131,16 @@ const Checkout = () => {
   };
 
   if (!cart) {
-    return <div>Loading cart...</div>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   const groupedTickets = groupTicketsByShowtime(cart.tickets);
@@ -136,70 +150,99 @@ const Checkout = () => {
   );
 
   return (
-    <div className="checkout-page">
-      <h2>Checkout</h2>
-      <div className="cart-items">
-        <h3>Your Cart</h3>
-        {groupedTickets.map((item) => (
-          <div key={item.id} className="cart-item">
-            <span>{item.showtime.movie.title}</span>
-            <span>
-              {item.quantity} x ${item.price}
-            </span>
-          </div>
-        ))}
-      </div>
+    <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Checkout
+        </Typography>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
-      <div className="total-amount">
-        <h3>Total: ${overallTotalPrice.toFixed(2)}</h3>
-      </div>
+        <Box mb={4}>
+          <Typography variant="h5" gutterBottom>
+            Your Cart
+          </Typography>
+          <List>
+            {groupedTickets.map((item) => (
+              <ListItem
+                key={item.id}
+                sx={{ display: 'flex', justifyContent: 'space-between' }}
+              >
+                <Box>
+                  <Typography variant="subtitle1">
+                    {item.showtime.movie.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Showtime:{' '}
+                    {new Date(item.showtime.startTime).toLocaleString()}
+                  </Typography>
+                </Box>
+                <Typography variant="subtitle1">
+                  {item.quantity} x ${item.price}
+                </Typography>
+              </ListItem>
+            ))}
+          </List>
+          <Divider sx={{ my: 2 }} />
+          <Typography variant="h6" align="right">
+            Total: ${overallTotalPrice.toFixed(2)}
+          </Typography>
+        </Box>
 
-      <form onSubmit={handleCheckout} className="payment-form">
-        <h3>Payment Information</h3>
-        <label>
-          Card Number
-          <input
-            type="text"
+        <form onSubmit={handleCheckout}>
+          <Typography variant="h5" gutterBottom>
+            Payment Information
+          </Typography>
+          <TextField
+            fullWidth
+            label="Card Number"
+            variant="outlined"
             name="cardNumber"
             value={paymentDetails.cardNumber}
             onChange={handleChange}
+            sx={{ mb: 2 }}
             required
           />
-        </label>
-        <label>
-          Expiry Date
-          <input
-            type="text"
-            name="expiryDate"
-            value={paymentDetails.expiryDate}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <label>
-          CVV
-          <input
-            type="text"
-            name="cvv"
-            value={paymentDetails.cvv}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <label>
-          Card Holder Name
-          <input
-            type="text"
+          <Box display="flex" gap={2} mb={2}>
+            <TextField
+              label="Expiry Date"
+              variant="outlined"
+              name="expiryDate"
+              value={paymentDetails.expiryDate}
+              onChange={handleChange}
+              placeholder="MM/YY"
+              fullWidth
+              required
+            />
+            <TextField
+              label="CVV"
+              variant="outlined"
+              name="cvv"
+              value={paymentDetails.cvv}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+          </Box>
+          <TextField
+            fullWidth
+            label="Card Holder Name"
+            variant="outlined"
             name="cardHolderName"
             value={paymentDetails.cardHolderName}
             onChange={handleChange}
+            sx={{ mb: 2 }}
             required
           />
-        </label>
-        <button type="submit">Place Order</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            Place Order
+          </Button>
+        </form>
+      </Paper>
+    </Container>
   );
 };
 

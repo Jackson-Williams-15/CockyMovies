@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {
+  Container,
+  Box,
+  Typography,
+  Paper,
+  Button,
+  Divider,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
 
 const Cart = () => {
   const [cart, setCart] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Fetch cart details from the API when the component mounts
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -22,11 +31,9 @@ const Cart = () => {
         setError('Failed to load cart. Please try again.');
       }
     };
-
     fetchCart();
   }, []);
 
-  // Handle removing a ticket from the cart
   const handleRemoveTicket = async (ticketId) => {
     try {
       const cartId = localStorage.getItem('cartId');
@@ -60,16 +67,13 @@ const Cart = () => {
     }
   };
 
-  // Handle proceeding to checkout
   const handleCheckout = () => {
     navigate('/checkout');
   };
 
-  // Group tickets by showtime
   const groupTicketsByShowtime = (tickets) => {
     const groupedTickets = tickets.reduce((acc, ticket) => {
       const showtimeId = ticket.showtime.id;
-      // Use showtimeId and price as key
       const ticketKey = `${showtimeId}-${ticket.price}`;
       if (!acc[ticketKey]) {
         acc[ticketKey] = {
@@ -86,7 +90,16 @@ const Cart = () => {
   };
 
   if (!cart) {
-    return <div>Loading cart...</div>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   const groupedTickets = groupTicketsByShowtime(cart.tickets);
@@ -96,49 +109,77 @@ const Cart = () => {
   );
 
   return (
-    <div>
-      <h1>Your Cart</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        {groupedTickets.map((ticket) => (
-          <div
-            key={`${ticket.showtime.id}-${ticket.price}`}
-            style={{ borderBottom: '1px solid #ccc', marginBottom: '10px' }}
-          >
-            <p>Movie: {ticket.showtime.movie.title}</p>
-            <p>
-              Showtime: {new Date(ticket.showtime.startTime).toLocaleString()}
-            </p>
-            <p>Price: ${ticket.price}</p>
-            <p>Quantity: {ticket.quantity}</p>
-            <p>Total Price: ${ticket.totalPrice.toFixed(2)}</p>
-            <button
-              onClick={() => handleRemoveTicket(ticket.id)}
-              style={buttonStyle}
-            >
-              Remove Ticket
-            </button>
-          </div>
-        ))}
-      </div>
-      <h3>Total: ${overallTotalPrice.toFixed(2)}</h3>
-      {/* Checkout button at the bottom */}
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <button onClick={handleCheckout} style={buttonStyle}>
-          Proceed to Checkout
-        </button>
-      </div>
-    </div>
-  );
-};
+    <Container maxWidth="sm" sx={{ mt: 4, px: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Your Cart
+      </Typography>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
-const buttonStyle = {
-  padding: '10px 20px',
-  backgroundColor: '#4CAF50',
-  color: 'white',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
+      {/* Scrollable container for tickets */}
+      <Box
+        sx={{
+          maxHeight: 400, // Adjust this height as needed
+          overflowY: 'auto',
+          mb: 4,
+          pr: 1, // padding-right to avoid scrollbar overlap
+        }}
+      >
+        {groupedTickets.map((ticket) => (
+          <Paper
+            key={`${ticket.showtime.id}-${ticket.price}`}
+            sx={{ p: 2, mb: 2 }}
+          >
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                <Typography variant="subtitle1">
+                  {ticket.showtime.movie.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Showtime:{' '}
+                  {new Date(ticket.showtime.startTime).toLocaleString()}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Quantity: {ticket.quantity}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Price per Ticket: ${ticket.price}
+                </Typography>
+                <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                  Total Price: ${ticket.totalPrice.toFixed(2)}
+                </Typography>
+              </Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleRemoveTicket(ticket.id)}
+              >
+                Remove Ticket
+              </Button>
+            </Box>
+          </Paper>
+        ))}
+      </Box>
+
+      <Divider />
+      <Box display="flex" justifyContent="space-between" mt={2}>
+        <Typography variant="h5">
+          Total: ${overallTotalPrice.toFixed(2)}
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCheckout}
+          sx={{ mt: 2 }}
+        >
+          Proceed to Checkout
+        </Button>
+      </Box>
+    </Container>
+  );
 };
 
 export default Cart;
