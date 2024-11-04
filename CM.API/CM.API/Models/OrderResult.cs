@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CM.API.Models {
+namespace CM.API.Models;
 public class OrderResult
 {
-        public int Id { get; set; } // Primary key
+    public int Id { get; set; }
+    public int OrderId { get; set; }
+    public DateTime ProcessedDate { get; set; }
+    public bool Success { get; set; }
+    public string Details { get; set; }
+    public decimal TotalPrice { get; set; }
+    public List<OrderTicket> Tickets { get; set; }
 
-        public int OrderResultsId { get; set; }
-        public int OrderId { get; set; }
-        public DateTime ProcessedDate { get; set; }
-        public bool Success { get; set; }
-        public string Details { get; set; }
-}
+    public int UserId { get; set; }
+    public User User { get; set; }
 }
