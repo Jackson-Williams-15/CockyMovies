@@ -13,6 +13,7 @@ import Signup from './components/pages/Signup';
 import Tickets from './components/pages/Tickets';
 import Profile from './components/pages/Profile';
 import { AuthProvider } from './context/AuthContext';
+import OrderSuccess from './components/pages/OrderSuccess';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/tickets/:showtimeId" element={<Tickets />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/profile/:username" element={<Profile />} />
         </Routes>
       </ThemeProvider>
