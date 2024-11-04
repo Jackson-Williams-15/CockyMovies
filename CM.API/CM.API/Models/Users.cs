@@ -36,4 +36,5 @@ public class User
     }
 
     public Cart Cart { get; set; }
+    public List<OrderResult> OrderResults { get; set; }
 }

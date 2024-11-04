@@ -17,6 +17,10 @@ public class AppDbContext : DbContext
     public DbSet<Showtime> Showtime { get; set; }
     public DbSet<Ticket> Ticket { get; set; }
     public DbSet<Cart> Carts { get; set; }
+    public DbSet<OrderResult> OrderResult { get; set; }
+    public DbSet<OrderTicket> OrderTickets { get; set; }
+    public DbSet<PaymentDetails> PaymentDetails { get; set; }
+    public DbSet<CheckoutRequest> CheckoutRequest { get; set; }
 
     // this is used to further configure the model
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -77,5 +81,26 @@ public class AppDbContext : DbContext
              .HasOne(u => u.Cart)
              .WithOne(c => c.User)
              .HasForeignKey<Cart>(c => c.UserId);
+
+        modelBuilder.Entity<OrderResult>()
+            .HasMany(o => o.Tickets)
+            .WithOne()
+            .HasForeignKey(ot => ot.OrderTicketId);
+
+        modelBuilder.Entity<OrderResult>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.OrderResults)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<OrderTicket>()
+                .HasOne(ot => ot.Showtime)
+                .WithMany()
+                .HasForeignKey(ot => ot.ShowtimeId);
+
+        modelBuilder.Entity<OrderTicket>()
+                .HasOne(ot => ot.Movie)
+                .WithMany()
+                .HasForeignKey(ot => ot.MovieId);
     }
 }

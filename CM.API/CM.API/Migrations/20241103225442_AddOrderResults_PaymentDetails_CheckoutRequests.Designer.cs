@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CM.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241028180701_AddShowtimeAndUserTables")]
-    partial class AddShowtimeAndUserTables
+    [Migration("20241103225442_AddOrderResults_PaymentDetails_CheckoutRequests")]
+    partial class AddOrderResults_PaymentDetails_CheckoutRequests
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,47 @@ namespace CM.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("CM.API.Models.Cart", b =>
+                {
+                    b.Property<int>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CartId"));
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CartId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("CM.API.Models.CheckoutRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CheckoutRequestsId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CheckoutRequest");
+                });
 
             modelBuilder.Entity("CM.API.Models.Genre", b =>
                 {
@@ -60,13 +101,120 @@ namespace CM.API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("RatingId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RatingId");
+
                     b.ToTable("Movies");
+                });
+
+            modelBuilder.Entity("CM.API.Models.OrderResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderResultsId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ProcessedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrderResult");
+                });
+
+            modelBuilder.Entity("CM.API.Models.PaymentDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("PaymentDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentDetails");
+                });
+
+            modelBuilder.Entity("CM.API.Models.Rating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ratings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "G"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "PG"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "PG-13"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "R"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "NC-17"
+                        });
                 });
 
             modelBuilder.Entity("CM.API.Models.Showtime", b =>
@@ -86,6 +234,9 @@ namespace CM.API.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("TicketsAvailable")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MovieId");
@@ -101,13 +252,21 @@ namespace CM.API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<int>("ShowtimeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartId");
 
                     b.HasIndex("ShowtimeId");
 
@@ -159,6 +318,28 @@ namespace CM.API.Migrations
                     b.ToTable("MovieGenres", (string)null);
                 });
 
+            modelBuilder.Entity("CM.API.Models.Cart", b =>
+                {
+                    b.HasOne("CM.API.Models.User", "User")
+                        .WithOne("Cart")
+                        .HasForeignKey("CM.API.Models.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CM.API.Models.Movie", b =>
+                {
+                    b.HasOne("CM.API.Models.Rating", "Rating")
+                        .WithMany()
+                        .HasForeignKey("RatingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rating");
+                });
+
             modelBuilder.Entity("CM.API.Models.Showtime", b =>
                 {
                     b.HasOne("CM.API.Models.Movie", "Movie")
@@ -172,6 +353,10 @@ namespace CM.API.Migrations
 
             modelBuilder.Entity("CM.API.Models.Ticket", b =>
                 {
+                    b.HasOne("CM.API.Models.Cart", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("CartId");
+
                     b.HasOne("CM.API.Models.Showtime", "Showtime")
                         .WithMany("Tickets")
                         .HasForeignKey("ShowtimeId")
@@ -196,6 +381,11 @@ namespace CM.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CM.API.Models.Cart", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
             modelBuilder.Entity("CM.API.Models.Movie", b =>
                 {
                     b.Navigation("Showtimes");
@@ -204,6 +394,12 @@ namespace CM.API.Migrations
             modelBuilder.Entity("CM.API.Models.Showtime", b =>
                 {
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("CM.API.Models.User", b =>
+                {
+                    b.Navigation("Cart")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -4,6 +4,7 @@ using CM.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CM.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241104034231_AddPaymentDetailsColumns")]
+    partial class AddPaymentDetailsColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,49 +135,18 @@ namespace CM.API.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderResultsId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ProcessedDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("Success")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("OrderResult");
-                });
-
-            modelBuilder.Entity("CM.API.Models.OrderTicket", b =>
-                {
-                    b.Property<int>("OrderTicketId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("ShowtimeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TicketId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderTicketId");
-
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("ShowtimeId");
-
-                    b.ToTable("OrderTickets");
                 });
 
             modelBuilder.Entity("CM.API.Models.PaymentDetails", b =>
@@ -304,9 +276,6 @@ namespace CM.API.Migrations
                     b.Property<int?>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsSold")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
@@ -403,42 +372,6 @@ namespace CM.API.Migrations
                     b.Navigation("Rating");
                 });
 
-            modelBuilder.Entity("CM.API.Models.OrderResult", b =>
-                {
-                    b.HasOne("CM.API.Models.User", "User")
-                        .WithMany("OrderResults")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CM.API.Models.OrderTicket", b =>
-                {
-                    b.HasOne("CM.API.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CM.API.Models.OrderResult", null)
-                        .WithMany("Tickets")
-                        .HasForeignKey("OrderTicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CM.API.Models.Showtime", "Showtime")
-                        .WithMany()
-                        .HasForeignKey("ShowtimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("Showtime");
-                });
-
             modelBuilder.Entity("CM.API.Models.Showtime", b =>
                 {
                     b.HasOne("CM.API.Models.Movie", "Movie")
@@ -490,11 +423,6 @@ namespace CM.API.Migrations
                     b.Navigation("Showtimes");
                 });
 
-            modelBuilder.Entity("CM.API.Models.OrderResult", b =>
-                {
-                    b.Navigation("Tickets");
-                });
-
             modelBuilder.Entity("CM.API.Models.Showtime", b =>
                 {
                     b.Navigation("Tickets");
@@ -504,8 +432,6 @@ namespace CM.API.Migrations
                 {
                     b.Navigation("Cart")
                         .IsRequired();
-
-                    b.Navigation("OrderResults");
                 });
 #pragma warning restore 612, 618
         }
