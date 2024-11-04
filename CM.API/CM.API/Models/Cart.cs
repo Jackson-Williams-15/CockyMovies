@@ -8,9 +8,6 @@ namespace CM.API.Models
         public int CartId { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
-    
-        // public string OrderStatus { get; set; } = "Pending"; // e.g., Pending, Completed
-
 
         // List of tickets in the cart
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
