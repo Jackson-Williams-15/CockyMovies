@@ -176,4 +176,24 @@ public class CartService : ICartService
         await _context.SaveChangesAsync();
         return true;
     }
+    public async Task<OrderResult> CheckoutAsync(int cartId, PaymentDetails paymentDetails)
+{
+    // Step 1: Retrieve the cart
+    var cart = await _context.Carts
+        .Include(c => c.Tickets)
+        .FirstOrDefaultAsync(c => c.CartId == cartId);
+    
+    if (cart == null || !cart.Tickets.Any())
+    {
+        return new OrderResult { Success = false, Details = "Cart is empty or not found." };
+    }
+
+
+    // Step 4: Update cart status and finalize order
+    // cart.OrderStatus = "Completed"; // You can set this to an enum or constant if needed
+    await _context.SaveChangesAsync(); // Save the updated cart status
+
+    return new OrderResult { Success = true, Details = "Checkout successful.", OrderId = cart.CartId };
+}
+
 }

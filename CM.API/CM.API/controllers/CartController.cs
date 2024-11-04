@@ -78,9 +78,9 @@ public class CartController : ControllerBase
 
         if (!result.Success)
         {
-            return BadRequest(result.Message);
+            return BadRequest(result.Details);
         }
 
-        return Ok(new { message = "Checkout successful.", orderId = result.OrderId, success = true });
+        return Ok(new { detail = "Checkout successful.", orderId = result.OrderId, success = true });
     }
 }

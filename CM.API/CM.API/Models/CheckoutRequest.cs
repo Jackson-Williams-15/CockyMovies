@@ -6,8 +6,12 @@ public class CheckoutRequest
 {
     public int Id { get; set; } // Primary key
 
-   public int CheckoutRequestsId { get; set; }
+
+    public int cartId { get; set; }
     public int UserId { get; set; }
     public DateTime RequestDate { get; set; }
+
+    public PaymentDetails PaymentDetails { get; set; }
+
 }
 }
