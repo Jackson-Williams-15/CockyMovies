@@ -49,10 +49,7 @@ const Checkout = () => {
   
     try {
       const cartId = parseInt(localStorage.getItem('cartId'), 10);
-      const userIdStr = localStorage.getItem('id'); // Retrieve userId from the correct key
-  
-      // Log userIdStr to verify it is correctly retrieved
-      console.log('userIdStr:', userIdStr);
+      const userIdStr = localStorage.getItem('id');
   
       if (!userIdStr) {
         setError('User ID is not found in localStorage.');
@@ -60,9 +57,6 @@ const Checkout = () => {
       }
   
       const userId = parseInt(userIdStr, 10);
-  
-      // Log userId to verify it is correctly parsed
-      console.log('userId:', userId);
   
       if (isNaN(userId)) {
         setError('User ID is invalid.');
@@ -85,7 +79,8 @@ const Checkout = () => {
       );
   
       if (response.data.success) {
-        navigate('/order-success');
+        const orderId = response.data.orderId;
+        navigate(`/order-success/${orderId}`);
       } else {
         setError('Checkout failed. Please try again.');
       }
