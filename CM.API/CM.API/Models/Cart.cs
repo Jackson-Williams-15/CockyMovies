@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CM.API.Models
-{
+namespace CM.API.Models;
+
     public class Cart
     {
         public int CartId { get; set; }
@@ -27,4 +27,3 @@ namespace CM.API.Models
             return false;
         }
     }
-}
