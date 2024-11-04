@@ -122,10 +122,10 @@ const Cart = () => {
       {/* Scrollable container for tickets */}
       <Box
         sx={{
-          maxHeight: 400, // Adjust this height as needed
+          maxHeight: 400,
           overflowY: 'auto',
           mb: 4,
-          pr: 1, // padding-right to avoid scrollbar overlap
+          pr: 1
         }}
       >
         {groupedTickets.map((ticket) => (
