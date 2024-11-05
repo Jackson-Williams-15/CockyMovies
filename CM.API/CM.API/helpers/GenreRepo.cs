@@ -10,20 +10,36 @@ namespace CM.API.Repositories
     public class GenreRepository
     {
         private readonly AppDbContext _context;
+        private Dictionary<int, Genre> _genresDictionary;
 
         public GenreRepository(AppDbContext context)
         {
             _context = context;
+            _genresDictionary = new Dictionary<int, Genre>();
+        }
+
+        public async Task LoadGenres()
+        {
+            var genres = await _context.Genres.ToListAsync();
+            _genresDictionary = genres.ToDictionary(g => g.Id);
         }
 
         public async Task<List<Genre>> GetGenres()
         {
-            return await _context.Genres.ToListAsync();
+            if (!_genresDictionary.Any())
+            {
+                await LoadGenres();
+            }
+            return _genresDictionary.Values.ToList();
         }
 
         public async Task<Genre?> GetGenreById(int id)
         {
-            return await _context.Genres.FirstOrDefaultAsync(g => g.Id == id);
+            if (!_genresDictionary.Any())
+            {
+                await LoadGenres();
+            }
+            return _genresDictionary.TryGetValue(id, out var genre) ? genre : null;
         }
 
         public async Task<bool> AddGenre(Genre genre)
@@ -36,6 +52,7 @@ namespace CM.API.Repositories
 
             _context.Genres.Add(genre);
             await _context.SaveChangesAsync();
+            _genresDictionary[genre.Id] = genre;
             return true;
         }
     }
