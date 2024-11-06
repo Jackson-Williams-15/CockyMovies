@@ -8,6 +8,10 @@ public class Ticket
     // Foreign key for the associated showtime
     public int ShowtimeId { get; set; }
     public required Showtime Showtime { get; set; }
+
+    // Foreign key for the associated cart
+    public int? CartId { get; set; }
+    public Cart? Cart { get; set; }
     public int Quantity { get; set; }
     public bool IsSold { get; set; }
 

@@ -105,5 +105,10 @@ public class AppDbContext : DbContext
                 .HasOne(ot => ot.Movie)
                 .WithMany()
                 .HasForeignKey(ot => ot.MovieId);
+                
+        modelBuilder.Entity<Ticket>()
+            .HasOne(t => t.Cart)
+            .WithMany(c => c.Tickets)
+            .HasForeignKey(t => t.CartId);
     }
 }
