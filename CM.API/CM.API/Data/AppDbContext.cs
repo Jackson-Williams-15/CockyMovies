@@ -30,6 +30,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Movie>()
             .Property(m => m.Title)
             .IsRequired();
+        modelBuilder.Entity<PaymentDetails>()
+        .Property(p => p.Id)
+        .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<Movie>()
        .HasMany(m => m.Genres)
