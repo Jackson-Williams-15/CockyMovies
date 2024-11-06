@@ -16,7 +16,11 @@ public class AppDbContext : DbContext
     public DbSet<Rating> Ratings { get; set; }
     public DbSet<Showtime> Showtime { get; set; }
     public DbSet<Ticket> Ticket { get; set; }
-
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<OrderResult> OrderResult { get; set; }
+    public DbSet<OrderTicket> OrderTickets { get; set; }
+    public DbSet<PaymentDetails> PaymentDetails { get; set; }
+    public DbSet<CheckoutRequest> CheckoutRequest { get; set; }
 
     // this is used to further configure the model
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +30,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Movie>()
             .Property(m => m.Title)
             .IsRequired();
+        modelBuilder.Entity<PaymentDetails>()
+        .Property(p => p.Id)
+        .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<Movie>()
        .HasMany(m => m.Genres)
@@ -67,5 +74,36 @@ public class AppDbContext : DbContext
            .HasMany(s => s.Tickets)
            .WithOne(t => t.Showtime)
            .HasForeignKey(t => t.ShowtimeId);
+
+        modelBuilder.Entity<Showtime>()
+             .HasOne(s => s.Movie)
+             .WithMany(m => m.Showtimes)
+             .HasForeignKey(s => s.MovieId);
+
+        modelBuilder.Entity<User>()
+             .HasOne(u => u.Cart)
+             .WithOne(c => c.User)
+             .HasForeignKey<Cart>(c => c.UserId);
+
+        modelBuilder.Entity<OrderResult>()
+            .HasMany(o => o.Tickets)
+            .WithOne()
+            .HasForeignKey(ot => ot.OrderTicketId);
+
+        modelBuilder.Entity<OrderResult>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.OrderResults)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<OrderTicket>()
+                .HasOne(ot => ot.Showtime)
+                .WithMany()
+                .HasForeignKey(ot => ot.ShowtimeId);
+
+        modelBuilder.Entity<OrderTicket>()
+                .HasOne(ot => ot.Movie)
+                .WithMany()
+                .HasForeignKey(ot => ot.MovieId);
     }
 }

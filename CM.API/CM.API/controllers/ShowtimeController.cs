@@ -1,21 +1,28 @@
+using CM.API.Data;
 using CM.API.Interfaces;
 using CM.API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CM.API.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class ShowtimesController : ControllerBase
 {
     private readonly IShowtimeService _showtimeService;
     private readonly IMovieService _movieService;
-
-    public ShowtimesController(IShowtimeService showtimeService, IMovieService movieService)
+    private readonly AppDbContext _context;
+    private readonly ILogger<ShowtimesController> _logger;
+    public ShowtimesController(IShowtimeService showtimeService, IMovieService movieService, AppDbContext context, ILogger<ShowtimesController> logger)
     {
         _showtimeService = showtimeService;
         _movieService = movieService;
+        _context = context;
+        _logger = logger;
+        _context = context;
     }
 
     // POST: api/showtimes
@@ -54,22 +61,49 @@ public class ShowtimesController : ControllerBase
     {
         var showtimes = await _showtimeService.GetShowtimesByMovieId(movieId);
 
-        if (showtimes.Count == 0)
+        if (showtimes == null || showtimes.Count == 0)
         {
-            return NotFound("No showtimes found for this movie.");
+            return NotFound("No showtimes found for the specified movie.");
         }
 
-        var showtimeDtos = showtimes.Select(s => new ShowtimeDto
+        return Ok(showtimes);
+    }
+
+    // GET: api/showtimes/{id}
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetShowtimeById(int id)
+    {
+        var showtime = await _context.Showtime
+            .Include(s => s.Movie)
+            .Include(s => s.Tickets)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        if (showtime == null)
         {
-            Id = s.Id,
-            StartTime = s.StartTime,
-            Tickets = s.Tickets.Select(t => new TicketDto
+            _logger.LogWarning($"Showtime with ID {id} not found.");
+            return NotFound("Showtime not found.");
+        }
+
+        var showtimeDto = new ShowtimeDto
+        {
+            Id = showtime.Id,
+            StartTime = showtime.StartTime,
+            Movie = new MovieDto
+            {
+                Id = showtime.Movie.Id,
+                Title = showtime.Movie.Title,
+                Description = showtime.Movie.Description,
+                Rating = showtime.Movie.Rating?.ToString() ?? "Unrated",
+                DateReleased = showtime.Movie.DateReleased
+            },
+            Tickets = showtime.Tickets.Select(t => new TicketDto
             {
                 Id = t.Id,
                 Price = t.Price
-            }).ToList()
-        }).ToList();
+            }).ToList(),
+            AvailableTickets = showtime.TicketsAvailable
+        };
 
-        return Ok(showtimeDtos);
+        return Ok(showtimeDto);
     }
 }

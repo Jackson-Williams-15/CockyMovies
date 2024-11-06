@@ -20,10 +20,12 @@ public class AccountController : ControllerBase
     private readonly IAccountService _accountService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<AccountController> _logger;
+    private readonly ICartService _cartService;
 
-    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger)
+    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger, ICartService cartService)
     {
         _accountService = accountService;
+        _cartService = cartService;
         _configuration = configuration;
         _logger = logger;
     }
@@ -32,42 +34,29 @@ public class AccountController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
     {
-        var user = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
+        var userDto = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
 
-        if (user == null)
+        if (userDto == null)
             return BadRequest(new { message = "User registration failed" });
 
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Username = user.Username,
-            DateOfBirth = user.DateOfBirth
-        };
+        var cart = await _cartService.GetCartByUserId(userDto.Id);
 
-        return Ok(userDto);
+        return Ok(new { user = userDto, cartId = cart?.CartId });
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
     {
-        var user = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
+        var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
 
-        if (user == null)
+        if (userDto == null)
             return Unauthorized(new { message = "Invalid username or password" });
 
-        var token = GenerateJwtToken(user);
+        var cart = await _cartService.GetCartByUserId(userDto.Id);
+        var token = GenerateJwtToken(userDto);
 
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Username = user.Username,
-            DateOfBirth = user.DateOfBirth
-        };
-
-        return Ok(new { token, user = userDto });
+        return Ok(new { token, user = userDto, cartId = cart?.CartId });
     }
 
     [Authorize]
@@ -95,20 +84,43 @@ public class AccountController : ControllerBase
             Id = user.Id,
             Email = user.Email,
             Username = user.Username,
-            DateOfBirth = user.DateOfBirth
+            DateOfBirth = user.DateOfBirth,
+            Cart = user.Cart != null ? new CartDto
+            {
+                CartId = user.Cart.CartId,
+                UserId = user.Cart.UserId,
+                Tickets = user.Cart.Tickets.Select(t => new CartTicketDto
+                {
+                    Id = t.Id,
+                    Price = t.Price,
+                    Showtime = new ShowtimeDto
+                    {
+                        Id = t.Showtime.Id,
+                        StartTime = t.Showtime.StartTime,
+                        Movie = new MovieDto
+                        {
+                            Id = t.Showtime.Movie.Id,
+                            Title = t.Showtime.Movie.Title,
+                            Description = t.Showtime.Movie.Description,
+                            DateReleased = t.Showtime.Movie.DateReleased,
+                            Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
+                        }
+                    }
+                }).ToList()
+            } : null
         };
 
         return Ok(userDto);
     }
 
-    private string GenerateJwtToken(User user)
+    private string GenerateJwtToken(UserDto user)
     {
         var claims = new[]
         {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(ClaimTypes.Name, user.Username)
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
+            };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

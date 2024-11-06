@@ -25,6 +25,9 @@ public class ShowtimeService : IShowtimeService
             return false;
         }
 
+        showtime.TicketsAvailable = showtime.Capacity;
+        Console.WriteLine($"Showtime created with ID: {showtime.Id}, Capacity: {showtime.Capacity}, TicketsAvailable: {showtime.TicketsAvailable}");
+
         // Create tickets based on the capacity of the showtime
         for (int i = 0; i < showtime.Capacity; i++)
         {
@@ -50,11 +53,32 @@ public class ShowtimeService : IShowtimeService
         return true;
     }
 
-    public async Task<List<Showtime>> GetShowtimesByMovieId(int movieId)
+    public async Task<List<ShowtimeDto>> GetShowtimesByMovieId(int movieId)
     {
-        return await _context.Showtime
+        var showtimes = await _context.Showtime
             .Include(s => s.Tickets)
+            .Include(s => s.Movie)
             .Where(s => s.MovieId == movieId)
             .ToListAsync();
+
+        return showtimes.Select(s => new ShowtimeDto
+        {
+            Id = s.Id,
+            StartTime = s.StartTime,
+            Tickets = s.Tickets.Select(t => new TicketDto
+            {
+                Id = t.Id,
+                Price = t.Price
+            }).ToList(),
+            AvailableTickets = s.Capacity - s.Tickets.Count,
+            Movie = s.Movie != null ? new MovieDto
+            {
+                Id = s.Movie.Id,
+                Title = s.Movie.Title,
+                Description = s.Movie.Description,
+                DateReleased = s.Movie.DateReleased,
+                Rating = s.Movie.Rating?.ToString() ?? "Unrated"
+            } : null
+        }).ToList();
     }
 }

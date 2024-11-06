@@ -21,7 +21,12 @@ export default function Signup() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const signupData = { username, email, password, dateOfBirth: new Date(dob) };
+    const signupData = {
+      username,
+      email,
+      password,
+      dateOfBirth: new Date(dob),
+    };
 
     try {
       await handleSignup(signupData);

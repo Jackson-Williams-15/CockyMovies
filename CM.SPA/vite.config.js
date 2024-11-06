@@ -6,10 +6,13 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5252', //API base URL
+        target: 'http://localhost:5252', // API base URL
         changeOrigin: true,
         secure: false,
       },
     },
+  },
+  optimizeDeps: {
+    exclude: ['chunk-FLZU5K7W.js', 'chunk-HLUQYDOY.js'],
   },
 });

@@ -34,4 +34,7 @@ public class User
         }
         return ValidationResult.Success;
     }
+
+    public Cart Cart { get; set; }
+    public List<OrderResult> OrderResults { get; set; }
 }
