@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CM.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241104054151_AddUserToOrderResult")]
-    partial class AddUserToOrderResult
+    [Migration("20241108190924_AddOrderTicketsAndResult")]
+    partial class AddOrderTicketsAndResult
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,6 +159,9 @@ namespace CM.API.Migrations
                     b.Property<int>("OrderTicketId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
@@ -169,6 +172,10 @@ namespace CM.API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("OrderTicketId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("ShowtimeId");
 
                     b.ToTable("OrderTickets");
                 });
@@ -205,9 +212,6 @@ namespace CM.API.Migrations
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("PaymentDetailsId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
@@ -412,11 +416,27 @@ namespace CM.API.Migrations
 
             modelBuilder.Entity("CM.API.Models.OrderTicket", b =>
                 {
+                    b.HasOne("CM.API.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CM.API.Models.OrderResult", null)
                         .WithMany("Tickets")
                         .HasForeignKey("OrderTicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("CM.API.Models.Showtime", "Showtime")
+                        .WithMany()
+                        .HasForeignKey("ShowtimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("Showtime");
                 });
 
             modelBuilder.Entity("CM.API.Models.Showtime", b =>
