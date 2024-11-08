@@ -61,7 +61,7 @@ const Checkout = () => {
 
     try {
       const cartId = parseInt(localStorage.getItem('cartId'), 10);
-      const userIdStr = localStorage.getItem('id');
+      const userIdStr = localStorage.getItem('userId');
       if (!userIdStr) {
         setError('User ID is not found in localStorage.');
         return;

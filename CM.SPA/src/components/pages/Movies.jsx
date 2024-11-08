@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
 
 export default function Movies() {
   const [movies, setMovies] = useState([]);
@@ -18,16 +19,13 @@ export default function Movies() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const cachedMovies = localStorage.getItem('movies');
-        if (cachedMovies) {
-          setMovies(JSON.parse(cachedMovies));
-          setLoading(false);
-        } else {
-          const moviesData = await getMovies();
-          setMovies(moviesData);
-          localStorage.setItem('movies', JSON.stringify(moviesData));
-          setLoading(false);
-        }
+        // Clear the cache to fetch fresh data
+        localStorage.removeItem('movies');
+
+        const moviesData = await getMovies();
+        setMovies(moviesData);
+        localStorage.setItem('movies', JSON.stringify(moviesData));
+        setLoading(false);
       } catch (error) {
         console.error('Failed to fetch movies:', error);
         setLoading(false);
@@ -53,8 +51,10 @@ export default function Movies() {
   }
 
   return (
-    <div>
-      <h2>Movies List</h2>
+    <Container sx={{ mt: 4, mb: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Movies List
+      </Typography>
       <Box sx={{ padding: 3 }}>
         <Grid container spacing={3}>
           {movies.map((movie) => (
@@ -106,6 +106,6 @@ export default function Movies() {
           ))}
         </Grid>
       </Box>
-    </div>
+    </Container>
   );
 }
