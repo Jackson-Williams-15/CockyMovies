@@ -75,7 +75,7 @@ public class CheckoutController : ControllerBase
         // Create order details
         var order = new OrderResult
         {
-            OrderId = request.CartId,
+            CartId = request.CartId,
             ProcessedDate = DateTime.Now,
             Success = true,
             Details = "Order processed successfully.",
