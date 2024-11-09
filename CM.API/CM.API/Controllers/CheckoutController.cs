@@ -63,6 +63,12 @@ public class CheckoutController : ControllerBase
         // Mark tickets as sold
         foreach (var ticket in cart.Tickets)
         {
+            if (ticket.Quantity <= 0)
+            {
+                _logger.LogWarning("Ticket quantity is zero or less for TicketId: {TicketId}", ticket.Id);
+                continue;
+            }
+
             ticket.IsSold = true;
             var ticketEntity = await _context.Ticket.FindAsync(ticket.Id);
             if (ticketEntity != null)
@@ -81,11 +87,17 @@ public class CheckoutController : ControllerBase
             Details = "Order processed successfully.",
             TotalPrice = cart.TotalPrice,
             Tickets = new List<OrderTicket>(),
-            UserId = request.UserId // Set the UserId
+            UserId = request.UserId
         };
+
+        // Save OrderResult FIRST so the OrderResultId is set for the OrderTicket.
+        _context.OrderResult.Add(order);
+        await _context.SaveChangesAsync();
 
         foreach (var ticket in cart.Tickets)
         {
+            _logger.LogInformation("Processing TicketId: {TicketId}, ShowtimeId: {ShowtimeId}", ticket.Id, ticket.ShowtimeId);
+
             var showtime = await _context.Showtime.AsNoTracking().FirstOrDefaultAsync(s => s.Id == ticket.ShowtimeId);
             if (showtime == null)
             {
@@ -102,6 +114,28 @@ public class CheckoutController : ControllerBase
 
             _logger.LogInformation("Creating OrderTicket for TicketId: {TicketId}, ShowtimeId: {ShowtimeId}, MovieId: {MovieId}", ticket.Id, ticket.ShowtimeId, movie.Id);
 
+            // This checks if the entities are already trackednin the dbcontext
+            var trackedShowtime = await _context.Showtime.FindAsync(showtime.Id);
+            var trackedMovie = await _context.Movies.FindAsync(movie.Id);
+
+            if (trackedShowtime == null)
+            {
+                _context.Attach(showtime);
+            }
+            else
+            {
+                showtime = trackedShowtime;
+            }
+
+            if (trackedMovie == null)
+            {
+                _context.Attach(movie);
+            }
+            else
+            {
+                movie = trackedMovie;
+            }
+
             var orderTicket = new OrderTicket
             {
                 TicketId = ticket.Id,
@@ -109,13 +143,16 @@ public class CheckoutController : ControllerBase
                 MovieId = movie.Id,
                 Price = ticket.Price,
                 Showtime = showtime,
-                Movie = movie
+                Movie = movie,
+                OrderResultId = order.Id // Associate with OrderResult
             };
 
             order.Tickets.Add(orderTicket);
+            _logger.LogInformation("OrderTicket created: {@OrderTicket}", orderTicket);
         }
 
-        _context.OrderResult.Add(order);
+        // Save the OrderTickets
+        await _context.SaveChangesAsync();
 
         // Clear the cart
         var cartEntity = await _context.Carts.FindAsync(cart.CartId);
@@ -128,6 +165,22 @@ public class CheckoutController : ControllerBase
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Checkout processed successfully for cart: {CartId}", request.CartId);
-        return Ok(new { message = "Checkout processed successfully.", success = true, orderId = order.Id });
+
+        var orderReceipt = new OrderReceiptDto
+        {
+            OrderId = order.Id,
+            ProcessedDate = order.ProcessedDate,
+            TotalPrice = order.TotalPrice,
+            Tickets = order.Tickets.Select(t => new OrderTicketDto
+            {
+                TicketId = t.TicketId,
+                ShowtimeId = t.ShowtimeId,
+                MovieTitle = t.Movie.Title,
+                ShowtimeStartTime = t.Showtime.StartTime,
+                Price = t.Price
+            }).ToList()
+        };
+
+        return Ok(orderReceipt);
     }
 }
