@@ -159,6 +159,9 @@ namespace CM.API.Migrations
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderResultId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
@@ -171,6 +174,8 @@ namespace CM.API.Migrations
                     b.HasKey("OrderTicketId");
 
                     b.HasIndex("MovieId");
+
+                    b.HasIndex("OrderResultId");
 
                     b.HasIndex("ShowtimeId");
 
@@ -419,6 +424,12 @@ namespace CM.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CM.API.Models.OrderResult", "OrderResult")
+                        .WithMany()
+                        .HasForeignKey("OrderResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CM.API.Models.OrderResult", null)
                         .WithMany("Tickets")
                         .HasForeignKey("OrderTicketId")
@@ -432,6 +443,8 @@ namespace CM.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Movie");
+
+                    b.Navigation("OrderResult");
 
                     b.Navigation("Showtime");
                 });
