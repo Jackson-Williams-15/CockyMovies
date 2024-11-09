@@ -8,4 +8,6 @@ public class OrderTicket
     public decimal Price { get; set; }
     public Showtime Showtime { get; set; }
     public Movie Movie { get; set; }
+    public int OrderResultId { get; set; } // Foreign key to OrderResult
+    public OrderResult OrderResult { get; set; } // Navigation property
 }
