@@ -62,18 +62,28 @@ const OrderReceipt = ({ orderId }) => {
         </Typography>
 
         <Box sx={{ mt: 3 }}>
-          {/*<Typography variant="h5" component="h2" gutterBottom>
+          <Typography variant="h5" component="h2" gutterBottom>
             Tickets
           </Typography>
           <List>
             {order.tickets.map((ticket) => (
-              <ListItem key={ticket.orderTicketId} sx={{ display: 'block', mb: 2 }}>
-                <Typography variant="subtitle1">Showtime: {new Date(ticket.showtime.startTime).toLocaleString()}</Typography>
-                <Typography variant="subtitle1">Movie: {ticket.movie.title}</Typography>
-                <Typography variant="subtitle1">Price: ${ticket.price.toFixed(2)}</Typography>
+              <ListItem
+                key={ticket.orderTicketId}
+                sx={{ display: 'block', mb: 2 }}
+              >
+                <Typography variant="subtitle1">
+                  Showtime:{' '}
+                  {new Date(ticket.showtime.startTime).toLocaleString()}
+                </Typography>
+                <Typography variant="subtitle1">
+                  Movie: {ticket.movie.title}
+                </Typography>
+                <Typography variant="subtitle1">
+                  Price: ${ticket.price.toFixed(2)}
+                </Typography>
               </ListItem>
             ))}
-          </List>*/}
+          </List>
         </Box>
       </Paper>
     </Container>
