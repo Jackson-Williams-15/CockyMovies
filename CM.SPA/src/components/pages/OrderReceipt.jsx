@@ -79,7 +79,13 @@ const OrderReceipt = ({ orderId }) => {
                   Movie: {ticket.movie.title}
                 </Typography>
                 <Typography variant="subtitle1">
-                  Price: ${ticket.price.toFixed(2)}
+                  Quantity: {ticket.quantity}
+                </Typography>
+                <Typography variant="subtitle1">
+                  Price per Ticket: ${ticket.price.toFixed(2)}
+                </Typography>
+                <Typography variant="subtitle1">
+                  Total Price: ${(ticket.price * ticket.quantity).toFixed(2)}
                 </Typography>
               </ListItem>
             ))}

@@ -10,4 +10,5 @@ public class OrderTicket
     public Movie Movie { get; set; }
     public int OrderResultId { get; set; } // Foreign key to OrderResult
     public OrderResult OrderResult { get; set; } // Navigation property
+    public int Quantity { get; set; }
 }
