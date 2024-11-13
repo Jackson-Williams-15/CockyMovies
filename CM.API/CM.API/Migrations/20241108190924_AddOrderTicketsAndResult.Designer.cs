@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CM.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241104161359_AddMovieIdToOrderTickets")]
-    partial class AddMovieIdToOrderTickets
+    [Migration("20241108190924_AddOrderTicketsAndResult")]
+    partial class AddOrderTicketsAndResult
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -212,9 +212,6 @@ namespace CM.API.Migrations
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("PaymentDetailsId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()

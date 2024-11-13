@@ -26,20 +26,31 @@ const Checkout = () => {
   });
   const navigate = useNavigate();
 
+  const fetchCart = async () => {
+    try {
+      const cartId = localStorage.getItem('cartId');
+      const response = await axios.get(`/api/Cart/GetCartById/${cartId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setCart(response.data);
+      localStorage.setItem('cart', JSON.stringify(response.data)); // Update local storage
+      updateUserLocalStorage(response.data); // Update user local storage
+    } catch (error) {
+      setError('Failed to load cart. Please try again.');
+    }
+  };
+
+  const updateUserLocalStorage = (cartData) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      user.cart = cartData;
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  };
+
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const cartId = localStorage.getItem('cartId');
-        const response = await axios.get(`/api/Cart/GetCartById/${cartId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setCart(response.data);
-      } catch (error) {
-        setError('Failed to load cart. Please try again.');
-      }
-    };
     fetchCart();
   }, []);
 
@@ -87,8 +98,9 @@ const Checkout = () => {
         },
       );
 
-      if (response.data.success) {
+      if (response.status === 200) {
         const orderId = response.data.orderId;
+        localStorage.removeItem('cart'); // Clear cart from local storage after checkout
         navigate(`/order-success/${orderId}`);
       } else {
         setError('Checkout failed. Please try again.');
@@ -238,7 +250,7 @@ const Checkout = () => {
             required
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
-            Place Order
+            Complete Checkout
           </Button>
         </form>
       </Paper>

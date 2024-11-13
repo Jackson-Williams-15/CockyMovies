@@ -63,6 +63,12 @@ public class CheckoutController : ControllerBase
         // Mark tickets as sold
         foreach (var ticket in cart.Tickets)
         {
+            if (ticket.Quantity <= 0)
+            {
+                _logger.LogWarning("Ticket quantity is zero or less for TicketId: {TicketId}", ticket.Id);
+                continue;
+            }
+
             ticket.IsSold = true;
             var ticketEntity = await _context.Ticket.FindAsync(ticket.Id);
             if (ticketEntity != null)
@@ -75,21 +81,37 @@ public class CheckoutController : ControllerBase
         // Create order details
         var order = new OrderResult
         {
-            OrderId = request.CartId,
+            CartId = request.CartId,
             ProcessedDate = DateTime.Now,
             Success = true,
             Details = "Order processed successfully.",
             TotalPrice = cart.TotalPrice,
             Tickets = new List<OrderTicket>(),
-            UserId = request.UserId // Set the UserId
+            UserId = request.UserId
         };
 
-        foreach (var ticket in cart.Tickets)
+        // Save OrderResult FIRST so the OrderResultId is set for the OrderTicket.
+        _context.OrderResult.Add(order);
+        await _context.SaveChangesAsync();
+
+        // Group tickets by showtime and movie
+        var groupedTickets = cart.Tickets
+            .GroupBy(t => new { t.ShowtimeId, t.MovieId })
+            .Select(g => new
+            {
+                ShowtimeId = g.Key.ShowtimeId,
+                MovieId = g.Key.MovieId,
+                Tickets = g.ToList(),
+                TotalQuantity = g.Sum(t => t.Quantity),
+                TotalPrice = g.Sum(t => t.Price * t.Quantity)
+            });
+
+        foreach (var group in groupedTickets)
         {
-            var showtime = await _context.Showtime.AsNoTracking().FirstOrDefaultAsync(s => s.Id == ticket.ShowtimeId);
+            var showtime = await _context.Showtime.AsNoTracking().FirstOrDefaultAsync(s => s.Id == group.ShowtimeId);
             if (showtime == null)
             {
-                _logger.LogWarning("Showtime not found for TicketId: {TicketId}, ShowtimeId: {ShowtimeId}", ticket.Id, ticket.ShowtimeId);
+                _logger.LogWarning("Showtime not found for ShowtimeId: {ShowtimeId}", group.ShowtimeId);
                 continue;
             }
 
@@ -100,22 +122,60 @@ public class CheckoutController : ControllerBase
                 continue;
             }
 
-            _logger.LogInformation("Creating OrderTicket for TicketId: {TicketId}, ShowtimeId: {ShowtimeId}, MovieId: {MovieId}", ticket.Id, ticket.ShowtimeId, movie.Id);
+            _logger.LogInformation("Creating OrderTicket for ShowtimeId: {ShowtimeId}, MovieId: {MovieId}, Quantity: {Quantity}", group.ShowtimeId, group.MovieId, group.TotalQuantity);
+
+            // This checks if the entities are already tracked in the dbcontext
+            var trackedShowtime = await _context.Showtime.FindAsync(showtime.Id);
+            var trackedMovie = await _context.Movies.FindAsync(movie.Id);
+
+            if (trackedShowtime == null)
+            {
+                _context.Attach(showtime);
+            }
+            else
+            {
+                showtime = trackedShowtime;
+            }
+
+            if (trackedMovie == null)
+            {
+                _context.Attach(movie);
+            }
+            else
+            {
+                movie = trackedMovie;
+            }
 
             var orderTicket = new OrderTicket
             {
-                TicketId = ticket.Id,
-                ShowtimeId = ticket.ShowtimeId,
-                MovieId = movie.Id,
-                Price = ticket.Price,
+                // Assign to group tickets, showtimes, movie, and price
+                TicketId = group.Tickets.First().Id, // Use first ticket's ID
+                ShowtimeId = group.ShowtimeId,
+                MovieId = group.MovieId,
+                Price = group.TotalPrice / group.TotalQuantity, // Average price per ticket
                 Showtime = showtime,
-                Movie = movie
+                Movie = movie,
+                OrderResultId = order.Id, // Associate with OrderResult
+                Quantity = group.TotalQuantity // Set the total quantity
             };
 
+            // Make sure  the OrderTicket is not already tracked in the dbcontext
+            var trackedOrderTicket = await _context.OrderTickets.FindAsync(orderTicket.OrderTicketId);
+            if (trackedOrderTicket == null)
+            {
+                _context.OrderTickets.Add(orderTicket);
+            }
+            else
+            {
+                _context.Entry(trackedOrderTicket).CurrentValues.SetValues(orderTicket);
+            }
+
             order.Tickets.Add(orderTicket);
+            _logger.LogInformation("OrderTicket created: {@OrderTicket}", orderTicket);
         }
 
-        _context.OrderResult.Add(order);
+        // Save the OrderTickets
+        await _context.SaveChangesAsync();
 
         // Clear the cart
         var cartEntity = await _context.Carts.FindAsync(cart.CartId);
@@ -128,6 +188,22 @@ public class CheckoutController : ControllerBase
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Checkout processed successfully for cart: {CartId}", request.CartId);
-        return Ok(new { message = "Checkout processed successfully.", success = true, orderId = order.Id });
+
+        var orderReceipt = new OrderReceiptDto
+        {
+            OrderId = order.Id,
+            ProcessedDate = order.ProcessedDate,
+            TotalPrice = order.TotalPrice,
+            Tickets = order.Tickets.Select(t => new OrderTicketDto
+            {
+                TicketId = t.TicketId,
+                ShowtimeId = t.ShowtimeId,
+                MovieTitle = t.Movie.Title,
+                ShowtimeStartTime = t.Showtime.StartTime,
+                Price = t.Price
+            }).ToList()
+        };
+
+        return Ok(orderReceipt);
     }
 }

@@ -5,28 +5,28 @@
 namespace CM.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserToOrderResult : Migration
+    public partial class AddOrderResultIdToOrderTicket : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "UserId",
-                table: "OrderResult",
+                name: "OrderResultId",
+                table: "OrderTickets",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderResult_UserId",
-                table: "OrderResult",
-                column: "UserId");
+                name: "IX_OrderTickets_OrderResultId",
+                table: "OrderTickets",
+                column: "OrderResultId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_OrderResult_Users_UserId",
-                table: "OrderResult",
-                column: "UserId",
-                principalTable: "Users",
+                name: "FK_OrderTickets_OrderResult_OrderResultId",
+                table: "OrderTickets",
+                column: "OrderResultId",
+                principalTable: "OrderResult",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
@@ -35,16 +35,16 @@ namespace CM.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_OrderResult_Users_UserId",
-                table: "OrderResult");
+                name: "FK_OrderTickets_OrderResult_OrderResultId",
+                table: "OrderTickets");
 
             migrationBuilder.DropIndex(
-                name: "IX_OrderResult_UserId",
-                table: "OrderResult");
+                name: "IX_OrderTickets_OrderResultId",
+                table: "OrderTickets");
 
             migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "OrderResult");
+                name: "OrderResultId",
+                table: "OrderTickets");
         }
     }
 }

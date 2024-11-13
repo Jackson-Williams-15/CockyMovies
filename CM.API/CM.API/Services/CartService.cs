@@ -22,26 +22,21 @@ public class CartService : ICartService
             Console.WriteLine($"Cart with ID {cartId} not found.");
             return false;
         }
-
         var ticketId = ticketIds.FirstOrDefault();
         var ticket = await _context.Ticket.Include(t => t.Showtime)
                                           .FirstOrDefaultAsync(t => t.Id == ticketId);
-
         if (ticket == null)
         {
             Console.WriteLine($"Ticket with ID {ticketId} not found.");
             return false;
         }
-
         if (ticket.Showtime.TicketsAvailable < quantity)
         {
             Console.WriteLine($"Capacity reached for showtime ID: {ticket.Showtime.Id}. Available: {ticket.Showtime.TicketsAvailable}, Requested: {quantity}");
             return false;
         }
-
         // Check if ticket already exists in cart for the same showtime
         var existingCartTicket = cart.Tickets.FirstOrDefault(t => t.ShowtimeId == ticket.ShowtimeId);
-
         if (existingCartTicket != null)
         {
             // Update the quantity of ticket
@@ -49,19 +44,12 @@ public class CartService : ICartService
         }
         else
         {
-            //New ticket entry
-            cart.Tickets.Add(new Ticket
-            {
-                Price = ticket.Price,
-                ShowtimeId = ticket.ShowtimeId,
-                Quantity = quantity,
-                Showtime = ticket.Showtime
-            });
+            // Add the existing ticket to the cart
+            cart.Tickets.Add(ticket);
+            ticket.Quantity = quantity;
         }
-
         // Lower the available tickets
         ticket.Showtime.TicketsAvailable -= quantity;
-
         await _context.SaveChangesAsync();
         return true;
     }
@@ -88,6 +76,7 @@ public class CartService : ICartService
                 Id = t.Id,
                 Price = t.Price,
                 Quantity = t.Quantity,
+                ShowtimeId = t.ShowtimeId,
                 Showtime = t.Showtime != null ? new ShowtimeDto
                 {
                     Id = t.Showtime.Id,

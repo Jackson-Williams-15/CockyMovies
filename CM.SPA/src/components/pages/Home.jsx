@@ -15,10 +15,16 @@ export default function Home() {
         <Typography variant="h2" component="h1" gutterBottom>
           Welcome to Cocky Movies
         </Typography>
-        <Typography variant="h5" component="p" color="text.secondary" sx={{ mb: 4 }}>
-          Discover the latest movies, view showtimes, and book your tickets all in one place.
+        <Typography
+          variant="h5"
+          component="p"
+          color="text.secondary"
+          sx={{ mb: 4 }}
+        >
+          Discover the latest movies, view showtimes, and book your tickets all
+          in one place.
         </Typography>
-        
+
         <Card
           sx={{
             maxWidth: 600,
@@ -32,7 +38,8 @@ export default function Home() {
               Explore Now
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Browse our selection of movies, find the perfect showtime, and secure your seats with ease.
+              Browse our selection of movies, find the perfect showtime, and
+              secure your seats with ease.
             </Typography>
           </CardContent>
           <CardActions sx={{ justifyContent: 'center' }}>
