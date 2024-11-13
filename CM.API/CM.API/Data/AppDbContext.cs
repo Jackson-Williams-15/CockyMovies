@@ -106,7 +106,7 @@ public class AppDbContext : DbContext
                 .HasOne(ot => ot.Movie)
                 .WithMany()
                 .HasForeignKey(ot => ot.MovieId);
-        
+
         modelBuilder.Entity<Review>()
                 .HasOne(r => r.Movie)
                 .WithMany(m => m.Reviews)
