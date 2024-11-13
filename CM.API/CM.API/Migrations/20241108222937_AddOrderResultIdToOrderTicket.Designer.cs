@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CM.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241104055652_AddShowtimeAndMovieToOrderTicket")]
-    partial class AddShowtimeAndMovieToOrderTicket
+    [Migration("20241108222937_AddOrderResultIdToOrderTicket")]
+    partial class AddOrderResultIdToOrderTicket
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,12 +128,12 @@ namespace CM.API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Details")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("ProcessedDate")
                         .HasColumnType("datetime(6)");
@@ -159,6 +159,12 @@ namespace CM.API.Migrations
                     b.Property<int>("OrderTicketId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderResultId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
@@ -169,6 +175,10 @@ namespace CM.API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("OrderTicketId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("OrderResultId");
 
                     b.HasIndex("ShowtimeId");
 
@@ -207,9 +217,6 @@ namespace CM.API.Migrations
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("PaymentDetailsId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
@@ -414,15 +421,21 @@ namespace CM.API.Migrations
 
             modelBuilder.Entity("CM.API.Models.OrderTicket", b =>
                 {
-                    b.HasOne("CM.API.Models.OrderResult", null)
-                        .WithMany("Tickets")
-                        .HasForeignKey("OrderTicketId")
+                    b.HasOne("CM.API.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CM.API.Models.Movie", "Movie")
+                    b.HasOne("CM.API.Models.OrderResult", "OrderResult")
                         .WithMany()
-                        .HasForeignKey("ShowtimeId")
+                        .HasForeignKey("OrderResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CM.API.Models.OrderResult", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("OrderTicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -433,6 +446,8 @@ namespace CM.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Movie");
+
+                    b.Navigation("OrderResult");
 
                     b.Navigation("Showtime");
                 });

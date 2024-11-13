@@ -5,7 +5,7 @@ namespace CM.API.Models;
 public class OrderResult
 {
     public int Id { get; set; }
-    public int OrderId { get; set; }
+    public int CartId { get; set; }
     public DateTime ProcessedDate { get; set; }
     public bool Success { get; set; }
     public string Details { get; set; }

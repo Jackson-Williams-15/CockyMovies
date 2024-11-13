@@ -17,20 +17,31 @@ const Cart = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const fetchCart = async () => {
+    try {
+      const cartId = localStorage.getItem('cartId');
+      const response = await axios.get(`/api/Cart/GetCartById/${cartId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setCart(response.data);
+      localStorage.setItem('cart', JSON.stringify(response.data)); // Update local storage
+      updateUserLocalStorage(response.data); // Update user local storage
+    } catch (error) {
+      setError('Failed to load cart. Please try again.');
+    }
+  };
+
+  const updateUserLocalStorage = (cartData) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      user.cart = cartData;
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  };
+
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const cartId = localStorage.getItem('cartId');
-        const response = await axios.get(`/api/Cart/GetCartById/${cartId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setCart(response.data);
-      } catch (error) {
-        setError('Failed to load cart. Please try again.');
-      }
-    };
     fetchCart();
   }, []);
 
@@ -43,25 +54,7 @@ const Cart = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-
-      setCart((prevCart) => {
-        const updatedTickets = prevCart.tickets
-          .map((ticket) => {
-            if (ticket.id === ticketId) {
-              return {
-                ...ticket,
-                quantity: ticket.quantity - 1,
-              };
-            }
-            return ticket;
-          })
-          .filter((ticket) => ticket.quantity > 0);
-
-        return {
-          ...prevCart,
-          tickets: updatedTickets,
-        };
-      });
+      fetchCart(); // Refresh cart data
     } catch (error) {
       setError('Failed to remove the ticket. Please try again.');
     }
@@ -76,11 +69,7 @@ const Cart = () => {
       const showtimeId = ticket.showtime.id;
       const ticketKey = `${showtimeId}-${ticket.price}`;
       if (!acc[ticketKey]) {
-        acc[ticketKey] = {
-          ...ticket,
-          quantity: 0,
-          totalPrice: 0,
-        };
+        acc[ticketKey] = { ...ticket, quantity: 0, totalPrice: 0 };
       }
       acc[ticketKey].quantity += ticket.quantity;
       acc[ticketKey].totalPrice += ticket.price * ticket.quantity;
@@ -119,13 +108,12 @@ const Cart = () => {
         </Alert>
       )}
 
-      {/* Scrollable container for tickets */}
       <Box
         sx={{
           maxHeight: 400,
           overflowY: 'auto',
           mb: 4,
-          pr: 1
+          pr: 1,
         }}
       >
         {groupedTickets.map((ticket) => (
