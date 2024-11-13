@@ -159,6 +159,17 @@ public class CheckoutController : ControllerBase
                 Quantity = group.TotalQuantity // Set the total quantity
             };
 
+            // Make sure  the OrderTicket is not already tracked in the dbcontext
+            var trackedOrderTicket = await _context.OrderTickets.FindAsync(orderTicket.OrderTicketId);
+            if (trackedOrderTicket == null)
+            {
+                _context.OrderTickets.Add(orderTicket);
+            }
+            else
+            {
+                _context.Entry(trackedOrderTicket).CurrentValues.SetValues(orderTicket);
+            }
+
             order.Tickets.Add(orderTicket);
             _logger.LogInformation("OrderTicket created: {@OrderTicket}", orderTicket);
         }
