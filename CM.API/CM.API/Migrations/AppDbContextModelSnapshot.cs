@@ -165,6 +165,9 @@ namespace CM.API.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<int>("ShowtimeId")
                         .HasColumnType("int");
 
