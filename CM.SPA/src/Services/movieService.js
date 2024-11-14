@@ -4,14 +4,10 @@ const API_BASE_URL = '/api/movies';
 
 export const getMovies = async (genreIds = [], ratingIds = []) => {
   try {
-    const params = {};
-    if (genreIds.length > 0) {
-      params.genreIds = genreIds.join(',');
-    }
-    if (ratingIds.length > 0) {
-      params.ratingIds = ratingIds.join(',');
-    }
-    const response = await axios.get(API_BASE_URL, { params });
+    const params = new URLSearchParams();
+    genreIds.forEach(id => params.append('genreIds', id));
+    ratingIds.forEach(id => params.append('ratingIds', id));
+    const response = await axios.get(`${API_BASE_URL}?${params.toString()}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching movies:', error);
