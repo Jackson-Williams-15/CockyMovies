@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace CM.API.Services;
-    public class RatingService : IRatingService
+public class RatingService : IRatingService
+{
+    private readonly AppDbContext _context;
+
+    public RatingService(AppDbContext context)
     {
-        private readonly AppDbContext _context;
-
-        public RatingService(AppDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<Rating>> GetRatings()
-        {
-            return await _context.Ratings.ToListAsync();
-        }
+        _context = context;
     }
+
+    public async Task<List<Rating>> GetRatings()
+    {
+        return await _context.Ratings.ToListAsync();
+    }
+}

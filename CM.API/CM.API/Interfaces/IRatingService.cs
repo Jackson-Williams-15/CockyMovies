@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CM.API.Interfaces;
 
-    public interface IRatingService
-    {
-        Task<List<Rating>> GetRatings();
-    }
+public interface IRatingService
+{
+    Task<List<Rating>> GetRatings();
+}
