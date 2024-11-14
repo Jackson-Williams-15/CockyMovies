@@ -19,9 +19,9 @@ namespace CM.API.Controllers
 
         // GET: api/movies
         [HttpGet]
-        public async Task<IActionResult> GetMovies()
+        public async Task<IActionResult> GetMovies([FromQuery] List<int>? genreIds = null, [FromQuery] List<int>? ratingIds = null)
         {
-            var movies = await _movieService.GetMovies();
+            var movies = await _movieService.GetMovies(genreIds, ratingIds);
 
             // map movie entities to movieDtos
             var movieDtos = movies.Select(m => new MovieDto
@@ -30,7 +30,7 @@ namespace CM.API.Controllers
                 Title = m.Title,
                 Description = m.Description,
                 DateReleased = m.DateReleased,
-                Genres = m.Genres.Select(g => new GenreDto
+                Genres = m.Genres?.Select(g => new GenreDto
                 {
                     Id = g.Id,
                     Name = g.Name
