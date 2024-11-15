@@ -78,7 +78,6 @@ public class AccountService : IAccountService
                             Description = t.Showtime.Movie.Description,
                             DateReleased = t.Showtime.Movie.DateReleased,
                             Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
-
                         }
                     }
                 }).ToList()
@@ -158,5 +157,57 @@ public class AccountService : IAccountService
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
         }
         return null;
+    }
+
+    public async Task<UserDto> UpdateUser(string userId, UserUpdateDto updateDto)
+    {
+        if (!int.TryParse(userId, out int parsedUserId))
+        {
+            return null;
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
+        if (user == null)
+        {
+            return null;
+        }
+
+        user.Email = updateDto.Email;
+        user.Username = updateDto.Username;
+        user.DateOfBirth = updateDto.DateOfBirth;
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+
+        return new UserDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Username = user.Username,
+            DateOfBirth = user.DateOfBirth,
+            Cart = user.Cart != null ? new CartDto
+            {
+                CartId = user.Cart.CartId,
+                UserId = user.Cart.UserId,
+                Tickets = user.Cart.Tickets.Select(t => new CartTicketDto
+                {
+                    Id = t.Id,
+                    Price = t.Price,
+                    Showtime = new ShowtimeDto
+                    {
+                        Id = t.Showtime.Id,
+                        StartTime = t.Showtime.StartTime,
+                        Movie = new MovieDto
+                        {
+                            Id = t.Showtime.Movie.Id,
+                            Title = t.Showtime.Movie.Title,
+                            Description = t.Showtime.Movie.Description,
+                            DateReleased = t.Showtime.Movie.DateReleased,
+                            Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
+                        }
+                    }
+                }).ToList()
+            } : null
+        };
     }
 }
