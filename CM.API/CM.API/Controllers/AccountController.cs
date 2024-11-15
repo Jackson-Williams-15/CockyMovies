@@ -63,19 +63,19 @@ public class AccountController : ControllerBase
     [HttpGet("profile")]
     public async Task<IActionResult> GetProfile()
     {
-        // Extract the username from the JWT token claims
-        var username = User.FindFirstValue(ClaimTypes.Name);
-        _logger.LogInformation("Extracted username from token: {Username}", username);
+        // Extract the UserId from the JWT token claims
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        _logger.LogInformation("Extracted username from token: {Username}", userId);
 
-        if (string.IsNullOrEmpty(username))
+        if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized(new { message = "Invalid token" });
         }
 
-        var user = await _accountService.GetUserByUsername(username);
+        var user = await _accountService.GetUserById(userId);
         if (user == null)
         {
-            _logger.LogWarning("User not found for username: {Username}", username);
+            _logger.LogWarning("User not found for username: {Username}", userId);
             return NotFound(new { message = "User not found" });
         }
 
@@ -117,7 +117,7 @@ public class AccountController : ControllerBase
     {
         var claims = new[]
         {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString(), user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
