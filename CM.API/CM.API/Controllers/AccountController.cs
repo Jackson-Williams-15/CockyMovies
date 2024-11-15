@@ -119,7 +119,8 @@ public class AccountController : ControllerBase
         {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, user.Username)
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -133,5 +134,37 @@ public class AccountController : ControllerBase
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    [Authorize]
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto updateDto)
+    {
+        _logger.LogInformation("Received update request for user.");
+
+        if (updateDto == null)
+        {
+            _logger.LogWarning("Update request body is null.");
+            return BadRequest(new { message = "Invalid request body" });
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            _logger.LogWarning("Invalid token: User ID not found in token.");
+            return Unauthorized(new { message = "Invalid token" });
+        }
+
+        _logger.LogInformation("Updating user with ID: {UserId}", userId);
+
+        var updatedUser = await _accountService.UpdateUser(userId, updateDto);
+        if (updatedUser == null)
+        {
+            _logger.LogWarning("User update failed for user ID: {UserId}", userId);
+            return BadRequest(new { message = "User update failed" });
+        }
+
+        _logger.LogInformation("User updated successfully for user ID: {UserId}", userId);
+        return Ok(updatedUser);
     }
 }
