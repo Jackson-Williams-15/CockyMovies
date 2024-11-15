@@ -25,7 +25,31 @@ const getUserInfo = async () => {
   }
 };
 
+// Update user information
+const updateUserInfo = async (userData) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await axios.put(`${BASE_API_URL}/update`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error updating user data:',
+      error.response ? error.response.data : error.message,
+    );
+    throw error;
+  }
+};
+
 // Export the service functions
 export default {
   getUserInfo,
+  updateUserInfo,
 };

@@ -7,6 +7,8 @@ import {
   Grid,
   Box,
   CircularProgress,
+  TextField,
+  Button,
 } from '@mui/material';
 import userService from '../../Services/userService';
 
@@ -15,12 +17,22 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formData, setFormData] = useState({
+    email: '',
+    username: '',
+    dateOfBirth: '',
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userData = await userService.getUserInfo(username);
+        const userData = await userService.getUserInfo();
         setUser(userData);
+        setFormData({
+          email: userData.email,
+          username: userData.username,
+          dateOfBirth: new Date(userData.dateOfBirth).toISOString().split('T')[0],
+        });
       } catch (error) {
         setError('Error fetching user data');
         console.error('Error fetching user data:', error);
@@ -31,6 +43,25 @@ const Profile = () => {
 
     fetchUser();
   }, [username]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedUser = await userService.updateUserInfo(formData);
+      alert('Profile updated successfully');
+    } catch (error) {
+      setError('Error updating profile');
+      console.error('Error updating profile:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -60,19 +91,41 @@ const Profile = () => {
           </Grid>
         </Grid>
         <CardContent>
-          <Typography variant="subtitle1" color="text.secondary">
-            Email:
-          </Typography>
-          <Typography variant="body1">{user?.email}</Typography>
-
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle1" color="text.secondary">
-              Date of Birth:
-            </Typography>
-            <Typography variant="body1">
-              {new Date(user?.dateOfBirth).toLocaleDateString() || 'N/A'}
-            </Typography>
-          </Box>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Date of Birth"
+              name="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Box sx={{ mt: 2 }}>
+              <Button type="submit" variant="contained" color="primary">
+                Save Changes
+              </Button>
+            </Box>
+          </form>
         </CardContent>
       </Card>
     </Box>
