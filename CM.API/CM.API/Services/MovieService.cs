@@ -62,14 +62,26 @@ public class MovieService : IMovieService
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<List<Movie>> GetMovies()
+    public async Task<List<Movie>> GetMovies(List<int>? genreIds = null, List<int>? ratingIds = null)
     {
-        return await _context.Movies
+        var query = _context.Movies
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
             .ThenInclude(s => s.Tickets)
             .Include(m => m.Rating)
-            .ToListAsync();
+            .AsQueryable();
+
+        if (genreIds != null && genreIds.Any())
+        {
+            query = query.Where(m => m.Genres.Any(g => genreIds.Contains(g.Id)));
+        }
+
+        if (ratingIds != null && ratingIds.Any())
+        {
+            query = query.Where(m => ratingIds.Contains(m.RatingId));
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<List<Genre>> GetGenresByIds(List<int> genreIds)
