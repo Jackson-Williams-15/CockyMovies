@@ -80,7 +80,8 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
+// only uncomment for debugging purposes, otherwise leave commented out
+/*app.Use(async (context, next) =>
 {
     // Log the request path and method
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
@@ -93,7 +94,7 @@ app.Use(async (context, next) =>
     logger.LogInformation("Request body: {Body}", body);
 
     await next.Invoke();
-});
+});*/
 
 // Configure cors and frontend URL
 app.UseCors(x => x
