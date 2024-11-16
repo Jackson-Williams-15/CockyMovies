@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
     public DbSet<OrderTicket> OrderTickets { get; set; }
     public DbSet<PaymentDetails> PaymentDetails { get; set; }
     public DbSet<CheckoutRequest> CheckoutRequest { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
     // this is used to further configure the model
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -105,5 +106,10 @@ public class AppDbContext : DbContext
                 .HasOne(ot => ot.Movie)
                 .WithMany()
                 .HasForeignKey(ot => ot.MovieId);
+
+        modelBuilder.Entity<Review>()
+                .HasOne(r => r.Movie)
+                .WithMany(m => m.Reviews)
+                .HasForeignKey(r => r.MovieId);
     }
 }
