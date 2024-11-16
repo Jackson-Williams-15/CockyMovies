@@ -8,4 +8,5 @@ public interface IAccountService
     Task<User> GetUserByUsername(string username);
     Task<User> GetUserById(string userId);
     Task<UserDto> UpdateUser(string userId, UserUpdateDto updateDto);
+    Task<bool> UpdatePassword(string userId, UserPasswordDto userPasswordDto);
 }
