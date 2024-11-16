@@ -210,4 +210,23 @@ public class AccountService : IAccountService
             } : null
         };
     }
+
+    public async Task<bool> UpdatePassword(string userId, UserPasswordDto passwordUpdateDto)
+    {
+        if (!int.TryParse(userId, out int parsedUserId))
+        {
+            return false;
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(passwordUpdateDto.OldPassword, user.Password))
+        {
+            return false;
+        }
+
+        user.Password = BCrypt.Net.BCrypt.HashPassword(passwordUpdateDto.NewPassword);
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

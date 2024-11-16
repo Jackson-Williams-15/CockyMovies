@@ -167,4 +167,28 @@ public class AccountController : ControllerBase
         _logger.LogInformation("User updated successfully for user ID: {UserId}", userId);
         return Ok(updatedUser);
     }
+
+    [Authorize]
+    [HttpPut("update-password")]
+    public async Task<IActionResult> UpdatePassword([FromBody] UserPasswordDto passwordUpdateDto)
+    {
+        if (passwordUpdateDto == null)
+        {
+            return BadRequest(new { message = "Invalid request body" });
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "Invalid token" });
+        }
+
+        var result = await _accountService.UpdatePassword(userId, passwordUpdateDto);
+        if (!result)
+        {
+            return BadRequest(new { message = "Password update failed" });
+        }
+
+        return Ok(new { message = "Password updated successfully" });
+    }
 }
