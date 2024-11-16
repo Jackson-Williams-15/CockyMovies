@@ -183,12 +183,12 @@ public class AccountController : ControllerBase
             return Unauthorized(new { message = "Invalid token" });
         }
 
-        var result = await _accountService.UpdatePassword(userId, passwordUpdateDto);
-        if (!result)
+        var (success, errorMessage) = await _accountService.UpdatePassword(userId, passwordUpdateDto);
+        if (!success)
         {
-            return BadRequest(new { message = "Password update failed" });
+            return BadRequest(new { message = errorMessage });
         }
 
-        return Ok(new { message = "Password updated successfully" });
+        return Ok(new { message = errorMessage });
     }
 }
