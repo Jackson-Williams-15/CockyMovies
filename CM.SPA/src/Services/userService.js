@@ -48,8 +48,32 @@ const updateUserInfo = async (userData) => {
   }
 };
 
+// Update user password
+const updatePassword = async (passwordData) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await axios.put(`${BASE_API_URL}/update-password`, passwordData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error updating password:',
+      error.response ? error.response.data : error.message,
+    );
+    throw error;
+  }
+};
+
 // Export the service functions
 export default {
   getUserInfo,
   updateUserInfo,
+  updatePassword,
 };

@@ -21,6 +21,8 @@ const Profile = () => {
     email: '',
     username: '',
     dateOfBirth: '',
+    oldPassword: '',
+    newPassword: '',
   });
 
   useEffect(() => {
@@ -60,6 +62,26 @@ const Profile = () => {
     } catch (error) {
       setError('Error updating profile');
       console.error('Error updating profile:', error);
+    }
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    try {
+      const passwordData = {
+        oldPassword: formData.oldPassword,
+        newPassword: formData.newPassword,
+      };
+      await userService.updatePassword(passwordData);
+      alert('Password updated successfully');
+      setFormData((prevData) => ({
+        ...prevData,
+        oldPassword: '',
+        newPassword: '',
+      }));
+    } catch (error) {
+      setError('Error updating password');
+      console.error('Error updating password:', error);
     }
   };
 
@@ -123,6 +145,31 @@ const Profile = () => {
             <Box sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" color="primary">
                 Save Changes
+              </Button>
+            </Box>
+          </form>
+          <form onSubmit={handlePasswordChange} style={{ marginTop: '20px' }}>
+            <TextField
+              label="Old Password"
+              name="oldPassword"
+              type="password"
+              value={formData.oldPassword}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="New Password"
+              name="newPassword"
+              type="password"
+              value={formData.newPassword}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <Box sx={{ mt: 2 }}>
+              <Button type="submit" variant="contained" color="secondary">
+                Change Password
               </Button>
             </Box>
           </form>
