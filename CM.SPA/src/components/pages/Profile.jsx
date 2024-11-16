@@ -9,6 +9,7 @@ import {
   CircularProgress,
   TextField,
   Button,
+  Alert,
 } from '@mui/material';
 import userService from '../../Services/userService';
 
@@ -17,6 +18,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -60,7 +62,7 @@ const Profile = () => {
       const updatedUser = await userService.updateUserInfo(formData);
       alert('Profile updated successfully');
     } catch (error) {
-      setError('Error updating profile');
+      setError(error.response.data.message || 'Error updating profile');
       console.error('Error updating profile:', error);
     }
   };
@@ -72,15 +74,16 @@ const Profile = () => {
         oldPassword: formData.oldPassword,
         newPassword: formData.newPassword,
       };
-      await userService.updatePassword(passwordData);
-      alert('Password updated successfully');
+      const response = await userService.updatePassword(passwordData);
+      alert(response.message);
       setFormData((prevData) => ({
         ...prevData,
         oldPassword: '',
         newPassword: '',
       }));
+      setPasswordError(null);
     } catch (error) {
-      setError('Error updating password');
+      setPasswordError(error.response.data.message || 'Error updating password');
       console.error('Error updating password:', error);
     }
   };
@@ -142,6 +145,11 @@ const Profile = () => {
                 shrink: true,
               }}
             />
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            )}
             <Box sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" color="primary">
                 Save Changes
@@ -167,6 +175,11 @@ const Profile = () => {
               fullWidth
               margin="normal"
             />
+            {passwordError && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {passwordError}
+              </Alert>
+            )}
             <Box sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" color="secondary">
                 Change Password
