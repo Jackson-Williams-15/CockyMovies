@@ -80,6 +80,7 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+// This can logs requests paths, methods, and bodies which can contain sensitive info
 // only uncomment for debugging purposes, otherwise leave commented out
 /*app.Use(async (context, next) =>
 {
