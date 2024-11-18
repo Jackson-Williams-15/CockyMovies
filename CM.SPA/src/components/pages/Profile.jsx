@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Card,
@@ -12,6 +12,7 @@ import {
   Alert,
 } from '@mui/material';
 import userService from '../../Services/userService';
+import { AuthContext } from '../../context/AuthContext';
 
 const Profile = () => {
   const { username } = useParams();
@@ -26,6 +27,7 @@ const Profile = () => {
     oldPassword: '',
     newPassword: '',
   });
+  const { updateUser } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,6 +65,9 @@ const Profile = () => {
     try {
       const updatedUser = await userService.updateUserInfo(formData);
       alert('Profile updated successfully');
+
+      // Update user information in AuthContext
+      updateUser(updatedUser);
     } catch (error) {
       setError(error.response.data.message || 'Error updating profile');
       console.error('Error updating profile:', error);
