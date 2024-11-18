@@ -35,7 +35,9 @@ const Profile = () => {
         setFormData({
           email: userData.email,
           username: userData.username,
-          dateOfBirth: new Date(userData.dateOfBirth).toISOString().split('T')[0],
+          dateOfBirth: new Date(userData.dateOfBirth)
+            .toISOString()
+            .split('T')[0],
         });
       } catch (error) {
         setError('Error fetching user data');
@@ -83,7 +85,9 @@ const Profile = () => {
       }));
       setPasswordError(null);
     } catch (error) {
-      setPasswordError(error.response.data.message || 'Error updating password');
+      setPasswordError(
+        error.response.data.message || 'Error updating password',
+      );
       console.error('Error updating password:', error);
     }
   };

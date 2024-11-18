@@ -56,11 +56,15 @@ const updatePassword = async (passwordData) => {
   }
 
   try {
-    const response = await axios.put(`${BASE_API_URL}/update-password`, passwordData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.put(
+      `${BASE_API_URL}/update-password`,
+      passwordData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     return response.data;
   } catch (error) {
     console.error(
