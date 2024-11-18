@@ -20,6 +20,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -64,12 +65,14 @@ const Profile = () => {
     e.preventDefault();
     try {
       const updatedUser = await userService.updateUserInfo(formData);
-      alert('Profile updated successfully');
+      setSuccessMessage('Profile updated successfully');
+      setError(null);
 
       // Update user information in AuthContext
       updateUser(updatedUser);
     } catch (error) {
       setError(error.response.data.message || 'Error updating profile');
+      setSuccessMessage(null);
       console.error('Error updating profile:', error);
     }
   };
@@ -125,6 +128,11 @@ const Profile = () => {
           </Grid>
         </Grid>
         <CardContent>
+          {successMessage && (
+            <Alert severity="success" sx={{ mt: 2 }}>
+              {successMessage}
+            </Alert>
+          )}
           <form onSubmit={handleSubmit}>
             <TextField
               label="Email"
