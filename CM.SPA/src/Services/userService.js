@@ -75,9 +75,37 @@ const updatePassword = async (passwordData) => {
   }
 };
 
+// Save payment details
+const savePaymentDetails = async (paymentDetails) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await axios.post(
+      `${BASE_API_URL}/save-payment-details`,
+      paymentDetails,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error saving payment details:',
+      error.response ? error.response.data : error.message,
+    );
+    throw error;
+  }
+};
+
 // Export the service functions
 export default {
   getUserInfo,
   updateUserInfo,
   updatePassword,
+  savePaymentDetails,
 };

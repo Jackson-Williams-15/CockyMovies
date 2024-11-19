@@ -27,6 +27,11 @@ const Profile = () => {
     dateOfBirth: '',
     oldPassword: '',
     newPassword: '',
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    cardHolderName: '',
+    paymentMethod: 'Credit Card',
   });
   const { updateUser } = useContext(AuthContext);
 
@@ -38,9 +43,12 @@ const Profile = () => {
         setFormData({
           email: userData.email,
           username: userData.username,
-          dateOfBirth: new Date(userData.dateOfBirth)
-            .toISOString()
-            .split('T')[0],
+          dateOfBirth: new Date(userData.dateOfBirth).toISOString().split('T')[0],
+          cardNumber: userData.paymentDetails?.cardNumber || '',
+          expiryDate: userData.paymentDetails?.expiryDate || '',
+          cvv: userData.paymentDetails?.cvv || '',
+          cardHolderName: userData.paymentDetails?.cardHolderName || '',
+          paymentMethod: userData.paymentDetails?.paymentMethod || 'Credit Card',
         });
       } catch (error) {
         setError('Error fetching user data');
@@ -100,18 +108,52 @@ const Profile = () => {
     }
   };
 
+  const handleSavePaymentDetails = async (e) => {
+    e.preventDefault();
+
+    // Validate card number (16 digits)
+    if (!/^\d{16}$/.test(formData.cardNumber)) {
+      setError('Card number must be exactly 16 digits.');
+      return;
+    }
+
+    // Validate CVV (3-4 digits)
+    if (!/^\d{3,4}$/.test(formData.cvv)) {
+      setError('CVV must be 3 or 4 digits.');
+      return;
+    }
+
+    // Validate expiry date (MM/YY format and not in the past)
+    const [month, year] = formData.expiryDate.split('/');
+    const expiryDate = new Date(`20${year}-${month}-01`);
+    const currentDate = new Date();
+    if (!/^(0[1-9]|1[0-2])\/?([0-9]{2})$/.test(formData.expiryDate) || expiryDate < currentDate) {
+      setError('Expiry date is invalid or in the past.');
+      return;
+    }
+
+    try {
+      await userService.savePaymentDetails({
+        cardNumber: formData.cardNumber,
+        expiryDate: formData.expiryDate,
+        cvv: formData.cvv,
+        cardHolderName: formData.cardHolderName,
+        paymentMethod: formData.paymentMethod,
+      });
+      setSuccessMessage('Payment details saved successfully');
+      setError(null);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Error saving payment details';
+      setError(errorMessage);
+      setSuccessMessage(null);
+      console.error('Error saving payment details:', error);
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
         <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
-        <Typography color="error">{error}</Typography>
       </Box>
     );
   }
@@ -131,6 +173,11 @@ const Profile = () => {
           {successMessage && (
             <Alert severity="success" sx={{ mt: 2 }}>
               {successMessage}
+            </Alert>
+          )}
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
             </Alert>
           )}
           <form onSubmit={handleSubmit}>
@@ -162,11 +209,6 @@ const Profile = () => {
                 shrink: true,
               }}
             />
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
             <Box sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" color="primary">
                 Save Changes
@@ -200,6 +242,53 @@ const Profile = () => {
             <Box sx={{ mt: 2 }}>
               <Button type="submit" variant="contained" color="secondary">
                 Change Password
+              </Button>
+            </Box>
+          </form>
+          <form onSubmit={handleSavePaymentDetails} style={{ marginTop: '20px' }}>
+            <TextField
+              label="Card Number"
+              name="cardNumber"
+              value={formData.cardNumber}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Expiry Date"
+              name="expiryDate"
+              value={formData.expiryDate}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="CVV"
+              name="cvv"
+              value={formData.cvv}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Card Holder Name"
+              name="cardHolderName"
+              value={formData.cardHolderName}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Payment Method"
+              name="paymentMethod"
+              value={formData.paymentMethod}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+            />
+            <Box sx={{ mt: 2 }}>
+              <Button type="submit" variant="contained" color="secondary">
+                Save Payment Details
               </Button>
             </Box>
           </form>
