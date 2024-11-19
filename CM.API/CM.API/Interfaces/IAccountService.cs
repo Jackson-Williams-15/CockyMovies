@@ -6,7 +6,7 @@ public interface IAccountService
     Task<UserDto> Authenticate(string username, string password);
     Task<UserDto> Register(string email, string username, string password, DateTime dateOfBirth);
     Task<User> GetUserByUsername(string username);
-    Task<User> GetUserById(string userId);
+    Task<User?> GetUserById(string userId);
     Task<UserDto> UpdateUser(string userId, UserUpdateDto updateDto);
     Task<(bool Success, string Message)> UpdatePassword(string userId, UserPasswordDto userPasswordDto);
 }

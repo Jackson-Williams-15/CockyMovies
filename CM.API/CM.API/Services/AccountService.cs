@@ -150,13 +150,16 @@ public class AccountService : IAccountService
         return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    public async Task<User> GetUserById(string userId)
+    public async Task<User?> GetUserById(string userId)
     {
         if (int.TryParse(userId, out int parsedUserId))
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
-        }
-        return null;
+    {
+        var user = await _context.Users
+            .Include(u => u.PaymentDetails)
+            .FirstOrDefaultAsync(u => u.Id == parsedUserId);
+        return user ?? throw new InvalidOperationException("User not found");
+    }
+    return null;
     }
 
     public async Task<UserDto> UpdateUser(string userId, UserUpdateDto updateDto)
