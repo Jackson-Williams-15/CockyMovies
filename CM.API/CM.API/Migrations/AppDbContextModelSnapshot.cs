@@ -350,12 +350,18 @@ namespace CM.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<int?>("PaymentDetailsId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PaymentDetailsId")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -478,6 +484,15 @@ namespace CM.API.Migrations
                     b.Navigation("Showtime");
                 });
 
+            modelBuilder.Entity("CM.API.Models.User", b =>
+                {
+                    b.HasOne("CM.API.Models.PaymentDetails", "PaymentDetails")
+                        .WithOne()
+                        .HasForeignKey("CM.API.Models.User", "PaymentDetailsId");
+
+                    b.Navigation("PaymentDetails");
+                });
+
             modelBuilder.Entity("GenreMovie", b =>
                 {
                     b.HasOne("CM.API.Models.Genre", null)
@@ -515,8 +530,7 @@ namespace CM.API.Migrations
 
             modelBuilder.Entity("CM.API.Models.User", b =>
                 {
-                    b.Navigation("Cart")
-                        .IsRequired();
+                    b.Navigation("Cart");
 
                     b.Navigation("OrderResults");
                 });
