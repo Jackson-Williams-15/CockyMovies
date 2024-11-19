@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using CM.API.Interfaces;
 using CM.API.Models;
+using CM.API.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -21,13 +23,14 @@ public class AccountController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly ILogger<AccountController> _logger;
     private readonly ICartService _cartService;
-
-    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger, ICartService cartService)
+    private readonly AppDbContext _context;
+    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger, ICartService cartService, AppDbContext context)
     {
         _accountService = accountService;
         _cartService = cartService;
         _configuration = configuration;
         _logger = logger;
+        _context = context;
     }
 
     [HttpPost("signup")]
@@ -85,29 +88,13 @@ public class AccountController : ControllerBase
             Email = user.Email,
             Username = user.Username,
             DateOfBirth = user.DateOfBirth,
-            Cart = user.Cart != null ? new CartDto
-            {
-                CartId = user.Cart.CartId,
-                UserId = user.Cart.UserId,
-                Tickets = user.Cart.Tickets.Select(t => new CartTicketDto
-                {
-                    Id = t.Id,
-                    Price = t.Price,
-                    Showtime = new ShowtimeDto
-                    {
-                        Id = t.Showtime.Id,
-                        StartTime = t.Showtime.StartTime,
-                        Movie = new MovieDto
-                        {
-                            Id = t.Showtime.Movie.Id,
-                            Title = t.Showtime.Movie.Title,
-                            Description = t.Showtime.Movie.Description,
-                            DateReleased = t.Showtime.Movie.DateReleased,
-                            Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
-                        }
-                    }
-                }).ToList()
-            } : null
+            PaymentDetails = user.PaymentDetails != null ? new PaymentDetailsDto
+        {
+            CardNumber = user.PaymentDetails.CardNumber,
+            ExpiryDate = user.PaymentDetails.ExpiryDate,
+            CVV = user.PaymentDetails.CVV,
+            CardHolderName = user.PaymentDetails.CardHolderName
+        } : null
         };
 
         return Ok(userDto);
@@ -191,4 +178,35 @@ public class AccountController : ControllerBase
 
         return Ok(new { message = errorMessage });
     }
+
+    [Authorize]
+[HttpPost("save-payment-details")]
+public async Task<IActionResult> SavePaymentDetails([FromBody] PaymentDetailsDto paymentDetailsDto)
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized(new { message = "Invalid token" });
+    }
+
+    var user = await _context.Users.Include(u => u.PaymentDetails).FirstOrDefaultAsync(u => u.Id == int.Parse(userId));
+    if (user == null)
+    {
+        return NotFound(new { message = "User not found" });
+    }
+
+    user.PaymentDetails = new PaymentDetails
+    {
+        CardNumber = paymentDetailsDto.CardNumber,
+        ExpiryDate = paymentDetailsDto.ExpiryDate,
+        CVV = paymentDetailsDto.CVV,
+        CardHolderName = paymentDetailsDto.CardHolderName,
+        PaymentMethod = paymentDetailsDto.PaymentMethod
+    };
+
+    _context.Users.Update(user);
+    await _context.SaveChangesAsync();
+
+    return Ok(new { message = "Payment details saved successfully" });
+}
 }
