@@ -55,20 +55,89 @@ namespace CM.API.Services
                 Price = ticket.Price
             };
         }
-        public async Task<bool> RemoveTicketsFromMovie(int movieId, int numberOfTickets)
-        {
-            var movieTickets = await _context.Ticket.Where(t => t.Showtime.MovieId == movieId).ToListAsync();
 
-            if (movieTickets.Count < numberOfTickets)
+       public async Task<bool> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
+        {
+            if (numberOfTickets <= 0)
+            {
+                return false; // Invalid number of tickets
+            }
+
+            // Find the showtime
+            var showtime = await _context.Showtime
+                .Include(s => s.Tickets) // Include tickets to make sure we can access them
+                .FirstOrDefaultAsync(s => s.Id == showtimeId); 
+
+            if (showtime == null)
+            {
+                return false; // Showtime not found
+            }
+
+            // Get the tickets associated with this showtime
+            var ticketsToRemove = showtime.Tickets
+                .Take(numberOfTickets) // Limit to the number of tickets you want to remove
+                .ToList();
+
+            // Check if there are enough tickets
+            if (ticketsToRemove.Count < numberOfTickets)
             {
                 return false; // Not enough tickets to remove
             }
 
-            _context.Ticket.RemoveRange(movieTickets.Take(numberOfTickets));
+            // Remove the tickets from the Ticket table
+            _context.Ticket.RemoveRange(ticketsToRemove);
+
+            // Update the Showtime's available ticket count (if applicable)
+            showtime.TicketsAvailable -= numberOfTickets; // Decrease ticket count
+
+            // Save changes to the database
             await _context.SaveChangesAsync();
 
             return true;
         }
+        public async Task<bool> AddTicketsToShowtime(int showtimeId, int numberOfTickets)
+        {
+            if (numberOfTickets <= 0)
+            {
+                return false; // Invalid number of tickets
+            }
+
+            // Find the showtime
+            var showtime = await _context.Showtime
+                .Include(s => s.Tickets) // Include tickets to make sure we can access them
+                .FirstOrDefaultAsync(s => s.Id == showtimeId); 
+
+            if (showtime == null)
+            {
+                return false; // Showtime not found
+            }
+
+            // Create new tickets
+            var newTickets = new List<Ticket>();
+            for (int i = 0; i < numberOfTickets; i++)
+            {
+                newTickets.Add(new Ticket
+                {
+                    Showtime = showtime,
+                    Price = 10.00m // Assuming movie has a TicketPrice property
+                });
+            }
+
+            // Add the new tickets to the Ticket table
+            _context.Ticket.AddRange(newTickets);
+
+            // Update the Showtime's available ticket count (if applicable)
+            showtime.TicketsAvailable += numberOfTickets; // Increase ticket count
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+
+
+
 
     }
 }

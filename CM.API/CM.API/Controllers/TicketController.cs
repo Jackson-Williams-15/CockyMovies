@@ -68,24 +68,31 @@ namespace CM.API.Controllers
 
             return Ok(ticket);
         }
-        // DELETE: api/tickets/remove-from-movie/{movieId}/{numberOfTickets}
-        [HttpDelete("remove-from-movie/{movieId}/{numberOfTickets}")]
-        public async Task<IActionResult> RemoveTicketsFromMovie(int movieId, int numberOfTickets)
+        // POST: api/tickets/add-to-showtime/{showtimeId}/{numberOfTickets}
+        [HttpPost("add-to-showtime/{showtimeId}/{numberOfTickets}")]
+        public async Task<IActionResult> AddTicketsToShowtime(int showtimeId, int numberOfTickets)
         {
-            if (numberOfTickets <= 0)
+            if (await _ticketService.AddTicketsToShowtime(showtimeId, numberOfTickets))
             {
-                return BadRequest("Number of tickets to remove must be greater than zero.");
+                return Ok("Tickets added successfully.");
             }
 
-            var result = await _ticketService.RemoveTicketsFromMovie(movieId, numberOfTickets);
+            return BadRequest("Failed to add tickets. Ensure the showtime exists and input is valid.");
+        }
 
-            if (result)
+        // DELETE: api/tickets/remove-from-showtime/{showtimeId}/{numberOfTickets}
+        [HttpDelete("remove-from-showtime/{showtimeId}/{numberOfTickets}")]
+        public async Task<IActionResult> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
+        {
+            if (await _ticketService.RemoveTicketsFromShowtime(showtimeId, numberOfTickets))
             {
                 return Ok("Tickets removed successfully.");
             }
 
-            return BadRequest("Failed to remove tickets. Ensure the movie exists and has enough tickets available.");
+            return BadRequest("Failed to remove tickets. Ensure the showtime exists and has enough tickets available.");
         }
+
+
 
     }
 }
