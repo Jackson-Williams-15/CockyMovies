@@ -61,6 +61,11 @@ public class AppDbContext : DbContext
             .Property(u => u.Password)
             .IsRequired();
 
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.PaymentDetails)
+            .WithOne()
+            .HasForeignKey<User>(u => u.PaymentDetailsId);
+
         // Data seed ratings
         modelBuilder.Entity<Rating>().HasData(
             new Rating { Id = 1, Name = "G" },
