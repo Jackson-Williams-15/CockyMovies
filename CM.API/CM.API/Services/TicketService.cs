@@ -55,5 +55,20 @@ namespace CM.API.Services
                 Price = ticket.Price
             };
         }
+        public async Task<bool> RemoveTicketsFromMovie(int movieId, int numberOfTickets)
+        {
+            var movieTickets = await _context.Ticket.Where(t => t.Showtime.MovieId == movieId).ToListAsync();
+
+            if (movieTickets.Count < numberOfTickets)
+            {
+                return false; // Not enough tickets to remove
+            }
+
+            _context.Ticket.RemoveRange(movieTickets.Take(numberOfTickets));
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }

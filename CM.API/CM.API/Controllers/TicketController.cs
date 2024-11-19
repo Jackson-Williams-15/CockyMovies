@@ -68,5 +68,24 @@ namespace CM.API.Controllers
 
             return Ok(ticket);
         }
+        // DELETE: api/tickets/remove-from-movie/{movieId}/{numberOfTickets}
+        [HttpDelete("remove-from-movie/{movieId}/{numberOfTickets}")]
+        public async Task<IActionResult> RemoveTicketsFromMovie(int movieId, int numberOfTickets)
+        {
+            if (numberOfTickets <= 0)
+            {
+                return BadRequest("Number of tickets to remove must be greater than zero.");
+            }
+
+            var result = await _ticketService.RemoveTicketsFromMovie(movieId, numberOfTickets);
+
+            if (result)
+            {
+                return Ok("Tickets removed successfully.");
+            }
+
+            return BadRequest("Failed to remove tickets. Ensure the movie exists and has enough tickets available.");
+        }
+
     }
 }
