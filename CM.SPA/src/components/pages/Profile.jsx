@@ -110,19 +110,21 @@ const Profile = () => {
 
   const handleSavePaymentDetails = async (e) => {
     e.preventDefault();
-
+    setSuccessMessage(null);
+    setError(null);
+  
     // Validate card number (16 digits)
-    if (!/^\d{16}$/.test(formData.cardNumber)) {
+    if (!/^\d{16}$/.test(formData.cardNumber.trim())) {
       setError('Card number must be exactly 16 digits.');
       return;
     }
-
+  
     // Validate CVV (3-4 digits)
-    if (!/^\d{3,4}$/.test(formData.cvv)) {
+    if (!/^\d{3,4}$/.test(formData.cvv.trim())) {
       setError('CVV must be 3 or 4 digits.');
       return;
     }
-
+  
     // Validate expiry date (MM/YY format and not in the past)
     const [month, year] = formData.expiryDate.split('/');
     const expiryDate = new Date(`20${year}-${month}-01`);
@@ -131,24 +133,58 @@ const Profile = () => {
       setError('Expiry date is invalid or in the past.');
       return;
     }
-
+  
     try {
+      const existingUser = await userService.getUserInfo();
+      const existingPaymentDetails = existingUser?.paymentDetails || {};
+  
+      // Compare each field to detect changes
+      const isCardNumberChanged =
+        (existingPaymentDetails.cardNumber || "").trim() !== formData.cardNumber.trim();
+      const isExpiryDateChanged =
+        (existingPaymentDetails.expiryDate || "").trim() !== formData.expiryDate.trim();
+      const isCVVChanged =
+        (existingPaymentDetails.cvv || "").trim() !== formData.cvv.trim();
+      const isCardHolderNameChanged =
+        (existingPaymentDetails.cardHolderName || "").trim().toLowerCase() !==
+        formData.cardHolderName.trim().toLowerCase();
+      const isPaymentMethodChanged =
+        (existingPaymentDetails.paymentMethod || "").trim().toLowerCase() !==
+        formData.paymentMethod.trim().toLowerCase();
+  
+      // If no changes detected
+      if (
+        !isCardNumberChanged &&
+        !isExpiryDateChanged &&
+        !isCVVChanged &&
+        !isCardHolderNameChanged &&
+        !isPaymentMethodChanged
+      ) {
+        setSuccessMessage('No changes detected in payment details.');
+        setError(null);
+      } else {
+
+      // Proceed to save if changes are detected
       await userService.savePaymentDetails({
-        cardNumber: formData.cardNumber,
-        expiryDate: formData.expiryDate,
-        cvv: formData.cvv,
-        cardHolderName: formData.cardHolderName,
-        paymentMethod: formData.paymentMethod,
+        cardNumber: formData.cardNumber.trim(),
+        expiryDate: formData.expiryDate.trim(),
+        cvv: formData.cvv.trim(),
+        cardHolderName: formData.cardHolderName.trim(),
+        paymentMethod: formData.paymentMethod.trim(),
       });
-      setSuccessMessage('Payment details saved successfully');
+  
+      setSuccessMessage('Payment details updated successfully.');
       setError(null);
+    }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error saving payment details';
+      const errorMessage =
+        error.response?.data?.message || 'Error saving payment details.';
       setError(errorMessage);
       setSuccessMessage(null);
       console.error('Error saving payment details:', error);
     }
   };
+  
 
   if (loading) {
     return (
