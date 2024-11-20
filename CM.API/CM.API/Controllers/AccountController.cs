@@ -195,18 +195,43 @@ public async Task<IActionResult> SavePaymentDetails([FromBody] PaymentDetailsDto
         return NotFound(new { message = "User not found" });
     }
 
-    user.PaymentDetails = new PaymentDetails
+    var existingPaymentDetails = user.PaymentDetails;
+
+    // Check if there are any changes
+    if (existingPaymentDetails != null &&
+        existingPaymentDetails.CardNumber == paymentDetailsDto.CardNumber &&
+        existingPaymentDetails.ExpiryDate == paymentDetailsDto.ExpiryDate &&
+        existingPaymentDetails.CVV == paymentDetailsDto.CVV &&
+        existingPaymentDetails.CardHolderName == paymentDetailsDto.CardHolderName &&
+        existingPaymentDetails.PaymentMethod == paymentDetailsDto.PaymentMethod)
     {
-        CardNumber = paymentDetailsDto.CardNumber,
-        ExpiryDate = paymentDetailsDto.ExpiryDate,
-        CVV = paymentDetailsDto.CVV,
-        CardHolderName = paymentDetailsDto.CardHolderName,
-        PaymentMethod = paymentDetailsDto.PaymentMethod
-    };
+        return Ok(new { message = "No changes detected in payment details." });
+    }
 
-    _context.Users.Update(user);
+    // Update existing payment details or create new if doesnt exist
+    if (existingPaymentDetails != null)
+    {
+        existingPaymentDetails.CardNumber = paymentDetailsDto.CardNumber;
+        existingPaymentDetails.ExpiryDate = paymentDetailsDto.ExpiryDate;
+        existingPaymentDetails.CVV = paymentDetailsDto.CVV;
+        existingPaymentDetails.CardHolderName = paymentDetailsDto.CardHolderName;
+        existingPaymentDetails.PaymentMethod = paymentDetailsDto.PaymentMethod;
+        _context.PaymentDetails.Update(existingPaymentDetails);
+    }
+    else
+    {
+        user.PaymentDetails = new PaymentDetails
+        {
+            CardNumber = paymentDetailsDto.CardNumber,
+            ExpiryDate = paymentDetailsDto.ExpiryDate,
+            CVV = paymentDetailsDto.CVV,
+            CardHolderName = paymentDetailsDto.CardHolderName,
+            PaymentMethod = paymentDetailsDto.PaymentMethod
+        };
+        _context.Users.Update(user);
+    }
+
     await _context.SaveChangesAsync();
-
     return Ok(new { message = "Payment details saved successfully" });
 }
 }
