@@ -66,13 +66,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
     // Configure email settings
     builder.Services.Configure<EmailSettings>(options =>
-    {
-    options.SmtpServer = "smtp.gmail.com";
-    options.SmtpPort = 587;
-    options.SenderName = "YourAppName";
+{
+    options.SmtpServer = builder.Configuration["EmailSettings:SmtpServer"];
+    options.SmtpPort = int.Parse(builder.Configuration["EmailSettings:SmtpPort"]);
+    options.SenderName = builder.Configuration["EmailSettings:SenderName"];
     options.SenderEmail = Environment.GetEnvironmentVariable("EMAIL_SENDER");
     options.SenderPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
-    });
+});
 
     builder.Services.AddTransient<IEmailService, EmailService>();
 
