@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System.Text;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -13,15 +14,17 @@ public class CheckoutController : ControllerBase
 {
     private readonly ICartService _cartService;
     private readonly IPaymentService _paymentService;
+    private readonly IEmailService _emailService;
     private readonly AppDbContext _context;
     private readonly ILogger<CheckoutController> _logger;
 
-    public CheckoutController(ICartService cartService, IPaymentService paymentService, AppDbContext context, ILogger<CheckoutController> logger)
+    public CheckoutController(ICartService cartService, IPaymentService paymentService, AppDbContext context, ILogger<CheckoutController> logger, IEmailService emailService)
     {
         _cartService = cartService;
         _paymentService = paymentService;
         _context = context;
         _logger = logger;
+        _emailService = emailService;
     }
 
     [HttpPost("ProcessCheckout")]
@@ -189,21 +192,54 @@ public class CheckoutController : ControllerBase
 
         _logger.LogInformation("Checkout processed successfully for cart: {CartId}", request.CartId);
 
-        var orderReceipt = new OrderReceiptDto
-        {
-            OrderId = order.Id,
-            ProcessedDate = order.ProcessedDate,
-            TotalPrice = order.TotalPrice,
-            Tickets = order.Tickets.Select(t => new OrderTicketDto
-            {
-                TicketId = t.TicketId,
-                ShowtimeId = t.ShowtimeId,
-                MovieTitle = t.Movie.Title,
-                ShowtimeStartTime = t.Showtime.StartTime,
-                Price = t.Price
-            }).ToList()
-        };
+        var orderReceipt = await GenerateOrderReceipt(order);
+
+    // Send order receipt email
+    var user = await _context.Users.FindAsync(request.UserId);
+    if (user != null)
+    {
+        await SendOrderReceiptEmail(user, orderReceipt);
+    }
 
         return Ok(orderReceipt);
+    }
+
+    private async Task<OrderReceiptDto> GenerateOrderReceipt(OrderResult order) {
+        var orderReceipt = new OrderReceiptDto
+    {
+        OrderId = order.Id,
+        ProcessedDate = order.ProcessedDate,
+        TotalPrice = order.TotalPrice,
+        Tickets = order.Tickets.Select(t => new OrderTicketDto
+        {
+            TicketId = t.TicketId,
+            ShowtimeId = t.ShowtimeId,
+            MovieTitle = t.Movie.Title,
+            ShowtimeStartTime = t.Showtime.StartTime,
+            Price = t.Price
+        }).ToList()
+    };
+
+    return orderReceipt;
+    } 
+
+    private async Task SendOrderReceiptEmail(User user, OrderReceiptDto orderReceipt) {
+        var emailBody = new StringBuilder();
+    emailBody.AppendLine($"Hi {user.Username}! Thank you for your order!");
+    emailBody.AppendLine($"Order ID: {orderReceipt.OrderId}");
+    emailBody.AppendLine($"Processed Date: {orderReceipt.ProcessedDate}");
+    emailBody.AppendLine($"Total Price: ${orderReceipt.TotalPrice}");
+
+    emailBody.AppendLine("Tickets:");
+    foreach (var ticket in orderReceipt.Tickets)
+    {
+        emailBody.AppendLine($"- Movie: {ticket.MovieTitle}");
+        emailBody.AppendLine($"  Showtime: {ticket.ShowtimeStartTime}");
+        emailBody.AppendLine($"  Quantity: {ticket.Quantity}");
+        emailBody.AppendLine($"  Price per Ticket: ${ticket.Price}");
+        emailBody.AppendLine($"  Total Price: ${ticket.Price * ticket.Quantity}");
+    }
+
+    await _emailService.SendEmail(user.Email, "Your Order Receipt", emailBody.ToString());
     }
 }
