@@ -36,6 +36,7 @@ const Checkout = () => {
       });
       setCart(response.data);
       localStorage.setItem('cart', JSON.stringify(response.data)); // Update local storage
+      setError('');
       updateUserLocalStorage(response.data); // Update user local storage
     } catch (error) {
       setError('Failed to load cart. Please try again.');
@@ -50,8 +51,31 @@ const Checkout = () => {
     }
   };
 
+  const fetchPaymentDetails = async () => {
+    try {
+      const response = await axios.get('/api/Account/profile', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      const user = response.data;
+      if (user.paymentDetails) {
+        setPaymentDetails({
+          cardNumber: user.paymentDetails.cardNumber,
+          expiryDate: user.paymentDetails.expiryDate,
+          cvv: user.paymentDetails.cvv,
+          cardHolderName: user.paymentDetails.cardHolderName,
+        });
+      }
+      setError('');
+    } catch (error) {
+      setError('Failed to load payment details. Please try again.');
+    }
+  };
+
   useEffect(() => {
     fetchCart();
+    fetchPaymentDetails();
   }, []);
 
   const handleChange = (e) => {
