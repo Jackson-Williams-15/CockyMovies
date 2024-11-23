@@ -194,40 +194,39 @@ public class CheckoutController : ControllerBase
 
         var orderReceipt = await GenerateOrderReceipt(order);
 
-        // Send order receipt email
-        var user = await _context.Users.FindAsync(request.UserId);
-        if (user != null)
-        {
-            await SendOrderReceiptEmail(user, orderReceipt);
-        }
+    // Send order receipt email
+    var user = await _context.Users.FindAsync(request.UserId);
+    if (user != null)
+    {
+        await SendOrderReceiptEmail(user, orderReceipt);
+    }
 
         return Ok(orderReceipt);
     }
 
-    private async Task<OrderReceiptDto> GenerateOrderReceipt(OrderResult order)
-    {
+    private async Task<OrderReceiptDto> GenerateOrderReceipt(OrderResult order) {
         var orderReceipt = new OrderReceiptDto
+    {
+        OrderId = order.Id,
+        ProcessedDate = order.ProcessedDate,
+        TotalPrice = order.TotalPrice,
+        Tickets = order.Tickets.Select(t => new OrderTicketDto
         {
-            OrderId = order.Id,
-            ProcessedDate = order.ProcessedDate,
-            TotalPrice = order.TotalPrice,
-            Tickets = order.Tickets.Select(t => new OrderTicketDto
-            {
-                TicketId = t.TicketId,
-                ShowtimeId = t.ShowtimeId,
-                MovieTitle = t.Movie.Title,
-                ShowtimeStartTime = t.Showtime.StartTime,
-                Price = t.Price,
-                Quantity = t.Quantity
-            }).ToList()
-        };
+            TicketId = t.TicketId,
+            ShowtimeId = t.ShowtimeId,
+            MovieTitle = t.Movie.Title,
+            ShowtimeStartTime = t.Showtime.StartTime,
+            Price = t.Price,
+            Quantity = t.Quantity
+        }).ToList()
+    };
 
-        return orderReceipt;
-    }
+    return orderReceipt;
+    } 
 
     private async Task SendOrderReceiptEmail(User user, OrderReceiptDto orderReceipt)
-    {
-        var emailBody = $@"
+{
+    var emailBody = $@"
     <!DOCTYPE html>
     <html>
     <head>
@@ -289,10 +288,10 @@ public class CheckoutController : ControllerBase
             </div>
             <div class='tickets'>
                 <h3>Tickets</h3>";
-
-        foreach (var ticket in orderReceipt.Tickets)
-        {
-            emailBody += $@"
+                
+    foreach (var ticket in orderReceipt.Tickets)
+    {
+        emailBody += $@"
                 <div class='ticket'>
                     <p><strong>Movie:</strong> {ticket.MovieTitle}</p>
                     <p><strong>Showtime:</strong> {ticket.ShowtimeStartTime}</p>
@@ -300,15 +299,9 @@ public class CheckoutController : ControllerBase
                     <p><strong>Price per Ticket:</strong> ${ticket.Price:F2}</p>
                     <p><strong>Total Price:</strong> ${(ticket.Price * ticket.Quantity):F2}</p>
                 </div>";
-        }
-
-        emailBody += @"
-            </div>
-        </div>
-    </body>
-    </html>";
-
-        await _emailService.SendEmail(user.Email, "Your Order Receipt", emailBody);
     }
+
+    await _emailService.SendEmail(user.Email, "Your Order Receipt", emailBody);
+}
 
 }
