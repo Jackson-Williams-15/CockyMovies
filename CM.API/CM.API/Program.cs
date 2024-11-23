@@ -64,17 +64,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(8, 0, 28))));
 
-    // Configure email settings
-    builder.Services.Configure<EmailSettings>(options =>
+// Configure email settings
+builder.Services.Configure<EmailSettings>(options =>
 {
-    options.SmtpServer = builder.Configuration["EmailSettings:SmtpServer"];
-    options.SmtpPort = int.Parse(builder.Configuration["EmailSettings:SmtpPort"]);
-    options.SenderName = builder.Configuration["EmailSettings:SenderName"];
-    options.SenderEmail = Environment.GetEnvironmentVariable("EMAIL_SENDER");
-    options.SenderPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
+options.SmtpServer = builder.Configuration["EmailSettings:SmtpServer"];
+options.SmtpPort = int.Parse(builder.Configuration["EmailSettings:SmtpPort"]);
+options.SenderName = builder.Configuration["EmailSettings:SenderName"];
+options.SenderEmail = Environment.GetEnvironmentVariable("EMAIL_SENDER");
+options.SenderPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
 });
 
-    builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 //JWT authentication
 builder.Services.AddAuthentication(options =>
