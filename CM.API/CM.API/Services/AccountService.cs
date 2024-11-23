@@ -78,7 +78,6 @@ public class AccountService : IAccountService
                             Description = t.Showtime.Movie.Description,
                             DateReleased = t.Showtime.Movie.DateReleased,
                             Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
-
                         }
                     }
                 }).ToList()
@@ -151,12 +150,86 @@ public class AccountService : IAccountService
         return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    public async Task<User> GetUserById(string userId)
+    public async Task<User?> GetUserById(string userId)
     {
         if (int.TryParse(userId, out int parsedUserId))
+    {
+        var user = await _context.Users
+            .Include(u => u.PaymentDetails)
+            .FirstOrDefaultAsync(u => u.Id == parsedUserId);
+        return user ?? throw new InvalidOperationException("User not found");
+    }
+    return null;
+    }
+
+    public async Task<UserDto> UpdateUser(string userId, UserUpdateDto updateDto)
+    {
+        if (!int.TryParse(userId, out int parsedUserId))
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
+            return null;
         }
-        return null;
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
+        if (user == null)
+        {
+            return null;
+        }
+
+        user.Email = updateDto.Email;
+        user.Username = updateDto.Username;
+        user.DateOfBirth = updateDto.DateOfBirth;
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+
+        return new UserDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Username = user.Username,
+            DateOfBirth = user.DateOfBirth,
+            Cart = user.Cart != null ? new CartDto
+            {
+                CartId = user.Cart.CartId,
+                UserId = user.Cart.UserId,
+                Tickets = user.Cart.Tickets.Select(t => new CartTicketDto
+                {
+                    Id = t.Id,
+                    Price = t.Price,
+                    Showtime = new ShowtimeDto
+                    {
+                        Id = t.Showtime.Id,
+                        StartTime = t.Showtime.StartTime,
+                        Movie = new MovieDto
+                        {
+                            Id = t.Showtime.Movie.Id,
+                            Title = t.Showtime.Movie.Title,
+                            Description = t.Showtime.Movie.Description,
+                            DateReleased = t.Showtime.Movie.DateReleased,
+                            Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
+                        }
+                    }
+                }).ToList()
+            } : null
+        };
+    }
+
+    public async Task<(bool Success, string Message)> UpdatePassword(string userId, UserPasswordDto passwordUpdateDto)
+    {
+        if (!int.TryParse(userId, out int parsedUserId))
+        {
+            return (false, "Invalid User Id");
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(passwordUpdateDto.OldPassword, user.Password))
+        {
+            return (false, "Incorrect Old Password");
+        }
+
+        user.Password = BCrypt.Net.BCrypt.HashPassword(passwordUpdateDto.NewPassword);
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        return (true, "Password Updated Successfully");
     }
 }
