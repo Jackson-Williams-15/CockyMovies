@@ -303,9 +303,6 @@ public class CheckoutController : ControllerBase
 
     emailBody += @"
             </div>
-            <div class='footer'>
-                This email was generated automatically. For assistance, please contact our support team.
-            </div>
         </div>
     </body>
     </html>";
