@@ -8,11 +8,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+// Load environment variables from .env file
+Env.Load();
 
 // Disable HTTPS Redirection Middleware (for local dev)
 builder.Services.AddHttpsRedirection(options =>
@@ -59,6 +63,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(8, 0, 28))));
+
+    // Configure email settings
+    builder.Services.Configure<EmailSettings>(options =>
+    {
+    options.SmtpServer = "smtp.gmail.com";
+    options.SmtpPort = 587;
+    options.SenderName = "YourAppName";
+    options.SenderEmail = Environment.GetEnvironmentVariable("EMAIL_SENDER");
+    options.SenderPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
+    });
+
+    builder.Services.AddTransient<IEmailService, EmailService>();
 
 //JWT authentication
 builder.Services.AddAuthentication(options =>
