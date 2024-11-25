@@ -115,6 +115,9 @@ namespace CM.API.Services
             {
                 return false; // Showtime not found
             }
+            if(showtime.TicketsAvailable == showtime.Capacity) {
+                return false;
+            }
 
             // Create new tickets
             var newTickets = new List<Ticket>();
