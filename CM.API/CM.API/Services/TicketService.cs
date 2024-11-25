@@ -73,6 +73,10 @@ namespace CM.API.Services
                 return false; // Showtime not found
             }
 
+            if(showtime.TicketsAvailable == showtime.Capacity) {
+                return false;
+            }
+
             // Get the tickets associated with this showtime
             var ticketsToRemove = showtime.Tickets
                 .Take(numberOfTickets) // Limit to the number of tickets you want to remove
