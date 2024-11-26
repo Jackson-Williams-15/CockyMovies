@@ -20,13 +20,15 @@ namespace CM.API.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
+    private readonly IEmailService _emailService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<AccountController> _logger;
     private readonly ICartService _cartService;
     private readonly AppDbContext _context;
-    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger, ICartService cartService, AppDbContext context)
+    public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger, ICartService cartService, AppDbContext context, IEmailService emailServices)
     {
         _accountService = accountService;
+        _emailService = emailServices;
         _cartService = cartService;
         _configuration = configuration;
         _logger = logger;
@@ -43,6 +45,13 @@ public class AccountController : ControllerBase
             return BadRequest(new { message = "User registration failed" });
 
         var cart = await _cartService.GetCartByUserId(userDto.Id);
+
+        // Send verification email
+        var user = await _accountService.GetUserById(userDto.Id.ToString());
+        if (user != null)
+        {
+            await _emailService.SendEmail(user.Email, EmailType.Verification, user, user);
+        }
 
         return Ok(new { user = userDto, cartId = cart?.CartId });
     }
