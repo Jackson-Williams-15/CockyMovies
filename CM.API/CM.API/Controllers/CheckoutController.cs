@@ -194,114 +194,35 @@ public class CheckoutController : ControllerBase
 
         var orderReceipt = await GenerateOrderReceipt(order);
 
-    // Send order receipt email
-    var user = await _context.Users.FindAsync(request.UserId);
-    if (user != null)
-    {
-        await SendOrderReceiptEmail(user, orderReceipt);
-    }
+        // Send order receipt email
+        var user = await _context.Users.FindAsync(request.UserId);
+        if (user != null)
+        {
+            await _emailService.SendEmail(user.Email, EmailType.OrderReceipt, orderReceipt, user);
+        }
 
         return Ok(orderReceipt);
     }
 
-    private async Task<OrderReceiptDto> GenerateOrderReceipt(OrderResult order) {
+    private async Task<OrderReceiptDto> GenerateOrderReceipt(OrderResult order)
+    {
         var orderReceipt = new OrderReceiptDto
-    {
-        OrderId = order.Id,
-        ProcessedDate = order.ProcessedDate,
-        TotalPrice = order.TotalPrice,
-        Tickets = order.Tickets.Select(t => new OrderTicketDto
         {
-            TicketId = t.TicketId,
-            ShowtimeId = t.ShowtimeId,
-            MovieTitle = t.Movie.Title,
-            ShowtimeStartTime = t.Showtime.StartTime,
-            Price = t.Price,
-            Quantity = t.Quantity
-        }).ToList()
-    };
+            OrderId = order.Id,
+            ProcessedDate = order.ProcessedDate,
+            TotalPrice = order.TotalPrice,
+            Tickets = order.Tickets.Select(t => new OrderTicketDto
+            {
+                TicketId = t.TicketId,
+                ShowtimeId = t.ShowtimeId,
+                MovieTitle = t.Movie.Title,
+                ShowtimeStartTime = t.Showtime.StartTime,
+                Price = t.Price,
+                Quantity = t.Quantity
+            }).ToList()
+        };
 
-    return orderReceipt;
-    } 
-
-    private async Task SendOrderReceiptEmail(User user, OrderReceiptDto orderReceipt)
-{
-    var emailBody = $@"
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body {{
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                color: #333;
-                margin: 0;
-                padding: 0;
-                background-color: #f9f9f9;
-            }}
-            .email-container {{
-                max-width: 600px;
-                margin: 20px auto;
-                padding: 20px;
-                background-color: #ffffff;
-                border-radius: 10px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }}
-            .header {{
-                font-size: 20px;
-                font-weight: bold;
-                text-align: center;
-                margin-bottom: 20px;
-                color: #007BFF;
-            }}
-            .order-details {{
-                margin-bottom: 20px;
-            }}
-            .order-details h3 {{
-                font-size: 18px;
-                margin-bottom: 10px;
-                color: #444;
-            }}
-            .ticket {{
-                margin-bottom: 10px;
-                padding: 10px;
-                border-bottom: 1px solid #e0e0e0;
-            }}
-            .footer {{
-                text-align: center;
-                margin-top: 20px;
-                font-size: 12px;
-                color: #888;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class='email-container'>
-            <div class='header'>
-                Thank you for your order, {user.Username}!
-            </div>
-            <div class='order-details'>
-                <h3>Order Summary</h3>
-                <p><strong>Order ID:</strong> {orderReceipt.OrderId}</p>
-                <p><strong>Processed Date:</strong> {orderReceipt.ProcessedDate}</p>
-                <p><strong>Total Price:</strong> ${orderReceipt.TotalPrice:F2}</p>
-            </div>
-            <div class='tickets'>
-                <h3>Tickets</h3>";
-                
-    foreach (var ticket in orderReceipt.Tickets)
-    {
-        emailBody += $@"
-                <div class='ticket'>
-                    <p><strong>Movie:</strong> {ticket.MovieTitle}</p>
-                    <p><strong>Showtime:</strong> {ticket.ShowtimeStartTime}</p>
-                    <p><strong>Quantity:</strong> {ticket.Quantity}</p>
-                    <p><strong>Price per Ticket:</strong> ${ticket.Price:F2}</p>
-                    <p><strong>Total Price:</strong> ${(ticket.Price * ticket.Quantity):F2}</p>
-                </div>";
+        return orderReceipt;
     }
-
-    await _emailService.SendEmail(user.Email, "Your Order Receipt", emailBody);
-}
 
 }
