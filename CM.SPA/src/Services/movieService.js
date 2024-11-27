@@ -15,6 +15,16 @@ export const getMovies = async (genreIds = [], ratingIds = []) => {
   }
 };
 
+export async function getMovieById(movieId) {
+  const BASE_API_URL = `/api/movies`;
+
+  const response = await fetch(`${BASE_API_URL}/${movieId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch movie');
+  }
+  return response.json();
+}
+
 export const getGenres = async () => {
   try {
     const response = await axios.get('/api/genre');
