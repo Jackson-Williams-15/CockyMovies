@@ -12,6 +12,7 @@ import SignIn from './components/pages/SignIn';
 import Signup from './components/pages/Signup';
 import Tickets from './components/pages/Tickets';
 import Profile from './components/pages/Profile';
+import Reviews from './components/pages/Reviews';
 import { AuthProvider } from './context/AuthContext';
 import OrderSuccess from './components/pages/OrderSuccess';
 
@@ -27,6 +28,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/movies/:movieId/showtimes" element={<Showtimes />} />
+          <Route path="/movies/:movieId/reviews" element={<Reviews />} />
           <Route path="/tickets/:showtimeId" element={<Tickets />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<Signup />} />

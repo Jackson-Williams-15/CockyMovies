@@ -164,6 +164,13 @@ export default function Movies() {
                   >
                     Show Times
                   </Button>
+                  <Button
+                    size="large"
+                    component={Link}
+                    to={`/movies/${movie.id}/reviews`}
+                  >
+                    Reviews
+                  </Button>
                 </CardActions>
               </Card>
             </Grid>
