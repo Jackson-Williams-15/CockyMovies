@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { getReviews } from '../../Services/reviewService';
 import { getMovieById } from '../../Services/movieService';
+import { AuthContext } from '../../context/AuthContext';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -16,6 +17,7 @@ import ReviewForm from './ReviewForm';
 export default function Reviews() {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
+  const { isLoggedIn } = useContext(AuthContext);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -69,7 +71,11 @@ export default function Reviews() {
         </Typography>
       )}
       <Divider sx={{ mb: 4 }} />
-      <ReviewForm />
+      {isLoggedIn ? <ReviewForm /> : (
+        <Typography variant="body2" color="error" gutterBottom>
+          You must be logged in to submit a review.
+        </Typography>
+      )}
       <Grid container spacing={4}>
         {reviews.map((review) => (
           <Grid item xs={12} sm={6} md={4} key={review.id}>
@@ -77,6 +83,9 @@ export default function Reviews() {
               <CardContent>
                 <Typography variant="h5" gutterBottom>
                   {review.title}
+                </Typography>
+                <Typography variant="subtitle2" color="text.secondary">
+                  by {review.username}
                 </Typography>
                 <Divider sx={{ my: 2 }} />
                 <Rating value={review.rating} readOnly precision={0.5} />

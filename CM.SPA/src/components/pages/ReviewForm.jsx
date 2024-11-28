@@ -6,7 +6,7 @@ import { TextField, Button, Box, Typography, Rating } from '@mui/material';
 
 export default function ReviewForm() {
   const { movieId } = useParams();
-  const { username } = useContext(AuthContext); // Get the current user's username
+  const { username, isLoggedIn } = useContext(AuthContext); // Get the current user's username and login status
   const [title, setTitle] = useState('');
   const [rating, setRating] = useState(0);
   const [description, setDescription] = useState('');
@@ -14,6 +14,10 @@ export default function ReviewForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isLoggedIn) {
+      setError('You must be logged in to submit a review.');
+      return;
+    }
     try {
       await addReview({
         title,
@@ -32,6 +36,14 @@ export default function ReviewForm() {
       setError('Failed to add review. Please try again.');
     }
   };
+
+  if (!isLoggedIn) {
+    return (
+      <Typography variant="body2" color="error" gutterBottom>
+        You must be logged in to submit a review.
+      </Typography>
+    );
+  }
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
