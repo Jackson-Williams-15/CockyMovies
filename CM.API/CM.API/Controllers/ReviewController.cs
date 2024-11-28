@@ -68,4 +68,30 @@ public class ReviewsController : ControllerBase
 
         return Ok(reviewDtos);
     }
+
+    // PUT: api/reviews/{id}
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditReview(int id, [FromBody] ReviewUpdateDto reviewDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var updatedReview = new Review
+        {
+            Title = reviewDto.Title,
+            Rating = reviewDto.Rating,
+            Description = reviewDto.Description
+        };
+
+        var success = await _reviewService.EditReview(id, updatedReview);
+
+        if (!success)
+        {
+            return NotFound("Review not found.");
+        }
+
+        return Ok("Review updated successfully.");
+    }
 }
