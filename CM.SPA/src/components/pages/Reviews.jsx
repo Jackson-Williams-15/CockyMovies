@@ -11,6 +11,7 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Rating from '@mui/material/Rating';
 import Grid from '@mui/material/Grid';
+import ReviewForm from './ReviewForm';
 
 export default function Reviews() {
   const { movieId } = useParams();
@@ -68,6 +69,7 @@ export default function Reviews() {
         </Typography>
       )}
       <Divider sx={{ mb: 4 }} />
+      <ReviewForm />
       <Grid container spacing={4}>
         {reviews.map((review) => (
           <Grid item xs={12} sm={6} md={4} key={review.id}>
