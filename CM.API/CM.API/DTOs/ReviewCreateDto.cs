@@ -12,4 +12,6 @@ public class ReviewCreateDto
 
     [Required]
     public int MovieId { get; set; }
+
+    public string? Username { get; set; }
 }

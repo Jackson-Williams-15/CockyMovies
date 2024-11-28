@@ -8,4 +8,5 @@ public class Review
     public string? Description { get; set; }
     public int MovieId { get; set; }
     public Movie? Movie { get; set; } // Navigation property
+    public string? Username { get; set; }
 }
