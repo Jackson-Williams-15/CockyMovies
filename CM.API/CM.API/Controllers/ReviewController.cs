@@ -31,7 +31,8 @@ public class ReviewsController : ControllerBase
             Title = reviewDto.Title,
             Rating = reviewDto.Rating,
             Description = reviewDto.Description,
-            MovieId = reviewDto.MovieId
+            MovieId = reviewDto.MovieId,
+            Username = reviewDto.Username
         };
 
         var success = await _reviewService.AddReview(review);
@@ -61,7 +62,8 @@ public class ReviewsController : ControllerBase
             Title = r.Title,
             Rating = r.Rating,
             Description = r.Description,
-            MovieId = r.MovieId
+            MovieId = r.MovieId,
+            Username = r.Username
         }).ToList();
 
         return Ok(reviewDtos);
