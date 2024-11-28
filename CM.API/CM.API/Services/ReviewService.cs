@@ -39,4 +39,25 @@ public class ReviewService : IReviewService
             .Where(r => r.MovieId == movieId)
             .ToListAsync();
     }
+
+    public async Task<bool> EditReview(int reviewId, Review updatedReview) 
+    {
+        try {
+            var existingReview = await _context.Reviews.FindAsync(reviewId);
+            if (existingReview == null) {
+                return false;
+            }
+
+            existingReview.Title = updatedReview.Title;
+            existingReview.Description = updatedReview.Description;
+            existingReview.Rating = updatedReview.Rating;
+
+            _context.Reviews.Update(existingReview);
+            await _context.SaveChangesAsync();
+            return true;
+        } catch (Exception ex) {
+            _logger.LogError(ex, "Error editing review");
+            throw;
+        }
+    }
 }
