@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export async function getReviews(movieId) {
     const BASE_API_URL = `/api/reviews/movie`;
   
@@ -6,4 +8,14 @@ export async function getReviews(movieId) {
       throw new Error('Failed to fetch reviews');
     }
     return response.json();
+  }
+
+  export async function addReview(review) {
+    try {
+      const response = await axios.post('/api/reviews', review);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to add review:', error);
+      throw error;
+    }
   }
