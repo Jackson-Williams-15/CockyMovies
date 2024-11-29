@@ -85,7 +85,7 @@ export default function Reviews() {
                   {review.title}
                 </Typography>
                 <Typography variant="subtitle2" color="text.secondary">
-                  by {review.username}
+                  by {review.username ? review.username : 'Anonymous'}
                 </Typography>
                 <Divider sx={{ my: 2 }} />
                 <Rating value={review.rating} readOnly precision={0.5} />
