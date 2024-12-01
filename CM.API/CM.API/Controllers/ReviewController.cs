@@ -6,17 +6,29 @@ using System.Threading.Tasks;
 
 namespace CM.API.Controllers;
 
+/// <summary>
+/// Controller for managing reviews.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ReviewsController : ControllerBase
 {
     private readonly IReviewService _reviewService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReviewsController"/> class.
+    /// </summary>
+    /// <param name="reviewService">The review service.</param>
     public ReviewsController(IReviewService reviewService)
     {
         _reviewService = reviewService;
     }
 
+    /// <summary>
+    /// Adds a new review.
+    /// </summary>
+    /// <param name="reviewDto">The review data transfer object.</param>
+    /// <returns>An <see cref="IActionResult"/> representing the result of the action.</returns>
     // POST: api/reviews
     [HttpPost]
     public async Task<IActionResult> AddReview([FromBody] ReviewCreateDto reviewDto)
@@ -45,6 +57,11 @@ public class ReviewsController : ControllerBase
         return Ok("Review added successfully.");
     }
 
+    /// <summary>
+    /// Gets reviews for a specific movie.
+    /// </summary>
+    /// <param name="movieId">The movie identifier.</param>
+    /// <returns>An <see cref="IActionResult"/> representing the result of the action.</returns>
     // GET: api/reviews/movie/{movieId}
     [HttpGet("movie/{movieId}")]
     public async Task<IActionResult> GetReviews(int movieId)
@@ -69,6 +86,12 @@ public class ReviewsController : ControllerBase
         return Ok(reviewDtos);
     }
 
+    /// <summary>
+    /// Edits an existing review.
+    /// </summary>
+    /// <param name="id">The review identifier.</param>
+    /// <param name="reviewDto">The review data transfer object.</param>
+    /// <returns>An <see cref="IActionResult"/> representing the result of the action.</returns>
     // PUT: api/reviews/{id}
     [HttpPut("{id}")]
     public async Task<IActionResult> EditReview(int id, [FromBody] ReviewUpdateDto reviewDto)
