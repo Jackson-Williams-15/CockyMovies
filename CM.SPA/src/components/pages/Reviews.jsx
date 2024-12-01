@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { getReviews, editReview, addReview } from '../../Services/reviewService';
+import {
+  getReviews,
+  editReview,
+  addReview,
+} from '../../Services/reviewService';
 import { getMovieById } from '../../Services/movieService';
 import { AuthContext } from '../../context/AuthContext';
 import Container from '@mui/material/Container';
@@ -75,8 +79,8 @@ export default function Reviews() {
       await editReview(updatedReview.id, updatedReview);
       setReviews((prevReviews) =>
         prevReviews.map((review) =>
-          review.id === updatedReview.id ? updatedReview : review
-        )
+          review.id === updatedReview.id ? updatedReview : review,
+        ),
       );
       setEditingReview(null);
     } catch (error) {
@@ -109,7 +113,11 @@ export default function Reviews() {
       <Divider sx={{ mb: 4 }} />
       {isLoggedIn ? (
         !addingReview && (
-          <Button variant="contained" color="primary" onClick={handleAddReviewClick}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddReviewClick}
+          >
             Add Review
           </Button>
         )

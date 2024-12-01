@@ -56,7 +56,7 @@ namespace CM.API.Services
             };
         }
 
-       public async Task<bool> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
+        public async Task<bool> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
         {
             if (numberOfTickets <= 0)
             {
@@ -66,14 +66,15 @@ namespace CM.API.Services
             // Find the showtime
             var showtime = await _context.Showtime
                 .Include(s => s.Tickets) // Include tickets to make sure we can access them
-                .FirstOrDefaultAsync(s => s.Id == showtimeId); 
+                .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
             if (showtime == null)
             {
                 return false; // Showtime not found
             }
 
-            if(showtime.TicketsAvailable == showtime.Capacity) {
+            if (showtime.TicketsAvailable == showtime.Capacity)
+            {
                 return false;
             }
 
@@ -109,13 +110,14 @@ namespace CM.API.Services
             // Find the showtime
             var showtime = await _context.Showtime
                 .Include(s => s.Tickets) // Include tickets to make sure we can access them
-                .FirstOrDefaultAsync(s => s.Id == showtimeId); 
+                .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
             if (showtime == null)
             {
                 return false; // Showtime not found
             }
-            if(showtime.TicketsAvailable == showtime.Capacity) {
+            if (showtime.TicketsAvailable == showtime.Capacity)
+            {
                 return false;
             }
 

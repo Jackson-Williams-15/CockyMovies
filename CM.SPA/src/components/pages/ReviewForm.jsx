@@ -9,7 +9,9 @@ export default function ReviewForm({ review, onSubmit, onCancel }) {
   const { username, isLoggedIn } = useContext(AuthContext);
   const [title, setTitle] = useState(review ? review.title : '');
   const [rating, setRating] = useState(review ? review.rating : 0);
-  const [description, setDescription] = useState(review ? review.description : '');
+  const [description, setDescription] = useState(
+    review ? review.description : '',
+  );
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -46,14 +48,15 @@ export default function ReviewForm({ review, onSubmit, onCancel }) {
       setRating(0);
       setDescription('');
       setError(null);
-      onSubmit && onSubmit({
-        id: review ? review.id : null,
-        title,
-        rating,
-        description,
-        movieId: parseInt(movieId),
-        username,
-      });
+      onSubmit &&
+        onSubmit({
+          id: review ? review.id : null,
+          title,
+          rating,
+          description,
+          movieId: parseInt(movieId),
+          username,
+        });
     } catch (error) {
       console.error('Failed to add review:', error);
       setError('Failed to add review. Please try again.');
@@ -106,7 +109,12 @@ export default function ReviewForm({ review, onSubmit, onCancel }) {
         {review ? 'Update Review' : 'Submit Review'}
       </Button>
       {onCancel && (
-        <Button onClick={onCancel} variant="contained" color="secondary" sx={{ mt: 2, ml: 2 }}>
+        <Button
+          onClick={onCancel}
+          variant="contained"
+          color="secondary"
+          sx={{ mt: 2, ml: 2 }}
+        >
           Cancel
         </Button>
       )}
