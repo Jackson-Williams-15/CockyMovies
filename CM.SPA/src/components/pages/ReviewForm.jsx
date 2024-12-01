@@ -1,16 +1,24 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { addReview } from '../../Services/reviewService';
+import { addReview, editReview } from '../../Services/reviewService';
 import { useParams } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Rating } from '@mui/material';
 
-export default function ReviewForm() {
+export default function ReviewForm({ review, onSubmit, onCancel }) {
   const { movieId } = useParams();
-  const { username, isLoggedIn } = useContext(AuthContext); // Get the current user's username and login status
-  const [title, setTitle] = useState('');
-  const [rating, setRating] = useState(0);
-  const [description, setDescription] = useState('');
+  const { username, isLoggedIn } = useContext(AuthContext);
+  const [title, setTitle] = useState(review ? review.title : '');
+  const [rating, setRating] = useState(review ? review.rating : 0);
+  const [description, setDescription] = useState(review ? review.description : '');
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (review) {
+      setTitle(review.title);
+      setRating(review.rating);
+      setDescription(review.description);
+    }
+  }, [review]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,18 +27,33 @@ export default function ReviewForm() {
       return;
     }
     try {
-      await addReview({
+      if (review) {
+        await editReview(review.id, {
+          title,
+          rating,
+          description,
+        });
+      } else {
+        await addReview({
+          title,
+          rating,
+          description,
+          movieId: parseInt(movieId),
+          username,
+        });
+      }
+      setTitle('');
+      setRating(0);
+      setDescription('');
+      setError(null);
+      onSubmit && onSubmit({
+        id: review ? review.id : null,
         title,
         rating,
         description,
         movieId: parseInt(movieId),
         username,
       });
-      
-      setTitle('');
-      setRating(0);
-      setDescription('');
-      setError(null);
     } catch (error) {
       console.error('Failed to add review:', error);
       setError('Failed to add review. Please try again.');
@@ -48,7 +71,7 @@ export default function ReviewForm() {
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Typography variant="h6" gutterBottom>
-        Add a Review
+        {review ? 'Edit Review' : 'Add a Review'}
       </Typography>
       {error && (
         <Typography variant="body2" color="error" gutterBottom>
@@ -80,8 +103,13 @@ export default function ReviewForm() {
         required
       />
       <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-        Submit Review
+        {review ? 'Update Review' : 'Submit Review'}
       </Button>
+      {onCancel && (
+        <Button onClick={onCancel} variant="contained" color="secondary" sx={{ mt: 2, ml: 2 }}>
+          Cancel
+        </Button>
+      )}
     </Box>
   );
 }

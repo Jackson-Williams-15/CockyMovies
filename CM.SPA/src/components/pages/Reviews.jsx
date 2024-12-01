@@ -12,14 +12,17 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Rating from '@mui/material/Rating';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import ReviewForm from './ReviewForm';
 
 export default function Reviews() {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, username } = useContext(AuthContext);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingReview, setEditingReview] = useState(null);
+  const [addingReview, setAddingReview] = useState(false);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -48,6 +51,39 @@ export default function Reviews() {
     fetchMovie();
   }, [movieId]);
 
+  const handleAddReviewSubmit = async (newReview) => {
+    try {
+      await addReview(newReview);
+      setReviews((prevReviews) => [...prevReviews, newReview]);
+      setAddingReview(false);
+    } catch (error) {
+      console.error('Failed to add review:', error);
+    }
+  };
+
+  const handleAddReviewClick = () => {
+    setAddingReview(true);
+  };
+
+  const handleEditClick = (review) => {
+    setEditingReview(review);
+  };
+
+  const handleEditSubmit = async (updatedReview) => {
+    // Call your API to update the review
+    try {
+      await editReview(updatedReview.id, updatedReview);
+      setReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          review.id === updatedReview.id ? updatedReview : review
+        )
+      );
+      setEditingReview(null);
+    } catch (error) {
+      console.error('Failed to update review:', error);
+    }
+  };
+
   if (loading) {
     return (
       <Box
@@ -71,11 +107,24 @@ export default function Reviews() {
         </Typography>
       )}
       <Divider sx={{ mb: 4 }} />
-      {isLoggedIn ? <ReviewForm /> : (
+      {isLoggedIn ? (
+        !addingReview && (
+          <Button variant="contained" color="primary" onClick={handleAddReviewClick}>
+            Add Review
+          </Button>
+        )
+      ) : (
         <Typography variant="body2" color="error" gutterBottom>
-          You must be logged in to submit a review.
+          You must be logged in to add a review.
         </Typography>
       )}
+      {addingReview && (
+        <ReviewForm
+          onSubmit={handleAddReviewSubmit}
+          onCancel={() => setAddingReview(false)}
+        />
+      )}
+      <Divider sx={{ mb: 4 }} />
       <Grid container spacing={4}>
         {reviews.map((review) => (
           <Grid item xs={12} sm={6} md={4} key={review.id}>
@@ -96,11 +145,21 @@ export default function Reviews() {
                 >
                   {review.description}
                 </Typography>
+                {isLoggedIn && review.username === username && (
+                  <Button onClick={() => handleEditClick(review)}>Edit</Button>
+                )}
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
+      {editingReview && (
+        <ReviewForm
+          review={editingReview}
+          onSubmit={handleEditSubmit}
+          onCancel={() => setEditingReview(null)}
+        />
+      )}
     </Container>
   );
 }
