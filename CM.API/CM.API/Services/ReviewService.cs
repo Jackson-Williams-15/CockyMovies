@@ -20,6 +20,13 @@ public class ReviewService : IReviewService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Adds a new review to the database.
+    /// </summary>
+    /// <param name="review">The review to add.</param>
+    /// <returns>A task result containing a 
+    /// boolean showing whether the operation was successful.
+    /// </returns>
     public async Task<bool> AddReview(Review review)
     {
         try
@@ -34,14 +41,25 @@ public class ReviewService : IReviewService
             throw;
         }
     }
-
+    /// <summary>
+    /// Retrieves all reviews for a specific movie.
+    /// </summary>
+    /// <param name="movieId">The ID of the movie.</param>
+    /// <returns>A task that results has a list of reviews for the 
+    /// specified movie.</returns>
     public async Task<List<Review>> GetReviews(int movieId)
     {
         return await _context.Reviews
             .Where(r => r.MovieId == movieId)
             .ToListAsync();
     }
-
+    /// <summary>
+    /// Edits an existing review.
+    /// </summary>
+    /// <param name="reviewId">The ID of the review to edit.</param>
+    /// <param name="updatedReview">The updated review details.</param>
+    /// <returns>A  task result that has a boolean showing whether 
+    /// the operation was successful.</returns>
     public async Task<bool> EditReview(int reviewId, Review updatedReview)
     {
         try
