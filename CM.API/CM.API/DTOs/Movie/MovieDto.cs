@@ -8,4 +8,5 @@ public class MovieDto
     public List<ShowtimeDto> Showtimes { get; set; } = new List<ShowtimeDto>();
     public string? ImageUrl { get; set; }
     public string Rating { get; set; } = string.Empty;
+    public double? AverageReviewRating { get; set; }
 }

@@ -17,6 +17,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
+import Rating from '@mui/material/Rating';
 
 export default function Movies() {
   const [movies, setMovies] = useState([]);
@@ -141,6 +142,14 @@ export default function Movies() {
                       ? movie.genres.map((genre) => genre.name).join(', ')
                       : 'No genres available'}
                   </Typography>
+                  {movie.averageReviewRating !== null && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Rating value={movie.averageReviewRating} readOnly precision={0.5} />
+                      <Typography variant="body2" sx={{ ml: 1 }}>
+                        {movie.averageReviewRating}
+                      </Typography>
+                    </Box>
+                  )}
                   <Typography
                     variant="body2"
                     sx={{

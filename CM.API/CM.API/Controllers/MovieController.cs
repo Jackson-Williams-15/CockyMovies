@@ -36,7 +36,8 @@ namespace CM.API.Controllers
                     Name = g.Name
                 }).ToList(),
                 ImageUrl = m.ImageUrl,
-                Rating = m.Rating.Name
+                Rating = m.Rating.Name,
+                AverageReviewRating = m.Reviews != null && m.Reviews.Any() ? (double?)m.Reviews.Average(r => r.Rating) : null
             }).ToList();
 
             return Ok(movieDtos);
@@ -76,7 +77,8 @@ namespace CM.API.Controllers
                 }).ToList(),
                 // ImageUrl in the response
                 ImageUrl = movie.ImageUrl,
-                Rating = movie.Rating.Name
+                Rating = movie.Rating.Name,
+                AverageReviewRating = movie.Reviews != null && movie.Reviews.Any() ? (double?)movie.Reviews.Average(r => r.Rating) : null
             };
 
             return Ok(movieDto);
