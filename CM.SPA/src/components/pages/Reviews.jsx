@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { getReviews } from '../../Services/reviewService';
+import { getReviews, editReview, addReview } from '../../Services/reviewService';
 import { getMovieById } from '../../Services/movieService';
 import { AuthContext } from '../../context/AuthContext';
 import Container from '@mui/material/Container';
