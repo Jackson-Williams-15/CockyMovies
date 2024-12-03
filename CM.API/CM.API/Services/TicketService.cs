@@ -30,7 +30,7 @@ namespace CM.API.Services
             return true;
         }
 
-        public async Task<bool> EditTicket(int id, Ticket updatedTicket)
+        public async Task<bool> EditTicket(int id, TicketUpdateDto updatedTicketDto)
         {
             // Find the ticket to update
             var ticket = await _context.Ticket.FirstOrDefaultAsync(t => t.Id == id);
@@ -39,14 +39,15 @@ namespace CM.API.Services
                 return false; // Ticket not found
             }
 
-            // Update ticket properties
-            ticket.Price = updatedTicket.Price;
-            ticket.ShowtimeId = updatedTicket.ShowtimeId;
+            // Update ticket properties with values from the DTO
+            ticket.Price = updatedTicketDto.Price;
+            ticket.ShowtimeId = updatedTicketDto.ShowtimeId;
 
             // Save changes to the database
             await _context.SaveChangesAsync();
             return true;
         }
+
 
 
         // Get all tickets

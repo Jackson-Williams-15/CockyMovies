@@ -37,20 +37,23 @@ namespace CM.API.Controllers
 
         // PUT: api/tickets/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditTicket(int id, [FromBody] Ticket updatedTicket)
+        public async Task<IActionResult> EditTicket(int id, [FromBody] TicketUpdateDto updatedTicketDto)
         {
-            if (updatedTicket == null)
+            if (updatedTicketDto == null)
             {
                 return BadRequest("Updated ticket cannot be null.");
             }
 
-            if (await _ticketService.EditTicket(id, updatedTicket))
+            var success = await _ticketService.EditTicket(id, updatedTicketDto);
+
+            if (success)
             {
                 return Ok("Ticket updated successfully.");
             }
 
             return NotFound("Ticket not found or update failed.");
         }
+
 
         // GET: api/tickets
         [HttpGet]
