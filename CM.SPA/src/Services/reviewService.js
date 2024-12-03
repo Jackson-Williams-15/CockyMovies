@@ -29,3 +29,13 @@ export async function editReview(reviewId, review) {
     throw error;
   }
 }
+
+export async function removeReview(reviewId) {
+  try {
+    const response = await axios.delete(`/api/reviews/${reviewId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete review:', error);
+    throw error;
+  }
+}

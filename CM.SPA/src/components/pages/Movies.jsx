@@ -125,7 +125,11 @@ export default function Movies() {
           {movies.map((movie) => (
             <Grid item xs={12} sm={6} md={4} key={movie.id}>
               <Card
-                sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
                 <CardMedia
                   component="img"
@@ -144,7 +148,11 @@ export default function Movies() {
                   </Typography>
                   {movie.averageReviewRating !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <Rating value={movie.averageReviewRating} readOnly precision={0.5} />
+                      <Rating
+                        value={movie.averageReviewRating}
+                        readOnly
+                        precision={0.5}
+                      />
                       <Typography variant="body2" sx={{ ml: 1 }}>
                         {movie.averageReviewRating.toFixed(1)}
                       </Typography>

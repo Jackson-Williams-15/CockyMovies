@@ -4,6 +4,7 @@ import {
   getReviews,
   editReview,
   addReview,
+  removeReview,
 } from '../../Services/reviewService';
 import { getMovieById } from '../../Services/movieService';
 import { AuthContext } from '../../context/AuthContext';
@@ -73,8 +74,19 @@ export default function Reviews() {
     setEditingReview(review);
   };
 
-  const handleEditSubmit = async (updatedReview) => {
-    // Call your API to update the review
+  const handleEditSubmit = async (updatedReview, deletedReviewId) => {
+    if (deletedReviewId) {
+      try {
+        await removeReview(deletedReviewId);
+        setReviews((prevReviews) =>
+          prevReviews.filter((review) => review.id !== deletedReviewId),
+        );
+        setEditingReview(null);
+      } catch (error) {
+        console.error('Failed to delete review:', error);
+      }
+      return;
+    }
     try {
       await editReview(updatedReview.id, updatedReview);
       setReviews((prevReviews) =>
@@ -154,7 +166,17 @@ export default function Reviews() {
                   {review.description}
                 </Typography>
                 {isLoggedIn && review.username === username && (
-                  <Button onClick={() => handleEditClick(review)}>Edit</Button>
+                  <>
+                    <Button onClick={() => handleEditClick(review)}>
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleEditSubmit(null, review.id)}
+                      color="error"
+                    >
+                      Delete
+                    </Button>
+                  </>
                 )}
               </CardContent>
             </Card>
