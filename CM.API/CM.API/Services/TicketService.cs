@@ -36,7 +36,7 @@ namespace CM.API.Services
             var ticket = await _context.Ticket.FirstOrDefaultAsync(t => t.Id == id);
             if (ticket == null)
             {
-                return false;
+                return false; // Ticket not found
             }
 
             // Update ticket properties
@@ -47,6 +47,7 @@ namespace CM.API.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
 
         // Get all tickets
         public async Task<List<Ticket>> GetAllTickets()
@@ -159,10 +160,5 @@ namespace CM.API.Services
 
             return true;
         }
-
-
-
-
-
     }
 }
