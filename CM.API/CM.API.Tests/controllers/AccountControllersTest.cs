@@ -1,16 +1,16 @@
-using Moq;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using CM.API.Controllers;
+using CM.API.Interfaces;
+using CM.API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using CM.API.Controllers;
-using CM.API.Models;
-using CM.API.Interfaces;
-using CM.API.Data;
-using Newtonsoft.Json.Linq;
+using Moq;
 using Xunit;
+using System.Collections.Generic;
 
 public class AccountControllerTests
 {
@@ -18,222 +18,197 @@ public class AccountControllerTests
     private readonly Mock<ICartService> _mockCartService;
     private readonly Mock<ILogger<AccountController>> _mockLogger;
     private readonly Mock<IConfiguration> _mockConfiguration;
-    private readonly AccountController _accountController;
-    private readonly AppDbContext _dbContext;
+
+    private readonly AccountController _controller;
 
     public AccountControllerTests()
     {
-        // Mock dependencies
-        _mockLogger = new Mock<ILogger<AccountController>>();
         _mockAccountService = new Mock<IAccountService>();
         _mockCartService = new Mock<ICartService>();
+        _mockLogger = new Mock<ILogger<AccountController>>();
         _mockConfiguration = new Mock<IConfiguration>();
 
-        // Set up in-memory database for AppDbContext
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
-        _dbContext = new AppDbContext(options);
-
-        // Initialize the controller with mocks and the real DbContext
-        _accountController = new AccountController(
+        _controller = new AccountController(
             _mockAccountService.Object,
             _mockConfiguration.Object,
             _mockLogger.Object,
             _mockCartService.Object,
-            _dbContext
+            null // Assuming AppDbContext is not relevant for these tests
         );
+
+        // Mock JWT configuration
+        _mockConfiguration.Setup(c => c["Jwt:Key"]).Returns("dummykeydummykeydummykeydummykey");
+        _mockConfiguration.Setup(c => c["Jwt:Issuer"]).Returns("testissuer");
     }
 
 [Fact]
-public async Task SignUp_ShouldReturnOk_WhenUserIsRegistered()
+public async Task SignUp_ReturnsOk_WhenRegistrationIsSuccessful()
 {
     // Arrange
     var signupRequest = new UserCreateDto
     {
         Email = "test@example.com",
         Username = "testuser",
-        Password = "Password123",
-        DateOfBirth = new DateTime(1990, 1, 1)
+        Password = "password",
+        DateOfBirth = DateTime.Now.AddYears(-20)
     };
 
-    var mockUser = new UserDto { Id = 1, Username = "testuser" };
-    _mockAccountService.Setup(service => service.Register(
-            signupRequest.Email,
-            signupRequest.Username,
-            signupRequest.Password,
-            signupRequest.DateOfBirth))
-        .ReturnsAsync(mockUser);
+    var userDto = new UserDto
+    {
+        Id = 1,
+        Email = "test@example.com",
+        Username = "testuser",
+        Cart = new CartDto
+        {
+            CartId = 1,
+            UserId = 1,
+            Tickets = new List<CartTicketDto>()
+        }
+    };
 
-    var result = await controller.SignUp(signUpRequest);
-    var okResult = Assert.IsType<OkObjectResult>(result); // Assert the result is OkObjectResult
+    _mockAccountService.Setup(s => s.Register(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+        .ReturnsAsync(userDto);
 
-    // Cast the value to an anonymous type
-    var value = Assert.IsType<ExpandoObject>(okResult.Value);
+    _mockCartService.Setup(s => s.GetCartByUserId(It.IsAny<int>()))
+        .ReturnsAsync(new Cart { CartId = 1, UserId = 1 });
 
-    // You can now access the properties of the anonymous object
-    dynamic data = value;
-    Assert.Equal(userDto, data.user);
-    Assert.Equal(cart?.CartId, data.cartId);
+    // Act
+    var result = await _controller.SignUp(signupRequest);
+
+    // Assert
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var response = okResult.Value as SignUpResponseDto;
+
+    Assert.NotNull(response);
+    Assert.Equal(userDto.Email, response.User.Email);
+    Assert.Equal(userDto.Id, response.User.Id);
+    Assert.Equal(userDto.Username, response.User.Username);
+    Assert.Equal(1, response.CartId);
 }
 
 
 
 
-    // [Fact]
-    // public async Task Login_ShouldReturnOk_WhenCredentialsAreValid()
-    // {
-    //     // Arrange
-    //     var loginRequest = new UserLoginDto
-    //     {
-    //         Username = "testuser",
-    //         Password = "Password123"
-    //     };
+    [Fact]
+    public async Task Login_ReturnsUnauthorized_WhenAuthenticationFails()
+    {
+        // Arrange
+        var loginRequest = new UserLoginDto { Username = "testuser", Password = "wrongpassword" };
 
-    //     var mockUser = new UserDto { Id = 1, Username = "testuser" };
-    //     _mockAccountService.Setup(service => service.Authenticate(
-    //             loginRequest.Username,
-    //             loginRequest.Password))
-    //         .ReturnsAsync(mockUser);
+        _mockAccountService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync((UserDto?)null);
 
-    //     var mockCart = new Cart { CartId = 1 };
-    //     _mockCartService.Setup(service => service.GetCartByUserId(It.IsAny<int>()))
-    //         .ReturnsAsync(mockCart);
+        // Act
+        var result = await _controller.Login(loginRequest);
 
-    //     _mockConfiguration.SetupGet(config => config["Jwt:Key"]).Returns("TestKey");
-    //     _mockConfiguration.SetupGet(config => config["Jwt:Issuer"]).Returns("TestIssuer");
+        // Assert
+        Assert.IsType<UnauthorizedObjectResult>(result);
+    }
 
-    //     // Act
-    //     var result = await _accountController.Login(loginRequest);
+[Fact]
+public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
+{
+    // Arrange
+    var loginRequest = new UserLoginDto { Username = "testuser", Password = "password" };
 
-    //     // Assert
-    //     var okResult = Assert.IsType<OkObjectResult>(result);
-    //     var response = Assert.IsType<dynamic>(okResult.Value);
-    //     Assert.NotNull(response.token);
-    //     Assert.Equal(1, response.cartId);
-    // }
+    var userDto = new UserDto
+    {
+        Id = 1,
+        Username = "testuser",
+        Email = "test@example.com"
+    };
 
-    // [Fact]
-    // public async Task GetProfile_ShouldReturnUserProfile_WhenUserIsAuthenticated()
-    // {
-    //     // Arrange
-    //     var userId = "1"; // Assume a valid user ID from JWT token
-    //     var mockUser = new User
-    //     {
-    //         Id = 1,
-    //         Email = "test@example.com",
-    //         Username = "testuser",
-    //         DateOfBirth = new DateTime(1990, 1, 1),
-    //         PaymentDetails = new PaymentDetails { CardNumber = "1234", ExpiryDate = "12/25" }
-    //     };
+    _mockAccountService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
+        .ReturnsAsync(userDto);
 
-    //     _mockAccountService.Setup(service => service.GetUserById(userId))
-    //         .ReturnsAsync(mockUser);
+    _mockCartService.Setup(s => s.GetCartByUserId(It.IsAny<int>()))
+        .ReturnsAsync(new Cart
+        {
+            CartId = 1,
+            UserId = 1
+        });
 
-    //     var userDto = new UserDto
-    //     {
-    //         Id = 1,
-    //         Email = "test@example.com",
-    //         Username = "testuser",
-    //         DateOfBirth = new DateTime(1990, 1, 1),
-    //         PaymentDetails = new PaymentDetailsDto { CardNumber = "1234", ExpiryDate = "12/25" }
-    //     };
+    _mockConfiguration.Setup(c => c["Jwt:Key"]).Returns("dummykeydummykeydummykeydummykey");
+    _mockConfiguration.Setup(c => c["Jwt:Issuer"]).Returns("testissuer");
 
-    //     // Act
-    //     var result = await _accountController.GetProfile();
+    // Act
+    var result = await _controller.Login(loginRequest);
 
-    //     // Assert
-    //     var okResult = Assert.IsType<OkObjectResult>(result);
-    //     var response = Assert.IsType<UserDto>(okResult.Value);
-    //     Assert.Equal(mockUser.Username, response.Username);
-    //     Assert.Equal(mockUser.Email, response.Email);
-    // }
+    // Assert
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var response = okResult.Value as LoginResponseDto;
 
-    // [Fact]
-    // public async Task UpdateUser_ShouldReturnOk_WhenUpdateIsSuccessful()
-    // {
-    //     // Arrange
-    //     var userId = "1"; // Assume a valid user ID from JWT token
-    //     var updateDto = new UserUpdateDto
-    //     {
-    //         Username = "updateduser",
-    //         Email = "updated@example.com"
-    //     };
+    Assert.NotNull(response.Token);
+    Assert.Equal("testuser", response.User.Username);
+    Assert.Equal("test@example.com", response.User.Email);
+    Assert.Equal(1, response.CartId);
+}
 
-    //     var updatedUser = new UserDto { Id = 1, Username = "updateduser", Email = "updated@example.com" };
 
-    //     _mockAccountService.Setup(service => service.UpdateUser(userId, updateDto))
-    //         .ReturnsAsync(updatedUser);
 
-    //     // Act
-    //     var result = await _accountController.UpdateUser(updateDto);
 
-    //     // Assert
-    //     var okResult = Assert.IsType<OkObjectResult>(result);
-    //     var response = Assert.IsType<UserDto>(okResult.Value);
-    //     Assert.Equal("updateduser", response.Username);
-    // }
+    [Fact]
+    public async Task GetProfile_ReturnsOk_WhenUserIsFound()
+    {
+        // Arrange
+        var userId = "1";
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        }));
 
-    // [Fact]
-    // public async Task UpdatePassword_ShouldReturnOk_WhenPasswordUpdateIsSuccessful()
-    // {
-    //     // Arrange
-    //     var passwordUpdateDto = new UserPasswordDto
-    //     {
-    //         OldPassword = "OldPassword123",
-    //         NewPassword = "NewPassword123"
-    //     };
+        var user = new User
+        {
+            Id = 1,
+            Email = "test@example.com",
+            Username = "testuser",
+            DateOfBirth = DateTime.Now.AddYears(-25)
+        };
 
-    //     var userId = "1"; // Assume a valid user ID from JWT token
-    //     _mockAccountService.Setup(service => service.UpdatePassword(userId, passwordUpdateDto))
-    //         .ReturnsAsync((true, "Password updated successfully"));
+        _mockAccountService.Setup(s => s.GetUserById(It.IsAny<string>()))
+            .ReturnsAsync(user);
 
-    //     // Act
-    //     var result = await _accountController.UpdatePassword(passwordUpdateDto);
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = claims }
+        };
 
-    //     // Assert
-    //     var okResult = Assert.IsType<OkObjectResult>(result);
-    //     var response = Assert.IsType<dynamic>(okResult.Value);
-    //     Assert.Equal("Password updated successfully", response.message);
-    // }
+        // Act
+        var result = await _controller.GetProfile();
 
-    // [Fact]
-    // public async Task SavePaymentDetails_ShouldReturnOk_WhenPaymentDetailsAreSaved()
-    // {
-    //     // Arrange
-    //     var paymentDetailsDto = new PaymentDetailsDto
-    //     {
-    //         CardNumber = "1234",
-    //         ExpiryDate = "12/25",
-    //         CVV = "123",
-    //         CardHolderName = "Test User",
-    //         PaymentMethod = "CreditCard"
-    //     };
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var response = okResult.Value as UserDto;
 
-    //     var userId = "1"; // Assume a valid user ID from JWT token
-    //     var mockUser = new User { Id = 1, PaymentDetails = new PaymentDetails() };
+        Assert.NotNull(response);
+        Assert.Equal(user.Id, response.Id);
+        Assert.Equal(user.Email, response.Email);
+        Assert.Equal(user.Username, response.Username);
+    }
 
-    //     // Use the in-memory DbContext for this test
-    //     var mockDbSet = new Mock<DbSet<User>>();
-    //     mockDbSet.Setup(m => m.FindAsync(It.IsAny<int>())).ReturnsAsync(mockUser);
+    [Fact]
+public async Task GetProfile_ReturnsNotFound_WhenUserIsNotFound()
+{
+    // Arrange
+    var userId = "1";
+    var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, userId)
+    }));
 
-    //     var mockDbContext = new Mock<AppDbContext>(new DbContextOptions<AppDbContext>());
-    //     mockDbContext.Setup(db => db.Users).Returns(mockDbSet.Object);
+    _controller.ControllerContext = new ControllerContext
+    {
+        HttpContext = new DefaultHttpContext { User = claims }
+    };
 
-    //     var controller = new AccountController(
-    //         _mockAccountService.Object,
-    //         _mockConfiguration.Object,
-    //         _mockLogger.Object,
-    //         _mockCartService.Object,
-    //         mockDbContext.Object // Use the mockDbContext
-    //     );
+    _mockAccountService.Setup(s => s.GetUserById(It.IsAny<string>()))
+        .ReturnsAsync((User?)null);
 
-    //     // Act
-    //     var result = await controller.SavePaymentDetails(paymentDetailsDto);
+    // Act
+    var result = await _controller.GetProfile();
 
-    //     // Assert
-    //     var okResult = Assert.IsType<OkObjectResult>(result);
-    //     var response = Assert.IsType<dynamic>(okResult.Value);
-    //     Assert.Equal("Payment details saved successfully", response.message);
-    // }
+    // Assert
+    Assert.IsType<NotFoundObjectResult>(result);
+}
+
 }

@@ -34,33 +34,44 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("signup")]
-    [AllowAnonymous]
-    public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
+[AllowAnonymous]
+public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
+{
+    var userDto = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
+
+    if (userDto == null)
+        return BadRequest(new { message = "User registration failed" });
+
+    var cart = await _cartService.GetCartByUserId(userDto.Id);
+
+    return Ok(new SignUpResponseDto
     {
-        var userDto = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
+        User = userDto,
+        CartId = cart?.CartId
+    });
+}
 
-        if (userDto == null)
-            return BadRequest(new { message = "User registration failed" });
 
-        var cart = await _cartService.GetCartByUserId(userDto.Id);
+   [HttpPost("login")]
+[AllowAnonymous]
+public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
+{
+    var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
 
-        return Ok(new { user = userDto, cartId = cart?.CartId });
-    }
+    if (userDto == null)
+        return Unauthorized(new { message = "Invalid username or password" });
 
-    [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
+    var cart = await _cartService.GetCartByUserId(userDto.Id);
+    var token = GenerateJwtToken(userDto);
+
+    return Ok(new LoginResponseDto
     {
-        var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
+        Token = token,
+        User = userDto,
+        CartId = cart?.CartId
+    });
+}
 
-        if (userDto == null)
-            return Unauthorized(new { message = "Invalid username or password" });
-
-        var cart = await _cartService.GetCartByUserId(userDto.Id);
-        var token = GenerateJwtToken(userDto);
-
-        return Ok(new { token, user = userDto, cartId = cart?.CartId });
-    }
 
     [Authorize]
     [HttpGet("profile")]
