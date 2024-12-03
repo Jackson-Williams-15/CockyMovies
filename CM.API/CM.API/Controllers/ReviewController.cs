@@ -66,4 +66,17 @@ public class ReviewsController : ControllerBase
 
         return Ok(reviewDtos);
     }
+    [HttpPost("{reviewId}/like")]
+    public async Task<IActionResult> LikeReview(int reviewId)
+    {
+        var success = await _reviewService.LikeReview(reviewId);
+
+        if (!success)
+        {
+            return NotFound("Review not found.");
+        }
+
+        return Ok("Review liked successfully.");
+    }
+
 }
