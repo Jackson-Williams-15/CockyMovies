@@ -1,0 +1,551 @@
+0000.000 (0) Opened log file at time: Fri, 15 Nov 2024 02:16:42 +0000 on http://class.usc547team4.info/shop
+0000.008 (0) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.24.9 WP: 6.7 PHP: 8.1.30 (apache2handler, Linux lab.usc547team4.info 6.8.0-48-generic #48-Ubuntu SMP PREEMPT_DYNAMIC Fri Sep 27 14:04:52 UTC 2024 x86_64) MySQL: 8.0.40-0ubuntu0.24.04.1 (max packet size=67108864) WPLANG: en_US Server: Apache/2.4.58 (Ubuntu) safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 10M | 12M) multisite: N openssl: OpenSSL 3.0.13 30 Jan 2024 mcrypt: N LANG: C ZipArchive::addFile: Y
+0000.013 (0) Free space on disk containing Updraft's temporary directory: 5976.1 MB
+0000.020 (0) Tasks: Backup files: 1 (schedule: unset) Backup DB: 1 (schedule: unset)
+0000.028 (0) Semaphore (fd, shop_options) being initialised
+0000.045 (0) Requesting semaphore lock (fd) (apparently not via scheduler)
+0000.065 (0) Set semaphore last lock (fd) time to 2024-11-15 02:16:43
+0000.071 (0) Semaphore lock (fd) complete
+0000.093 (0) Backup run: resumption=0, nonce=abe34193ce08, file_nonce=abe34193ce08 begun at=1731637002 (1s ago), job type=backup
+0000.106 (0) Scheduling a resumption (1) after 300 seconds (1731637303) in case this run gets aborted
+0000.166 (0) Checking if we have a zip executable available
+0000.172 (0) Testing: /usr/bin/zip
+0000.181 (0) Output: zip warning: binziptest/test.zip not found or empty
+0000.187 (0) Output: adding: binziptest/subdir1/	(in=0) (out=0) (stored 0%)
+0000.193 (0) Output: adding: binziptest/subdir1/subdir2/	(in=0) (out=0) (stored 0%)
+0000.199 (0) Output: adding: binziptest/subdir1/subdir2/test.html	(in=131) (out=107) (deflated 18%)
+0000.204 (0) Output: total bytes=131, compressed=107 -> 18% savings
+0000.222 (0) Output: adding: binziptest/subdir1/subdir2/test2.html	(in=138) (out=113) (deflated 18%)
+0000.227 (0) Output: total bytes=269, compressed=220 -> 18% savings
+0000.234 (0) Working binary zip found: /usr/bin/zip
+0000.244 (0) Zip engine: found/will use a binary zip: /usr/bin/zip
+0000.248 (0) Creation of backups of directories: beginning
+0000.264 (0) Beginning creation of dump of plugins (split every: 400 MB)
+0001.214 (0) Total entities for the zip file: 1254 directories, 7196 files (0 skipped as non-modified), 108.9 MB
+0001.228 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 100 files added (on-disk size: 0 KB)
+0001.240 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 200 files added (on-disk size: 0 KB)
+0001.251 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 300 files added (on-disk size: 0 KB)
+0001.261 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 400 files added (on-disk size: 0 KB)
+0001.271 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 500 files added (on-disk size: 0 KB)
+0001.282 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 600 files added (on-disk size: 0 KB)
+0001.292 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 700 files added (on-disk size: 0 KB)
+0001.301 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 25 MB added on this batch (25 MB, 7196 files batched, 760 (760) added so far); re-opening (prior size: 0 KB)
+0002.643 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: size is now: 20.00 MB
+0002.654 (0) A useful amount of data was added after this amount of zip processing: 2.6 s (normalised: 2.6 s, rate: 9856.3 KB/s)
+0002.665 (0) Performance is good - will increase the amount of data we attempt to batch (time=2.5980930328369, normalised_time=2.5973145637311, max_time=2.6589729785919, data points known=1, old_max_bytes=26214400, new_max_bytes=60557316)
+0002.680 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 800 files added (on-disk size: 20485.4 KB)
+0002.690 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 900 files added (on-disk size: 20485.4 KB)
+0002.701 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1000 files added (on-disk size: 20485.4 KB)
+0002.714 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1100 files added (on-disk size: 20485.4 KB)
+0002.725 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1200 files added (on-disk size: 20485.4 KB)
+0002.737 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1300 files added (on-disk size: 20485.4 KB)
+0002.748 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1400 files added (on-disk size: 20485.4 KB)
+0002.760 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1500 files added (on-disk size: 20485.4 KB)
+0002.772 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1600 files added (on-disk size: 20485.4 KB)
+0002.784 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1700 files added (on-disk size: 20485.4 KB)
+0002.793 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 1000 files added on this batch (20.3 MB, 7196 files batched, 1001 (1761) added so far); re-opening (prior size: 20485.4 KB)
+0004.278 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: size is now: 25.50 MB
+0004.294 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1800 files added (on-disk size: 26096.8 KB)
+0004.304 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 1900 files added (on-disk size: 26096.8 KB)
+0004.315 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2000 files added (on-disk size: 26096.8 KB)
+0004.324 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2100 files added (on-disk size: 26096.8 KB)
+0004.335 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2200 files added (on-disk size: 26096.8 KB)
+0004.343 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2300 files added (on-disk size: 26096.8 KB)
+0004.352 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2400 files added (on-disk size: 26096.8 KB)
+0004.361 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2500 files added (on-disk size: 26096.8 KB)
+0004.372 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2600 files added (on-disk size: 26096.8 KB)
+0004.382 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2700 files added (on-disk size: 26096.8 KB)
+0004.391 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 1000 files added on this batch (13.6 MB, 7196 files batched, 1001 (2762) added so far); re-opening (prior size: 26096.8 KB)
+0006.307 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2800 files added (on-disk size: 31145.3 KB)
+0006.318 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 2900 files added (on-disk size: 31145.3 KB)
+0006.328 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3000 files added (on-disk size: 31145.3 KB)
+0006.341 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3100 files added (on-disk size: 31145.3 KB)
+0006.352 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3200 files added (on-disk size: 31145.3 KB)
+0006.364 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3300 files added (on-disk size: 31145.3 KB)
+0006.375 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3400 files added (on-disk size: 31145.3 KB)
+0006.387 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3500 files added (on-disk size: 31145.3 KB)
+0006.400 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3600 files added (on-disk size: 31145.3 KB)
+0006.412 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3700 files added (on-disk size: 31145.3 KB)
+0006.427 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 1000 files added on this batch (10.4 MB, 7196 files batched, 1001 (3763) added so far); re-opening (prior size: 31145.3 KB)
+0008.798 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: size is now: 37.50 MB
+0008.819 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3800 files added (on-disk size: 38401.8 KB)
+0008.832 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 3900 files added (on-disk size: 38401.8 KB)
+0008.844 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4000 files added (on-disk size: 38401.8 KB)
+0008.857 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4100 files added (on-disk size: 38401.8 KB)
+0008.869 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4200 files added (on-disk size: 38401.8 KB)
+0008.881 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4300 files added (on-disk size: 38401.8 KB)
+0008.894 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4400 files added (on-disk size: 38401.8 KB)
+0008.907 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4500 files added (on-disk size: 38401.8 KB)
+0008.919 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4600 files added (on-disk size: 38401.8 KB)
+0008.931 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4700 files added (on-disk size: 38401.8 KB)
+0008.941 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 1000 files added on this batch (9.6 MB, 7196 files batched, 1001 (4764) added so far); re-opening (prior size: 38401.8 KB)
+0011.290 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4800 files added (on-disk size: 41650.7 KB)
+0011.302 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 4900 files added (on-disk size: 41650.7 KB)
+0011.311 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5000 files added (on-disk size: 41650.7 KB)
+0011.322 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5100 files added (on-disk size: 41650.7 KB)
+0011.333 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5200 files added (on-disk size: 41650.7 KB)
+0011.344 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5300 files added (on-disk size: 41650.7 KB)
+0011.354 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5400 files added (on-disk size: 41650.7 KB)
+0011.365 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5500 files added (on-disk size: 41650.7 KB)
+0011.376 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5600 files added (on-disk size: 41650.7 KB)
+0011.387 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5700 files added (on-disk size: 41650.7 KB)
+0011.396 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 1000 files added on this batch (7.2 MB, 7196 files batched, 1001 (5765) added so far); re-opening (prior size: 41650.7 KB)
+0012.771 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5800 files added (on-disk size: 43722.3 KB)
+0012.783 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 5900 files added (on-disk size: 43722.3 KB)
+0012.794 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6000 files added (on-disk size: 43722.3 KB)
+0012.805 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6100 files added (on-disk size: 43722.3 KB)
+0012.817 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6200 files added (on-disk size: 43722.3 KB)
+0012.829 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6300 files added (on-disk size: 43722.3 KB)
+0012.840 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6400 files added (on-disk size: 43722.3 KB)
+0012.851 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6500 files added (on-disk size: 43722.3 KB)
+0012.862 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6600 files added (on-disk size: 43722.3 KB)
+0012.874 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6700 files added (on-disk size: 43722.3 KB)
+0012.884 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 1000 files added on this batch (15.3 MB, 7196 files batched, 1001 (6766) added so far); re-opening (prior size: 43722.3 KB)
+0015.493 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: size is now: 52.20 MB
+0015.512 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6800 files added (on-disk size: 53424.3 KB)
+0015.525 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 6900 files added (on-disk size: 53424.3 KB)
+0015.538 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 7000 files added (on-disk size: 53424.3 KB)
+0015.551 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.tmp: 7100 files added (on-disk size: 53424.3 KB)
+0016.875 (0) Creating zip file manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.list-temp.tmp)
+0016.941 (0) Successfully created zip file manifest (size: 633452)
+0018.233 (0) Created plugins zip (0) - 57258.6 KB in 18 s (3188.7 KB/s) (sha1: 1a68826fd9eb0173298dfcb98af5f8afbbb58b2d, sha256: 0c02caf595fd3d9fe0ba7585b37c239be733228133d70bf71e6bb233ba774643)
+0018.262 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0018.268 (0) No remote despatch: user chose no remote backup service
+0018.274 (0) Recording as successfully uploaded: backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip
+0018.284 (0) Deleting zip manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip.list.tmp)
+0018.299 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0018.307 (0) Number of backup sets in history: 0; groups (db): 1
+0018.313 (0) Number of backup sets in history: 0; groups (files): 1
+0018.321 (0) Retain: saving new backup history (sets now: 0) and finishing retain operation
+0018.354 (0) Beginning creation of dump of themes (split every: 400 MB)
+0018.492 (0) Total entities for the zip file: 61 directories, 486 files (0 skipped as non-modified), 18 MB
+0018.502 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip.tmp: 100 files added (on-disk size: 0 KB)
+0018.511 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip.tmp: 200 files added (on-disk size: 0 KB)
+0018.520 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip.tmp: 300 files added (on-disk size: 0 KB)
+0018.528 (0) Zip: backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip.tmp: 400 files added (on-disk size: 0 KB)
+0020.466 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip.tmp: size is now: 16.70 MB
+0020.490 (0) Creating zip file manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip.list-temp.tmp)
+0020.500 (0) Successfully created zip file manifest (size: 35073)
+0020.942 (0) Created themes zip (0) - 17151.5 KB in 2.6 s (6666.5 KB/s) (sha1: dca6b793fcf71c63c9a14e6c24b21d68212634eb, sha256: 4c6825bc4745d99451caa1a8b66587b3ab32654c1f4c7460664c14d56f5da1aa)
+0020.964 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0020.970 (0) No remote despatch: user chose no remote backup service
+0020.976 (0) Recording as successfully uploaded: backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip
+0020.988 (0) Deleting zip manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip.list.tmp)
+0021.002 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0021.008 (0) Number of backup sets in history: 0; groups (db): 1
+0021.013 (0) Number of backup sets in history: 0; groups (files): 1
+0021.019 (0) Retain: saving new backup history (sets now: 0) and finishing retain operation
+0021.049 (0) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+0021.056 (0) Looking for candidates to backup in: /greenvillesoftware/usc547team4.info/class/shop/wp-content/uploads
+0021.062 (0) finding files: 2024: adding to list (1)
+0021.068 (0) finding files: woocommerce-placeholder.png: adding to list (2)
+0021.074 (0) finding files: woocommerce-placeholder-100x100.png: adding to list (3)
+0021.080 (0) finding files: woocommerce-placeholder-350x350.png: adding to list (4)
+0021.087 (0) finding files: woocommerce_uploads: adding to list (5)
+0021.093 (0) finding files: woocommerce-placeholder-250x250.png: adding to list (6)
+0021.099 (0) finding files: wc-logs: adding to list (7)
+0021.105 (0) finding files: buddypress: adding to list (8)
+0021.112 (0) Beginning creation of dump of uploads (split every: 400 MB)
+0021.129 (0) Total entities for the zip file: 5 directories, 41 files (0 skipped as non-modified), 2.2 MB
+0021.203 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-uploads.zip.tmp: size is now: 2.20 MB
+0021.218 (0) Creating zip file manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-uploads.zip.list-temp.tmp)
+0021.223 (0) Successfully created zip file manifest (size: 2004)
+0021.310 (0) Created uploads zip (0) - 2299.7 KB in 0.2 s (12599 KB/s) (sha1: dfde8ee208c4b9a49e46dbd739c5f6f6da872029, sha256: 025a6d30d2223192c5fc49e14defbac9f64c29fae89e5a6cacd6ffa4a1656908)
+0021.333 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0021.340 (0) No remote despatch: user chose no remote backup service
+0021.346 (0) Recording as successfully uploaded: backup_2024-11-15-0216_CockyShop_abe34193ce08-uploads.zip
+0021.360 (0) Deleting zip manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-uploads.zip.list.tmp)
+0021.370 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0021.375 (0) Number of backup sets in history: 0; groups (db): 1
+0021.380 (0) Number of backup sets in history: 0; groups (files): 1
+0021.386 (0) Retain: saving new backup history (sets now: 0) and finishing retain operation
+0021.407 (0) No backup of mu-plugins: excluded by user's options
+0021.422 (0) Beginning backup of other directories found in the content directory (index: 0)
+0021.427 (0) Exclusion option setting (others): upgrade,cache,updraft,backup*,*backups,mysql.sql,debug.log
+0021.433 (0) Looking for candidates to backup in: /greenvillesoftware/usc547team4.info/class/shop/wp-content
+0021.440 (0) finding files: plugins: skipping: this is the plugins directory
+0021.445 (0) finding files: index.php: adding to list (1)
+0021.452 (0) finding files: updraft: skipping: this is the updraft directory
+0021.459 (0) finding files: themes: skipping: this is the themes directory
+0021.465 (0) finding files: uploads: skipping: this is the uploads directory
+0021.479 (0) Total entities for the zip file: 0 directories, 1 files (0 skipped as non-modified), 0 MB
+0021.498 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-others.zip.tmp: size is now: 0.00 MB
+0021.517 (0) Creating zip file manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-others.zip.list-temp.tmp)
+0021.522 (0) Successfully created zip file manifest (size: 43)
+0021.549 (0) Created others zip (0) - 0.2 KB in 0.1 s (2.8 KB/s) (sha1: 4662aea01edfa6288e9ab00faefe69929935132e, sha256: 16501dff044083039427adbba2e416be21e7612f155e760ee845fc5d39a25170)
+0021.572 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0021.579 (0) No remote despatch: user chose no remote backup service
+0021.586 (0) Recording as successfully uploaded: backup_2024-11-15-0216_CockyShop_abe34193ce08-others.zip
+0021.599 (0) Deleting zip manifest (backup_2024-11-15-0216_CockyShop_abe34193ce08-others.zip.list.tmp)
+0021.616 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0021.623 (0) Number of backup sets in history: 0; groups (db): 1
+0021.630 (0) Number of backup sets in history: 0; groups (files): 1
+0021.635 (0) Retain: saving new backup history (sets now: 0) and finishing retain operation
+0021.674 (0) Saving backup status to database (elements: 8)
+0021.687 (0) Beginning creation of database dump (WordPress DB)
+0021.693 (0) SQL compatibility mode is: NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+0021.708 (0) Testing potential mysqldump binary: /usr/bin/mysqldump
+0021.836 (0) Output: /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;\n/*!40103 SET TIME_ZONE='+00:00' */;\n/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;\n/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\nDROP TABLE IF EXISTS `shop_options`;\n/*!40101 SET @saved_cs_client     = @@character_set_client */;\n/*!50503 SET character_set_client = utf8mb4 */ (truncated - 1560 bytes total)
+0021.843 (0) Working binary mysqldump found: /usr/bin/mysqldump
+0021.883 (0) Table shop_options: Total expected rows (via COUNT): 437
+0021.889 (0) Table is relatively small; fetch_rows will thus be: 500 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0021.993 (0) Table shop_options: Rows added in this batch (next record: 557): 433 (uncompressed bytes in this segment=1198868) in 0.12 seconds
+0022.022 (0) Table shop_options: finishing file(s) (2, 231.4 KB)
+0022.042 (0) Table shop_users: Total expected rows (via COUNT): 1
+0022.048 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.063 (0) Table shop_users: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=1430) in 0.02 seconds
+0022.083 (0) Table shop_users: finishing file(s) (2, 0.6 KB)
+0022.111 (0) Table shop_usermeta: Total expected rows (via COUNT): 24
+0022.117 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.128 (0) Table shop_usermeta: Rows added in this batch (next record: 26): 24 (uncompressed bytes in this segment=2433) in 0.03 seconds
+0022.159 (0) Table shop_usermeta: finishing file(s) (2, 1.2 KB)
+0022.190 (0) Table shop_actionscheduler_actions: Total expected rows (via COUNT): 4
+0022.198 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.206 (0) Table shop_actionscheduler_actions: Rows added in this batch (next record: 10): 4 (uncompressed bytes in this segment=3505) in 0.03 seconds
+0022.237 (0) Table shop_actionscheduler_actions: finishing file(s) (2, 0.9 KB)
+0022.263 (0) Table shop_actionscheduler_claims: Total expected rows (via COUNT): 0
+0022.278 (0) Table shop_actionscheduler_claims: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=632) in 0.02 seconds
+0022.304 (0) Table shop_actionscheduler_claims: finishing file(s) (2, 0.4 KB)
+0022.327 (0) Table shop_actionscheduler_groups: Total expected rows (via COUNT): 2
+0022.332 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.349 (0) Table shop_actionscheduler_groups: Rows added in this batch (next record: 2): 2 (uncompressed bytes in this segment=709) in 0.03 seconds
+0022.372 (0) Table shop_actionscheduler_groups: finishing file(s) (2, 0.4 KB)
+0022.392 (0) Table shop_actionscheduler_logs: Total expected rows (via COUNT): 10
+0022.397 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.404 (0) Table shop_actionscheduler_logs: Rows added in this batch (next record: 10): 10 (uncompressed bytes in this segment=1661) in 0.02 seconds
+0022.425 (0) Table shop_actionscheduler_logs: finishing file(s) (2, 0.6 KB)
+0022.457 (0) Table shop_commentmeta: Total expected rows (via COUNT): 0
+0022.469 (0) Table shop_commentmeta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=689) in 0.02 seconds
+0022.494 (0) Table shop_commentmeta: finishing file(s) (2, 0.4 KB)
+0022.512 (0) Table shop_comments: Total expected rows (via COUNT): 1
+0022.517 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.533 (0) Table shop_comments: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=2179) in 0.02 seconds
+0022.553 (0) Table shop_comments: finishing file(s) (2, 0.8 KB)
+0022.584 (0) Table shop_links: Total expected rows (via COUNT): 0
+0022.596 (0) Table shop_links: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1310) in 0.02 seconds
+0022.617 (0) Table shop_links: finishing file(s) (2, 0.5 KB)
+0022.646 (0) Table shop_postmeta: Total expected rows (via COUNT): 104
+0022.652 (0) Table is relatively small; fetch_rows will thus be: 200 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.668 (0) Table shop_postmeta: Rows added in this batch (next record: 114): 104 (uncompressed bytes in this segment=13872) in 0.03 seconds
+0022.693 (0) Table shop_postmeta: finishing file(s) (2, 2.3 KB)
+0022.719 (0) Table shop_posts: Total expected rows (via COUNT): 60
+0022.725 (0) Table is relatively small; fetch_rows will thus be: 100 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.745 (0) Table shop_posts: Rows added in this batch (next record: 61): 60 (uncompressed bytes in this segment=66714) in 0.04 seconds
+0022.770 (0) Table shop_posts: finishing file(s) (2, 10.7 KB)
+0022.822 (0) Table shop_signups: Total expected rows (via COUNT): 0
+0022.834 (0) Table shop_signups: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1262) in 0.05 seconds
+0022.864 (0) Table shop_signups: finishing file(s) (2, 0.5 KB)
+0022.883 (0) Table shop_term_relationships: Total expected rows (approximate): 31
+0022.895 (0) Table shop_term_relationships: Rows added in this batch (next record: 100000): 31 (uncompressed bytes in this segment=1115) in 0.01 seconds
+0022.915 (0) Table shop_term_relationships: finishing file(s) (2, 0.5 KB)
+0022.945 (0) Table shop_term_taxonomy: Total expected rows (via COUNT): 38
+0022.951 (0) Table is relatively small; fetch_rows will thus be: 50 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0022.967 (0) Table shop_term_taxonomy: Rows added in this batch (next record: 38): 38 (uncompressed bytes in this segment=3461) in 0.03 seconds
+0022.991 (0) Table shop_term_taxonomy: finishing file(s) (2, 1 KB)
+0023.018 (0) Table shop_termmeta: Total expected rows (via COUNT): 0
+0023.029 (0) Table shop_termmeta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=662) in 0.02 seconds
+0023.056 (0) Table shop_termmeta: finishing file(s) (2, 0.4 KB)
+0023.073 (0) Table shop_terms: Total expected rows (via COUNT): 38
+0023.078 (0) Table is relatively small; fetch_rows will thus be: 50 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0023.089 (0) Table shop_terms: Rows added in this batch (next record: 38): 38 (uncompressed bytes in this segment=2762) in 0.02 seconds
+0023.109 (0) Table shop_terms: finishing file(s) (2, 0.9 KB)
+0023.133 (0) Table shop_wc_category_lookup: Total expected rows (approximate): 0
+0023.163 (0) Table shop_wc_category_lookup: Rows added in this batch (next record: 1000): 1 (uncompressed bytes in this segment=595) in 0.03 seconds
+0023.181 (0) Table shop_wc_category_lookup: finishing file(s) (2, 0.3 KB)
+0023.223 (0) Table shop_wc_product_meta_lookup: Total expected rows (via COUNT): 0
+0023.229 (0) Table shop_wc_product_meta_lookup: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1463) in 0.03 seconds
+0023.250 (0) Table shop_wc_product_meta_lookup: finishing file(s) (2, 0.5 KB)
+0023.273 (0) Table shop_wc_reserved_stock: Total expected rows (approximate): 0
+0023.286 (0) Table shop_wc_reserved_stock: Rows added in this batch (next record: 0): 0 (uncompressed bytes in this segment=669) in 0.02 seconds
+0023.303 (0) Table shop_wc_reserved_stock: finishing file(s) (2, 0.4 KB)
+0023.323 (0) Table shop_wc_tax_rate_classes: Total expected rows (via COUNT): 2
+0023.328 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0023.340 (0) Table shop_wc_tax_rate_classes: Rows added in this batch (next record: 2): 2 (uncompressed bytes in this segment=822) in 0.02 seconds
+0023.359 (0) Table shop_wc_tax_rate_classes: finishing file(s) (2, 0.4 KB)
+0023.401 (0) Table shop_woocommerce_order_itemmeta: Total expected rows (via COUNT): 0
+0023.414 (0) Table shop_woocommerce_order_itemmeta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=775) in 0.04 seconds
+0023.442 (0) Table shop_woocommerce_order_itemmeta: finishing file(s) (2, 0.4 KB)
+0023.475 (0) Table shop_woocommerce_payment_tokenmeta: Total expected rows (via COUNT): 0
+0023.484 (0) Table shop_woocommerce_payment_tokenmeta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=802) in 0.02 seconds
+0023.510 (0) Table shop_woocommerce_payment_tokenmeta: finishing file(s) (2, 0.4 KB)
+0023.536 (0) Table shop_bp_activity: Total expected rows (via COUNT): 1
+0023.542 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0023.556 (0) Table shop_bp_activity: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=1526) in 0.03 seconds
+0023.582 (0) Table shop_bp_activity: finishing file(s) (2, 0.6 KB)
+0023.615 (0) Table shop_bp_activity_meta: Total expected rows (via COUNT): 0
+0023.628 (0) Table shop_bp_activity_meta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=682) in 0.03 seconds
+0023.656 (0) Table shop_bp_activity_meta: finishing file(s) (2, 0.4 KB)
+0023.690 (0) Table shop_bp_invitations: Total expected rows (via COUNT): 0
+0023.703 (0) Table shop_bp_invitations: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1273) in 0.03 seconds
+0023.730 (0) Table shop_bp_invitations: finishing file(s) (2, 0.5 KB)
+0023.753 (0) Table shop_bp_notifications: Total expected rows (via COUNT): 0
+0023.758 (0) Table shop_bp_notifications: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1040) in 0.01 seconds
+0023.777 (0) Table shop_bp_notifications: finishing file(s) (2, 0.5 KB)
+0023.808 (0) Table shop_bp_notifications_meta: Total expected rows (via COUNT): 0
+0023.821 (0) Table shop_bp_notifications_meta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=724) in 0.03 seconds
+0023.846 (0) Table shop_bp_notifications_meta: finishing file(s) (2, 0.4 KB)
+0023.872 (0) Table shop_bp_optouts: Total expected rows (via COUNT): 0
+0023.883 (0) Table shop_bp_optouts: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=730) in 0.02 seconds
+0023.901 (0) Table shop_bp_optouts: finishing file(s) (2, 0.4 KB)
+0023.933 (0) Table shop_bp_xprofile_data: Total expected rows (via COUNT): 0
+0023.938 (0) Table shop_bp_xprofile_data: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=691) in 0.02 seconds
+0023.963 (0) Table shop_bp_xprofile_data: finishing file(s) (2, 0.4 KB)
+0023.995 (0) Table shop_bp_xprofile_fields: Total expected rows (via COUNT): 1
+0024.000 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0024.013 (0) Table shop_bp_xprofile_fields: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=1350) in 0.03 seconds
+0024.037 (0) Table shop_bp_xprofile_fields: finishing file(s) (2, 0.5 KB)
+0024.063 (0) Table shop_bp_xprofile_groups: Total expected rows (via COUNT): 1
+0024.069 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0024.076 (0) Table shop_bp_xprofile_groups: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=803) in 0.02 seconds
+0024.096 (0) Table shop_bp_xprofile_groups: finishing file(s) (2, 0.4 KB)
+0024.130 (0) Table shop_bp_xprofile_meta: Total expected rows (via COUNT): 2
+0024.136 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0024.143 (0) Table shop_bp_xprofile_meta: Rows added in this batch (next record: 2): 2 (uncompressed bytes in this segment=905) in 0.03 seconds
+0024.167 (0) Table shop_bp_xprofile_meta: finishing file(s) (2, 0.5 KB)
+0024.196 (0) Table shop_login_redirects: Total expected rows (via COUNT): 2
+0024.201 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0024.208 (0) Table shop_login_redirects: Rows added in this batch (next record: 2): 2 (uncompressed bytes in this segment=775) in 0.02 seconds
+0024.235 (0) Table shop_login_redirects: finishing file(s) (2, 0.4 KB)
+0024.262 (0) Table shop_wc_admin_note_actions: Total expected rows (via COUNT): 83
+0024.267 (0) Table is relatively small; fetch_rows will thus be: 100 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0024.280 (0) Table shop_wc_admin_note_actions: Rows added in this batch (next record: 488): 83 (uncompressed bytes in this segment=16828) in 0.03 seconds
+0024.307 (0) Table shop_wc_admin_note_actions: finishing file(s) (2, 2.7 KB)
+0024.333 (0) Table shop_wc_admin_notes: Total expected rows (via COUNT): 56
+0024.338 (0) Table is relatively small; fetch_rows will thus be: 100 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0024.349 (0) Table shop_wc_admin_notes: Rows added in this batch (next record: 56): 56 (uncompressed bytes in this segment=28172) in 0.03 seconds
+0024.374 (0) Table shop_wc_admin_notes: finishing file(s) (2, 5.8 KB)
+0024.400 (0) Table shop_wc_customer_lookup: Total expected rows (via COUNT): 0
+0024.411 (0) Table shop_wc_customer_lookup: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1270) in 0.02 seconds
+0024.430 (0) Table shop_wc_customer_lookup: finishing file(s) (2, 0.5 KB)
+0024.461 (0) Table shop_wc_download_log: Total expected rows (via COUNT): 0
+0024.468 (0) Table shop_wc_download_log: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=747) in 0.02 seconds
+0024.490 (0) Table shop_wc_download_log: finishing file(s) (2, 0.4 KB)
+0024.517 (0) Table shop_wc_order_addresses: Total expected rows (via COUNT): 0
+0024.524 (0) Table shop_wc_order_addresses: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1317) in 0.02 seconds
+0024.548 (0) Table shop_wc_order_addresses: finishing file(s) (2, 0.5 KB)
+0024.569 (0) Table shop_wc_order_coupon_lookup: Total expected rows (approximate): 0
+0024.578 (0) Table shop_wc_order_coupon_lookup: Rows added in this batch (next record: 0): 0 (uncompressed bytes in this segment=721) in 0.01 seconds
+0024.594 (0) Table shop_wc_order_coupon_lookup: finishing file(s) (2, 0.4 KB)
+0024.631 (0) Table shop_wc_order_operational_data: Total expected rows (via COUNT): 0
+0024.640 (0) Table shop_wc_order_operational_data: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1527) in 0.03 seconds
+0024.659 (0) Table shop_wc_order_operational_data: finishing file(s) (2, 0.6 KB)
+0024.681 (0) Table shop_wc_order_product_lookup: Total expected rows (via COUNT): 0
+0024.687 (0) Table shop_wc_order_product_lookup: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1215) in 0.01 seconds
+0024.704 (0) Table shop_wc_order_product_lookup: finishing file(s) (2, 0.5 KB)
+0024.729 (0) Table shop_wc_order_stats: Total expected rows (via COUNT): 0
+0024.736 (0) Table shop_wc_order_stats: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1231) in 0.02 seconds
+0024.755 (0) Table shop_wc_order_stats: finishing file(s) (2, 0.5 KB)
+0024.780 (0) Table shop_wc_order_tax_lookup: Total expected rows (approximate): 0
+0024.788 (0) Table shop_wc_order_tax_lookup: Rows added in this batch (next record: 0): 0 (uncompressed bytes in this segment=803) in 0.01 seconds
+0024.809 (0) Table shop_wc_order_tax_lookup: finishing file(s) (2, 0.4 KB)
+0024.831 (0) Table shop_wc_orders: Total expected rows (via COUNT): 0
+0024.838 (0) Table shop_wc_orders: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1688) in 0.01 seconds
+0024.859 (0) Table shop_wc_orders: finishing file(s) (2, 0.6 KB)
+0024.883 (0) Table shop_wc_orders_meta: Total expected rows (via COUNT): 0
+0024.896 (0) Table shop_wc_orders_meta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=755) in 0.02 seconds
+0024.922 (0) Table shop_wc_orders_meta: finishing file(s) (2, 0.4 KB)
+0024.945 (0) Table shop_wc_product_attributes_lookup: Total expected rows (approximate): 0
+0024.960 (0) Table shop_wc_product_attributes_lookup: Rows added in this batch (next record: 0): 0 (uncompressed bytes in this segment=862) in 0.02 seconds
+0024.979 (0) Table shop_wc_product_attributes_lookup: finishing file(s) (2, 0.4 KB)
+0025.003 (0) Table shop_wc_product_download_directories: Total expected rows (via COUNT): 2
+0025.009 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0025.025 (0) Table shop_wc_product_download_directories: Rows added in this batch (next record: 2): 2 (uncompressed bytes in this segment=958) in 0.03 seconds
+0025.045 (0) Table shop_wc_product_download_directories: finishing file(s) (2, 0.5 KB)
+0025.069 (0) Table shop_wc_rate_limits: Total expected rows (via COUNT): 0
+0025.082 (0) Table shop_wc_rate_limits: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=700) in 0.02 seconds
+0025.102 (0) Table shop_wc_rate_limits: finishing file(s) (2, 0.4 KB)
+0025.126 (0) Table shop_wc_webhooks: Total expected rows (via COUNT): 0
+0025.133 (0) Table shop_wc_webhooks: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1227) in 0.01 seconds
+0025.154 (0) Table shop_wc_webhooks: finishing file(s) (2, 0.5 KB)
+0025.214 (0) Table shop_woocommerce_api_keys: Total expected rows (via COUNT): 0
+0025.221 (0) Table shop_woocommerce_api_keys: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1050) in 0.05 seconds
+0025.247 (0) Table shop_woocommerce_api_keys: finishing file(s) (2, 0.5 KB)
+0025.284 (0) Table shop_woocommerce_attribute_taxonomies: Total expected rows (via COUNT): 0
+0025.292 (0) Table shop_woocommerce_attribute_taxonomies: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=966) in 0.02 seconds
+0025.315 (0) Table shop_woocommerce_attribute_taxonomies: finishing file(s) (2, 0.4 KB)
+0025.357 (0) Table shop_woocommerce_downloadable_product_permissions: Total expected rows (via COUNT): 0
+0025.365 (0) Table shop_woocommerce_downloadable_product_permissions: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1530) in 0.03 seconds
+0025.386 (0) Table shop_woocommerce_downloadable_product_permissions: finishing file(s) (2, 0.5 KB)
+0025.436 (0) Table shop_woocommerce_log: Total expected rows (via COUNT): 0
+0025.446 (0) Table shop_woocommerce_log: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=727) in 0.04 seconds
+0025.474 (0) Table shop_woocommerce_log: finishing file(s) (2, 0.4 KB)
+0025.513 (0) Table shop_woocommerce_order_items: Total expected rows (via COUNT): 0
+0025.521 (0) Table shop_woocommerce_order_items: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=743) in 0.03 seconds
+0025.543 (0) Table shop_woocommerce_order_items: finishing file(s) (2, 0.4 KB)
+0025.570 (0) Table shop_woocommerce_payment_tokens: Total expected rows (via COUNT): 0
+0025.578 (0) Table shop_woocommerce_payment_tokens: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=845) in 0.01 seconds
+0025.601 (0) Table shop_woocommerce_payment_tokens: finishing file(s) (2, 0.4 KB)
+0025.638 (0) Table shop_woocommerce_sessions: Total expected rows (via COUNT): 1
+0025.645 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0025.661 (0) Table shop_woocommerce_sessions: Rows added in this batch (next record: 2): 1 (uncompressed bytes in this segment=2199) in 0.04 seconds
+0025.689 (0) Table shop_woocommerce_sessions: finishing file(s) (2, 0.8 KB)
+0025.714 (0) Table shop_woocommerce_shipping_zone_locations: Total expected rows (via COUNT): 0
+0025.729 (0) Table shop_woocommerce_shipping_zone_locations: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=870) in 0.02 seconds
+0025.749 (0) Table shop_woocommerce_shipping_zone_locations: finishing file(s) (2, 0.4 KB)
+0025.768 (0) Table shop_woocommerce_shipping_zone_methods: Total expected rows (via COUNT): 0
+0025.774 (0) Table shop_woocommerce_shipping_zone_methods: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=775) in 0.01 seconds
+0025.794 (0) Table shop_woocommerce_shipping_zone_methods: finishing file(s) (2, 0.4 KB)
+0025.815 (0) Table shop_woocommerce_shipping_zones: Total expected rows (via COUNT): 0
+0025.821 (0) Table shop_woocommerce_shipping_zones: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=637) in 0.01 seconds
+0025.839 (0) Table shop_woocommerce_shipping_zones: finishing file(s) (2, 0.4 KB)
+0025.874 (0) Table shop_woocommerce_tax_rate_locations: Total expected rows (via COUNT): 0
+0025.881 (0) Table shop_woocommerce_tax_rate_locations: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=852) in 0.02 seconds
+0025.901 (0) Table shop_woocommerce_tax_rate_locations: finishing file(s) (2, 0.4 KB)
+0025.923 (0) Table shop_woocommerce_tax_rates: Total expected rows (via COUNT): 0
+0025.929 (0) Table shop_woocommerce_tax_rates: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1295) in 0.01 seconds
+0025.952 (0) Table shop_woocommerce_tax_rates: finishing file(s) (2, 0.5 KB)
+0025.958 (0) PHP event: code E_WARNING: filemtime(): stat failed for /greenvillesoftware/usc547team4.info/class/shop/wp-content/updraft/backup_2024-11-15-0216_CockyShop_abe34193ce08-db.gz (line 1925, wp-content/plugins/updraftplus/backup.php)
+0025.965 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_options.table.tmpr558.gz (1/62/fopen): adding to final database dump
+0025.980 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_options.table.gz (2/62/fopen): adding to final database dump
+0025.985 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_users.table.tmpr2.gz (3/62/fopen): adding to final database dump
+0025.990 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_users.table.gz (4/62/fopen): adding to final database dump
+0025.995 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_usermeta.table.tmpr27.gz (5/62/fopen): adding to final database dump
+0026.000 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_usermeta.table.gz (6/62/fopen): adding to final database dump
+0026.006 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_actions.table.tmpr11.gz (7/62/fopen): adding to final database dump
+0026.012 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_actions.table.gz (8/62/fopen): adding to final database dump
+0026.020 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_claims.table.tmpr0.gz (9/62/fopen): adding to final database dump
+0026.025 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_claims.table.gz (10/62/fopen): adding to final database dump
+0026.033 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_groups.table.tmpr3.gz (11/62/fopen): adding to final database dump
+0026.039 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_groups.table.gz (12/62/fopen): adding to final database dump
+0026.046 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_logs.table.tmpr11.gz (13/62/fopen): adding to final database dump
+0026.053 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_actionscheduler_logs.table.gz (14/62/fopen): adding to final database dump
+0026.059 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_commentmeta.table.tmpr0.gz (15/62/fopen): adding to final database dump
+0026.066 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_commentmeta.table.gz (16/62/fopen): adding to final database dump
+0026.073 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_comments.table.tmpr2.gz (17/62/fopen): adding to final database dump
+0026.079 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_comments.table.gz (18/62/fopen): adding to final database dump
+0026.084 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_links.table.tmpr0.gz (19/62/fopen): adding to final database dump
+0026.091 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_links.table.gz (20/62/fopen): adding to final database dump
+0026.098 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_postmeta.table.tmpr115.gz (21/62/fopen): adding to final database dump
+0026.104 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_postmeta.table.gz (22/62/fopen): adding to final database dump
+0026.109 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_posts.table.tmpr62.gz (23/62/fopen): adding to final database dump
+0026.116 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_posts.table.gz (24/62/fopen): adding to final database dump
+0026.122 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_signups.table.tmpr0.gz (25/62/fopen): adding to final database dump
+0026.128 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_signups.table.gz (26/62/fopen): adding to final database dump
+0026.134 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_term_relationships.table.tmpr100001.gz (27/62/fopen): adding to final database dump
+0026.140 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_term_relationships.table.gz (28/62/fopen): adding to final database dump
+0026.148 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_term_taxonomy.table.tmpr39.gz (29/62/fopen): adding to final database dump
+0026.154 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_term_taxonomy.table.gz (30/62/fopen): adding to final database dump
+0026.160 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_termmeta.table.tmpr0.gz (31/62/fopen): adding to final database dump
+0026.166 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_termmeta.table.gz (32/62/fopen): adding to final database dump
+0026.172 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_terms.table.tmpr39.gz (33/62/fopen): adding to final database dump
+0026.178 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_terms.table.gz (34/62/fopen): adding to final database dump
+0026.184 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_category_lookup.table.tmpr1001.gz (35/62/fopen): adding to final database dump
+0026.190 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_category_lookup.table.gz (36/62/fopen): adding to final database dump
+0026.199 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_product_meta_lookup.table.tmpr0.gz (37/62/fopen): adding to final database dump
+0026.206 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_product_meta_lookup.table.gz (38/62/fopen): adding to final database dump
+0026.211 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_reserved_stock.table.tmpr1.gz (39/62/fopen): adding to final database dump
+0026.217 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_reserved_stock.table.gz (40/62/fopen): adding to final database dump
+0026.224 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_tax_rate_classes.table.tmpr3.gz (41/62/fopen): adding to final database dump
+0026.230 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_tax_rate_classes.table.gz (42/62/fopen): adding to final database dump
+0026.237 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_order_itemmeta.table.tmpr0.gz (43/62/fopen): adding to final database dump
+0026.242 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_order_itemmeta.table.gz (44/62/fopen): adding to final database dump
+0026.248 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_payment_tokenmeta.table.tmpr0.gz (45/62/fopen): adding to final database dump
+0026.254 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_payment_tokenmeta.table.gz (46/62/fopen): adding to final database dump
+0026.261 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_activity.table.tmpr2.gz (47/62/fopen): adding to final database dump
+0026.267 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_activity.table.gz (48/62/fopen): adding to final database dump
+0026.274 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_activity_meta.table.tmpr0.gz (49/62/fopen): adding to final database dump
+0026.280 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_activity_meta.table.gz (50/62/fopen): adding to final database dump
+0026.287 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_invitations.table.tmpr0.gz (51/62/fopen): adding to final database dump
+0026.293 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_invitations.table.gz (52/62/fopen): adding to final database dump
+0026.301 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_notifications.table.tmpr0.gz (53/62/fopen): adding to final database dump
+0026.308 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_notifications.table.gz (54/62/fopen): adding to final database dump
+0026.314 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_notifications_meta.table.tmpr0.gz (55/62/fopen): adding to final database dump
+0026.319 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_notifications_meta.table.gz (56/62/fopen): adding to final database dump
+0026.327 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_optouts.table.tmpr0.gz (57/62/fopen): adding to final database dump
+0026.333 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_optouts.table.gz (58/62/fopen): adding to final database dump
+0026.338 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_data.table.tmpr0.gz (59/62/fopen): adding to final database dump
+0026.345 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_data.table.gz (60/62/fopen): adding to final database dump
+0026.352 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_fields.table.tmpr2.gz (61/62/fopen): adding to final database dump
+0026.359 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_fields.table.gz (62/62/fopen): adding to final database dump
+0026.365 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_groups.table.tmpr2.gz (63/62/fopen): adding to final database dump
+0026.371 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_groups.table.gz (64/62/fopen): adding to final database dump
+0026.377 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_meta.table.tmpr3.gz (65/62/fopen): adding to final database dump
+0026.382 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_bp_xprofile_meta.table.gz (66/62/fopen): adding to final database dump
+0026.387 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_login_redirects.table.tmpr3.gz (67/62/fopen): adding to final database dump
+0026.392 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_login_redirects.table.gz (68/62/fopen): adding to final database dump
+0026.397 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_admin_note_actions.table.tmpr489.gz (69/62/fopen): adding to final database dump
+0026.402 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_admin_note_actions.table.gz (70/62/fopen): adding to final database dump
+0026.408 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_admin_notes.table.tmpr57.gz (71/62/fopen): adding to final database dump
+0026.415 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_admin_notes.table.gz (72/62/fopen): adding to final database dump
+0026.423 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_customer_lookup.table.tmpr0.gz (73/62/fopen): adding to final database dump
+0026.429 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_customer_lookup.table.gz (74/62/fopen): adding to final database dump
+0026.436 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_download_log.table.tmpr0.gz (75/62/fopen): adding to final database dump
+0026.442 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_download_log.table.gz (76/62/fopen): adding to final database dump
+0026.448 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_addresses.table.tmpr0.gz (77/62/fopen): adding to final database dump
+0026.455 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_addresses.table.gz (78/62/fopen): adding to final database dump
+0026.460 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_coupon_lookup.table.tmpr1.gz (79/62/fopen): adding to final database dump
+0026.466 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_coupon_lookup.table.gz (80/62/fopen): adding to final database dump
+0026.471 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_operational_data.table.tmpr0.gz (81/62/fopen): adding to final database dump
+0026.477 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_operational_data.table.gz (82/62/fopen): adding to final database dump
+0026.482 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_product_lookup.table.tmpr0.gz (83/62/fopen): adding to final database dump
+0026.488 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_product_lookup.table.gz (84/62/fopen): adding to final database dump
+0026.494 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_stats.table.tmpr0.gz (85/62/fopen): adding to final database dump
+0026.499 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_stats.table.gz (86/62/fopen): adding to final database dump
+0026.505 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_tax_lookup.table.tmpr1.gz (87/62/fopen): adding to final database dump
+0026.513 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_order_tax_lookup.table.gz (88/62/fopen): adding to final database dump
+0026.519 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_orders.table.tmpr0.gz (89/62/fopen): adding to final database dump
+0026.525 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_orders.table.gz (90/62/fopen): adding to final database dump
+0026.531 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_orders_meta.table.tmpr0.gz (91/62/fopen): adding to final database dump
+0026.538 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_orders_meta.table.gz (92/62/fopen): adding to final database dump
+0026.543 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_product_attributes_lookup.table.tmpr1.gz (93/62/fopen): adding to final database dump
+0026.549 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_product_attributes_lookup.table.gz (94/62/fopen): adding to final database dump
+0026.554 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_product_download_directories.table.tmpr3.gz (95/62/fopen): adding to final database dump
+0026.562 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_product_download_directories.table.gz (96/62/fopen): adding to final database dump
+0026.568 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_rate_limits.table.tmpr0.gz (97/62/fopen): adding to final database dump
+0026.573 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_rate_limits.table.gz (98/62/fopen): adding to final database dump
+0026.578 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_webhooks.table.tmpr0.gz (99/62/fopen): adding to final database dump
+0026.593 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_wc_webhooks.table.gz (100/62/fopen): adding to final database dump
+0026.598 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_api_keys.table.tmpr0.gz (101/62/fopen): adding to final database dump
+0026.603 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_api_keys.table.gz (102/62/fopen): adding to final database dump
+0026.609 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_attribute_taxonomies.table.tmpr0.gz (103/62/fopen): adding to final database dump
+0026.615 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_attribute_taxonomies.table.gz (104/62/fopen): adding to final database dump
+0026.622 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_downloadable_product_permissions.table.tmpr0.gz (105/62/fopen): adding to final database dump
+0026.627 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_downloadable_product_permissions.table.gz (106/62/fopen): adding to final database dump
+0026.634 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_log.table.tmpr0.gz (107/62/fopen): adding to final database dump
+0026.641 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_log.table.gz (108/62/fopen): adding to final database dump
+0026.647 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_order_items.table.tmpr0.gz (109/62/fopen): adding to final database dump
+0026.654 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_order_items.table.gz (110/62/fopen): adding to final database dump
+0026.661 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_payment_tokens.table.tmpr0.gz (111/62/fopen): adding to final database dump
+0026.668 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_payment_tokens.table.gz (112/62/fopen): adding to final database dump
+0026.674 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_sessions.table.tmpr3.gz (113/62/fopen): adding to final database dump
+0026.681 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_sessions.table.gz (114/62/fopen): adding to final database dump
+0026.688 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_shipping_zone_locations.table.tmpr0.gz (115/62/fopen): adding to final database dump
+0026.695 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_shipping_zone_locations.table.gz (116/62/fopen): adding to final database dump
+0026.701 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_shipping_zone_methods.table.tmpr0.gz (117/62/fopen): adding to final database dump
+0026.708 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_shipping_zone_methods.table.gz (118/62/fopen): adding to final database dump
+0026.717 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_shipping_zones.table.tmpr0.gz (119/62/fopen): adding to final database dump
+0026.723 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_shipping_zones.table.gz (120/62/fopen): adding to final database dump
+0026.729 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_tax_rate_locations.table.tmpr0.gz (121/62/fopen): adding to final database dump
+0026.735 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_tax_rate_locations.table.gz (122/62/fopen): adding to final database dump
+0026.740 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_tax_rates.table.tmpr0.gz (123/62/fopen): adding to final database dump
+0026.746 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db-table-shop_woocommerce_tax_rates.table.gz (124/62/fopen): adding to final database dump
+0026.788 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db.gz: finished writing out complete database file (280.4 KB)
+0026.827 (0) Total database tables backed up: 62 (backup_2024-11-15-0216_CockyShop_abe34193ce08-db.gz, size: 287256, sha1: 2b874813d4a4db00ee2bcfa41e02b20d8e55cba6, sha256: 8f222d9457d6ab81e846eb8eccfb17ea4785249217f1fced02a38ec7639dde72)
+0026.855 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-plugins.zip: plugins: This file has already been successfully processed
+0026.862 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-themes.zip: themes: This file has already been successfully processed
+0026.866 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-uploads.zip: uploads: This file has already been successfully processed
+0026.874 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-others.zip: others: This file has already been successfully processed
+0026.880 (0) backup_2024-11-15-0216_CockyShop_abe34193ce08-db.gz: db: This file has not yet been successfully uploaded: will queue
+0026.886 (0) Saving backup history. Total backup size: 75.2 MB
+0026.901 (0) Requesting upload of the files that have not yet been successfully uploaded (1)
+0026.920 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0026.926 (0) No remote despatch: user chose no remote backup service
+0026.931 (0) Recording as successfully uploaded: backup_2024-11-15-0216_CockyShop_abe34193ce08-db.gz
+0026.951 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0026.958 (0) Number of backup sets in history: 1; groups (db): 1
+0026.963 (0) Examining (for databases) backup set with group_id=0, nonce=abe34193ce08, datestamp=1731637002 (Nov 15 2024 02:16:42)
+0026.968 (0) This backup set is the backup set just made, so will not be deleted.
+0026.968 (0) Number of backup sets in history: 1; groups (files): 1
+0026.973 (0) Examining (for files) backup set with nonce=abe34193ce08, datestamp=1731637002 (Nov 15 2024 02:16:42)
+0026.973 (0) This backup set is the backup set just made, so will not be deleted.
+0026.978 (0) This backup set is the backup set just made, so will not be deleted.
+0026.978 (0) This backup set is the backup set just made, so will not be deleted.
+0026.978 (0) This backup set is the backup set just made, so will not be deleted.
+0026.978 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0026.983 (0) Retain: saving new backup history (sets now: 1) and finishing retain operation
+0026.995 (0) Resume backup (abe34193ce08, 0): finish run
+0027.009 (0) Decremented the semaphore (fd) by 1
+0027.017 (0) Semaphore (fd) unlocked
+0027.023 (0) There were no errors in the uploads, so the 'resume' event (1) is being unscheduled
+0027.043 (0) No email will/can be sent - the user has not configured an email address.
+0027.048 (0) The backup succeeded and is now complete

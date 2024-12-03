@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.0" type="plugin" group="content" method="upgrade">
+  <name>Content - Simple Meta Refresh Redirect</name>
+  <creationDate>Febuary 21th, 2022</creationDate>
+  <author>webGobe</author>
+  <copyright>Copyright (C) 2014-2022 webGóbé. All rights reserved.</copyright>
+  <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+  <authorEmail>webgobe@gmail.com</authorEmail>
+  <authorUrl>www.webgobe.com</authorUrl>
+  <version>1.4</version>
+  <description>METAREFRESH</description>
+  <files>
+    <filename plugin="metarefresh">metarefresh.php</filename>
+    <filename>index.html</filename>
+  </files>
+  <languages>
+    <language tag="en-GB">language/en-GB/en-GB.plg_content_metarefresh.ini</language>
+    <language tag="en-GB">language/en-GB/en-GB.plg_content_metarefresh.sys.ini</language>
+  </languages>
+  <config>
+    <fields name="params">
+      <fieldset name="basic">
+        <field name="target" type="list" default="0" label="METAREFRESH_TARGET_BLANK_LABEL" description="METAREFRESH_TARGET_BLANK_DESC">
+          <option value="1">METAREFRESH_YES</option>
+          <option value="0">METAREFRESH_NO</option>
+        </field>
+        <field name="timeout" type="list" default="0" label="METAREFRESH_REFRESH" description="METAREFRESH_REFRESH_DESC">
+          <option value= "0">METAREFRESH_0</option>
+          <option value= "1">METAREFRESH_1</option>
+          <option value= "5">METAREFRESH_5</option>
+          <option value="10">METAREFRESH_10</option>
+          <option value="30">METAREFRESH_30</option>
+        </field>
+      </fieldset>
+    </fields>
+  </config>
+  <updateservers>
+    <server type="extension" priority="1" name="Simple Meta Refresh Redirect plugin">
+	https://www.webgobe.com/updates/metarefresh-plugin.xml
+	</server>
+  </updateservers>
+</extension>
