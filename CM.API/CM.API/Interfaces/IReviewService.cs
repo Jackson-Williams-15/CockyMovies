@@ -27,4 +27,5 @@ public interface IReviewService
     /// <param name="reviewId">The ID of the review to edit.</param>
     /// <param name="updatedReview">The updated review details.</param>
     Task<bool> EditReview(int reviewId, Review updatedReview);
+    Task<bool> RemoveReview(int reviewId);
 }
