@@ -8,4 +8,5 @@ public interface IReviewService
 {
     Task<bool> AddReview(Review review);
     Task<List<Review>> GetReviews(int movieId);
+    Task<bool> RemoveReview(int reviewId);
 }

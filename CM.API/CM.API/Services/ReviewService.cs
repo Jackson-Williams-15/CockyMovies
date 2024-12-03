@@ -39,4 +39,25 @@ public class ReviewService : IReviewService
             .Where(r => r.MovieId == movieId)
             .ToListAsync();
     }
+
+    public async Task<bool> RemoveReview(int reviewId)
+    {
+        try
+        {
+            var review = await _context.Reviews.FindAsync(reviewId);
+
+            if (review == null)
+            {
+                return false;
+            }
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing review.");
+            throw;
+        }
+    }  
 }
