@@ -30,6 +30,24 @@ namespace CM.API.Services
             return true;
         }
 
+        public async Task<bool> EditTicket(int id, Ticket updatedTicket)
+        {
+            // Find the ticket to update
+            var ticket = await _context.Ticket.FirstOrDefaultAsync(t => t.Id == id);
+            if (ticket == null)
+            {
+                return false;
+            }
+
+            // Update ticket properties
+            ticket.Price = updatedTicket.Price;
+            ticket.ShowtimeId = updatedTicket.ShowtimeId;
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         // Get all tickets
         public async Task<List<Ticket>> GetAllTickets()
         {
