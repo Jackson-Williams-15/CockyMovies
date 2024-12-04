@@ -30,4 +30,6 @@ public interface IReviewService
     Task<bool> LikeReview(int reviewId);
 
     Task<bool> RemoveReview(int reviewId);
+
+    Task<Review> GetReviewById(int reviewId);
 }

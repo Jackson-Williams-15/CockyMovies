@@ -86,7 +86,7 @@ public class ReviewService : IReviewService
     }
 
     public async Task<bool> LikeReview(int reviewId)
-    {  
+    {
         var review = await _context.Reviews.FindAsync(reviewId);
         if (review == null)
         {
@@ -128,5 +128,11 @@ public class ReviewService : IReviewService
             _logger.LogError(ex, "Error removing review.");
             throw;
         }
-    }  
+    }
+
+    public async Task<Review> GetReviewById(int reviewId)
+    {
+        var review = await _context.Reviews.FindAsync(reviewId);
+        return review ?? new Review();
+    }
 }

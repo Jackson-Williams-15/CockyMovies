@@ -80,7 +80,8 @@ public class ReviewsController : ControllerBase
             Rating = r.Rating,
             Description = r.Description,
             MovieId = r.MovieId,
-            Username = r.Username
+            Username = r.Username,
+            Likes = r.Likes
         }).ToList();
 
         return Ok(reviewDtos);
@@ -95,7 +96,19 @@ public class ReviewsController : ControllerBase
             return NotFound("Review not found.");
         }
 
-        return Ok("Review liked successfully.");
+        var updatedReview = await _reviewService.GetReviewById(reviewId);
+        var reviewDto = new ReviewDto
+        {
+            Id = updatedReview.Id,
+            Title = updatedReview.Title,
+            Rating = updatedReview.Rating,
+            Description = updatedReview.Description,
+            MovieId = updatedReview.MovieId,
+            Username = updatedReview.Username,
+            Likes = updatedReview.Likes
+        };
+
+        return Ok(reviewDto);
     }
 
 
