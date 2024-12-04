@@ -85,6 +85,30 @@ public class ReviewService : IReviewService
         }
     }
 
+    public async Task<bool> LikeReview(int reviewId)
+    {  
+        var review = await _context.Reviews.FindAsync(reviewId);
+        if (review == null)
+        {
+            return false;
+        }
+
+        review.Likes += 1;
+
+        try
+        {
+            _context.Reviews.Update(review);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error liking review");
+            return false;
+        }
+    }
+
+
     public async Task<bool> RemoveReview(int reviewId)
     {
         try

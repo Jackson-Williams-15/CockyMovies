@@ -9,4 +9,5 @@ public class Review
     public int MovieId { get; set; }
     public Movie? Movie { get; set; } // Navigation property
     public string? Username { get; set; }
+    public int Likes { get; set; }
 }
