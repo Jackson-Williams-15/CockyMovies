@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5252', // API base URL
+        target: 'http://class.usc547team.info:8080', // API base URL
         changeOrigin: true,
         secure: false,
       },
