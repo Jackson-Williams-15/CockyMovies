@@ -35,6 +35,26 @@ namespace CM.API.Controllers
             return BadRequest("Ticket already exists or invalid data.");
         }
 
+        // PUT: api/tickets/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditTicket(int id, [FromBody] TicketUpdateDto updatedTicketDto)
+        {
+            if (updatedTicketDto == null)
+            {
+                return BadRequest("Updated ticket cannot be null.");
+            }
+
+            var success = await _ticketService.EditTicket(id, updatedTicketDto);
+
+            if (success)
+            {
+                return Ok("Ticket updated successfully.");
+            }
+
+            return NotFound("Ticket not found or update failed.");
+        }
+
+
         // GET: api/tickets
         [HttpGet]
         public async Task<IActionResult> GetAllTickets()
@@ -68,5 +88,31 @@ namespace CM.API.Controllers
 
             return Ok(ticket);
         }
+        // POST: api/tickets/add-to-showtime/{showtimeId}/{numberOfTickets}
+        [HttpPost("add-to-showtime/{showtimeId}/{numberOfTickets}")]
+        public async Task<IActionResult> AddTicketsToShowtime(int showtimeId, int numberOfTickets)
+        {
+            if (await _ticketService.AddTicketsToShowtime(showtimeId, numberOfTickets))
+            {
+                return Ok("Tickets added successfully.");
+            }
+
+            return BadRequest("Failed to add tickets. Ensure the showtime exists and input is valid.");
+        }
+
+        // DELETE: api/tickets/remove-from-showtime/{showtimeId}/{numberOfTickets}
+        [HttpDelete("remove-from-showtime/{showtimeId}/{numberOfTickets}")]
+        public async Task<IActionResult> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
+        {
+            if (await _ticketService.RemoveTicketsFromShowtime(showtimeId, numberOfTickets))
+            {
+                return Ok("Tickets removed successfully.");
+            }
+
+            return BadRequest("Failed to remove tickets. Ensure the showtime exists and has enough tickets available.");
+        }
+
+
+
     }
 }
