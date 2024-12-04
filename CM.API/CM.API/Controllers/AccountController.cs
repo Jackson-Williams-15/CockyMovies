@@ -34,43 +34,43 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("signup")]
-[AllowAnonymous]
-public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
-{
-    var userDto = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
-
-    if (userDto == null)
-        return BadRequest(new { message = "User registration failed" });
-
-    var cart = await _cartService.GetCartByUserId(userDto.Id);
-
-    return Ok(new SignUpResponseDto
+    [AllowAnonymous]
+    public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
     {
-        User = userDto,
-        CartId = cart?.CartId
-    });
-}
+        var userDto = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
+
+        if (userDto == null)
+            return BadRequest(new { message = "User registration failed" });
+
+        var cart = await _cartService.GetCartByUserId(userDto.Id);
+
+        return Ok(new SignUpResponseDto
+        {
+            User = userDto,
+            CartId = cart?.CartId
+        });
+    }
 
 
-   [HttpPost("login")]
-[AllowAnonymous]
-public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
-{
-    var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
-
-    if (userDto == null)
-        return Unauthorized(new { message = "Invalid username or password" });
-
-    var cart = await _cartService.GetCartByUserId(userDto.Id);
-    var token = GenerateJwtToken(userDto);
-
-    return Ok(new LoginResponseDto
+    [HttpPost("login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
     {
-        Token = token,
-        User = userDto,
-        CartId = cart?.CartId
-    });
-}
+        var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
+
+        if (userDto == null)
+            return Unauthorized(new { message = "Invalid username or password" });
+
+        var cart = await _cartService.GetCartByUserId(userDto.Id);
+        var token = GenerateJwtToken(userDto);
+
+        return Ok(new LoginResponseDto
+        {
+            Token = token,
+            User = userDto,
+            CartId = cart?.CartId
+        });
+    }
 
 
     [Authorize]
