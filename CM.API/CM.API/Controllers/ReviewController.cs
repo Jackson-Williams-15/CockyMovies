@@ -79,4 +79,19 @@ public class ReviewsController : ControllerBase
         return Ok("Review liked successfully.");
     }
 
+
+    // DELETE: api/reviews/{id}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> RemoveReview(int id)
+    {
+        var success = await _reviewService.RemoveReview(id);
+
+        if (!success)
+        {
+            return NotFound("Failed to remove review.");
+        }
+
+        return Ok("Review removed successfully.");
+    }
+
 }

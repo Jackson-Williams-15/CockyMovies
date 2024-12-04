@@ -1,6 +1,9 @@
-@CM.API_HostAddress = http://localhost:5252
 
-GET {{CM.API_HostAddress}}/weatherforecast/
+// use REST Client extension to test endpoints directly from VS Code
+@CM_API_HostAddress = http://localhost:5252
+
+// Can change or add different requests here to endpoints
+GET {{CM_API_HostAddress}}/api/Account/profile
 Accept: application/json
 
 ###

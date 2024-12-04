@@ -10,4 +10,5 @@ public interface IReviewService
     Task<List<Review>> GetReviews(int movieId);
     Task<bool> LikeReview(int reviewId);
 
+    Task<bool> RemoveReview(int reviewId);
 }

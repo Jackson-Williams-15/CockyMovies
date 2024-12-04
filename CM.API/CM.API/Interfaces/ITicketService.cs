@@ -9,5 +9,8 @@ namespace CM.API.Interfaces
         Task<List<Ticket>> GetAllTickets();
         Task<List<Ticket>> GetTicketsByMovieId(int movieId);
         Task<TicketDto> GetTicketById(int id);
+        Task<bool> RemoveTicketsFromShowtime(int movieId, int numberOfTickets);
+        Task<bool> AddTicketsToShowtime(int showtimeId, int numberOfTickets);
+
     }
 }
