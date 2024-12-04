@@ -39,3 +39,13 @@ export async function removeReview(reviewId) {
     throw error;
   }
 }
+
+export async function likeReview(reviewId) {
+  try {
+    const response = await axios.post(`/api/reviews/${reviewId}/like`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to like review:', error);
+    throw error;
+  }
+}

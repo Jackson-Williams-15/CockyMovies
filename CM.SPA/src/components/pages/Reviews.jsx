@@ -5,6 +5,7 @@ import {
   editReview,
   addReview,
   removeReview,
+  likeReview,
 } from '../../Services/reviewService';
 import { getMovieById } from '../../Services/movieService';
 import { AuthContext } from '../../context/AuthContext';
@@ -100,6 +101,19 @@ export default function Reviews() {
     }
   };
 
+  const handleLikeClick = async (reviewId) => {
+    try {
+      const updatedReview = await likeReview(reviewId);
+      setReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          review.id === reviewId ? updatedReview : review,
+        ),
+      );
+    } catch (error) {
+      console.error('Failed to like review:', error);
+    }
+  };
+
   if (loading) {
     return (
       <Box
@@ -165,6 +179,12 @@ export default function Reviews() {
                 >
                   {review.description}
                 </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Likes: {review.likes}
+                </Typography>
+                <Button onClick={() => handleLikeClick(review.id)}>
+                  Like
+                </Button>
                 {isLoggedIn && review.username === username && (
                   <>
                     <Button onClick={() => handleEditClick(review)}>
