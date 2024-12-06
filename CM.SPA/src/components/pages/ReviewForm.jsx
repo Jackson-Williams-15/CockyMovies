@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import { addReview, editReview } from '../../Services/reviewService';
 import { useParams } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Rating } from '@mui/material';
 
@@ -29,34 +28,18 @@ export default function ReviewForm({ review, onSubmit, onCancel }) {
       return;
     }
     try {
-      if (review) {
-        await editReview(review.id, {
-          title,
-          rating,
-          description,
-        });
-      } else {
-        await addReview({
-          title,
-          rating,
-          description,
-          movieId: parseInt(movieId),
-          username,
-        });
-      }
+      const newReview = {
+        title,
+        rating,
+        description,
+        movieId: parseInt(movieId),
+        username,
+      };
+      onSubmit && onSubmit(newReview);
       setTitle('');
       setRating(0);
       setDescription('');
       setError(null);
-      onSubmit &&
-        onSubmit({
-          id: review ? review.id : null,
-          title,
-          rating,
-          description,
-          movieId: parseInt(movieId),
-          username,
-        });
     } catch (error) {
       console.error('Failed to add review:', error);
       setError('Failed to add review. Please try again.');
