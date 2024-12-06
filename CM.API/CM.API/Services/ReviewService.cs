@@ -61,5 +61,5 @@ public class ReviewService : IReviewService
             _logger.LogError(ex, "Error removing review.");
             throw;
         }
-    }  
+    }
 }

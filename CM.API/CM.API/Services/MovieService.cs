@@ -52,6 +52,39 @@ public class MovieService : IMovieService
         return true;
     }
 
+    public async Task<bool> EditMovie(Movie oldMovie, Movie newMovie)
+    {
+        var existingMovie = await _context.Movies
+            .Include(m => m.Genres)
+            .FirstOrDefaultAsync(m => m.Id == oldMovie.Id);
+
+        if (existingMovie == null)
+        {
+            return false; // Movie not found
+        }
+
+        // Update fields
+        existingMovie.Title = newMovie.Title;
+        existingMovie.Description = newMovie.Description;
+        existingMovie.DateReleased = newMovie.DateReleased;
+        existingMovie.ImageUrl = newMovie.ImageUrl ?? existingMovie.ImageUrl;
+        existingMovie.RatingId = newMovie.RatingId;
+
+        // Update genres if provided
+        if (newMovie.Genres != null && newMovie.Genres.Any())
+        {
+            existingMovie.Genres.Clear();
+            foreach (var genre in newMovie.Genres)
+            {
+                existingMovie.Genres.Add(genre);
+            }
+        }
+
+        // Save changes
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<Movie?> GetMovieById(int id)
     {
         return await _context.Movies
