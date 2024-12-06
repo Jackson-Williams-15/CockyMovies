@@ -159,43 +159,43 @@ public class ReviewsController : ControllerBase
     }
 
     [HttpPost("{reviewId}/replies")]
-public async Task<IActionResult> AddReply(int reviewId, [FromBody] ReplyCreateDto replyDto)
-{
-    if (!ModelState.IsValid)
+    public async Task<IActionResult> AddReply(int reviewId, [FromBody] ReplyCreateDto replyDto)
     {
-        return BadRequest(ModelState);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var reply = new Reply
+        {
+            ReviewId = reviewId,
+            Author = replyDto.Author,
+            Body = replyDto.Body
+        };
+
+        var success = await _reviewService.AddReply(reply);
+
+        if (!success)
+        {
+            return BadRequest("Failed to add reply.");
+        }
+
+        return Ok("Reply added successfully.");
     }
 
-    var reply = new Reply
+    [HttpGet("{reviewId}/replies")]
+    public async Task<IActionResult> GetReplies(int reviewId)
     {
-        ReviewId = reviewId,
-        Author = replyDto.Author,
-        Body = replyDto.Body
-    };
+        var replies = await _reviewService.GetReplies(reviewId);
+        var replyDtos = replies.Select(r => new ReplyDto
+        {
+            Id = r.Id,
+            ReviewId = r.ReviewId,
+            Author = r.Author,
+            Body = r.Body,
+            CreatedAt = r.CreatedAt
+        }).ToList();
 
-    var success = await _reviewService.AddReply(reply);
-
-    if (!success)
-    {
-        return BadRequest("Failed to add reply.");
+        return Ok(replyDtos);
     }
-
-    return Ok("Reply added successfully.");
-}
-
-[HttpGet("{reviewId}/replies")]
-public async Task<IActionResult> GetReplies(int reviewId)
-{
-    var replies = await _reviewService.GetReplies(reviewId);
-    var replyDtos = replies.Select(r => new ReplyDto
-    {
-        Id = r.Id,
-        ReviewId = r.ReviewId,
-        Author = r.Author,
-        Body = r.Body,
-        CreatedAt = r.CreatedAt
-    }).ToList();
-
-    return Ok(replyDtos);
-}
 }
