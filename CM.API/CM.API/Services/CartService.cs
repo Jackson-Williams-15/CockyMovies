@@ -87,7 +87,7 @@ public class CartService : ICartService
                         Title = t.Showtime.Movie.Title,
                         Description = t.Showtime.Movie.Description,
                         DateReleased = t.Showtime.Movie.DateReleased,
-                        Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty // Handle null Rating
+                        Rating = t.Showtime.Movie?.Rating?.ToString() ?? string.Empty // Handle null Rating
                     } : null
                 } : null
             }).ToList()
