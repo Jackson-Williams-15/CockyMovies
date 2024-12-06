@@ -55,6 +55,53 @@ public class ShowtimesController : ControllerBase
         return Ok("Showtime added successfully.");
     }
 
+    // POST: api/showtimes/{id}
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditShowtime(int id, [FromBody] ShowtimeUpdateDto showtimeDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Invalid data.");
+        }
+
+        // Fetch the movie from the database to ensure the Movie property is set correctly
+        var movie = await _movieService.GetMovieById(showtimeDto.MovieId);
+        if (movie == null)
+        {
+            return NotFound("Movie not found.");
+        }
+
+        var editedShowtime = new Showtime
+        {
+            StartTime = showtimeDto.StartTime,
+            MovieId = showtimeDto.MovieId,
+            Movie = movie,  // Set the Movie property explicitly
+            Capacity = showtimeDto.Capacity,
+            Tickets = new List<Ticket>()  // Explicitly initialize Tickets
+        };
+
+        try
+        {
+            var success = await _showtimeService.EditShowtime(id, editedShowtime);
+
+            if (!success)
+            {
+                return NotFound("Showtime not found.");
+            }
+
+            return Ok("Showtime edited successfully.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error editing showtime with ID {id}: {ex.Message}");
+            return StatusCode(500, "Internal server error while editing showtime.");
+        }
+    }
+
     // GET: api/showtimes/movie/{movieId}
     [HttpGet("movie/{movieId}")]
     public async Task<IActionResult> GetShowtimesByMovieId(int movieId)
