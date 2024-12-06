@@ -22,12 +22,14 @@ public class ReviewService : IReviewService
 
     public async Task<bool> AddReview(Review review)
     {
-        try {
-        _context.Reviews.Add(review);
-        await _context.SaveChangesAsync();
-        return true;
+        try
+        {
+            _context.Reviews.Add(review);
+            await _context.SaveChangesAsync();
+            return true;
         }
-        catch(Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(ex, "Error adding review");
             throw;
         }
