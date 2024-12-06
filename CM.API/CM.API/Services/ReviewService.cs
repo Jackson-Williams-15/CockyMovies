@@ -34,7 +34,14 @@ public class ReviewService : IReviewService
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
             return true;
+        try
+        {
+            _context.Reviews.Add(review);
+            await _context.SaveChangesAsync();
+            return true;
         }
+        catch (Exception ex)
+        {
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error adding review");
