@@ -142,8 +142,6 @@ export default function Reviews() {
         </Typography>
       )}
       <Divider sx={{ mb: 4 }} />
-      {isLoggedIn ? (
-        !addingReview && (
           <Button
             variant="contained"
             color="primary"
@@ -151,12 +149,6 @@ export default function Reviews() {
           >
             Add Review
           </Button>
-        )
-      ) : (
-        <Typography variant="body2" color="error" gutterBottom>
-          You must be logged in to add a review.
-        </Typography>
-      )}
       {addingReview && (
         <ReviewForm
           onSubmit={handleAddReviewSubmit}

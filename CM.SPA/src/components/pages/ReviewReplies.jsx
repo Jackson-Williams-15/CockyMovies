@@ -20,7 +20,8 @@ export default function ReviewReplies() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newReply = { author: username, body };
+    const replyAuthor = isLoggedIn ? username : 'Anonymous';
+    const newReply = { author: replyAuthor, body };    
     await addReply(reviewId, newReply);
     setReplies([...replies, newReply]);
     setBody('');
@@ -41,7 +42,6 @@ export default function ReviewReplies() {
           </Box>
         ))
       )}
-      {isLoggedIn ? (
         <form onSubmit={handleSubmit}>
           <TextField
             label="Reply"
@@ -57,11 +57,6 @@ export default function ReviewReplies() {
             Add Reply
           </Button>
         </form>
-      ) : (
-        <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-          You must be logged in to add a reply.
-        </Typography>
-      )}
     </Box>
   );
 }

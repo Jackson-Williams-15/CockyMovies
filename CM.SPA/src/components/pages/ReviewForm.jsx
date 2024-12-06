@@ -23,17 +23,14 @@ export default function ReviewForm({ review, onSubmit, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isLoggedIn) {
-      setError('You must be logged in to submit a review.');
-      return;
-    }
+    const reviewUsername = isLoggedIn ? username : 'Anonymous';
     try {
       const newReview = {
         title,
         rating,
         description,
         movieId: parseInt(movieId),
-        username,
+        username: reviewUsername,
       };
       onSubmit && onSubmit(newReview);
       setTitle('');
@@ -45,14 +42,6 @@ export default function ReviewForm({ review, onSubmit, onCancel }) {
       setError('Failed to add review. Please try again.');
     }
   };
-
-  if (!isLoggedIn) {
-    return (
-      <Typography variant="body2" color="error" gutterBottom>
-        You must be logged in to submit a review.
-      </Typography>
-    );
-  }
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
