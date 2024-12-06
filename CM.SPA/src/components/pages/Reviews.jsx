@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   getReviews,
   editReview,
@@ -23,6 +23,7 @@ import ReviewForm from './ReviewForm';
 
 export default function Reviews() {
   const { movieId } = useParams();
+  const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const { isLoggedIn, username } = useContext(AuthContext);
   const [reviews, setReviews] = useState([]);
@@ -114,6 +115,10 @@ export default function Reviews() {
     }
   };
 
+  const handleViewRepliesClick = (reviewId) => {
+    navigate(`/review/${reviewId}/replies`);
+  };
+
   if (loading) {
     return (
       <Box
@@ -184,6 +189,9 @@ export default function Reviews() {
                 </Typography>
                 <Button onClick={() => handleLikeClick(review.id)}>
                   Like
+                </Button>
+                <Button onClick={() => handleViewRepliesClick(review.id)}>
+                  View Replies
                 </Button>
                 {isLoggedIn && review.username === username && (
                   <>
