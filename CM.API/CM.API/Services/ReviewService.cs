@@ -108,6 +108,27 @@ public class ReviewService : IReviewService
         }
     }
 
+    public async Task<bool> AddReply(Reply reply)
+{
+    try
+    {
+        _context.Reply.Add(reply);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error adding reply");
+        throw;
+    }
+}
+
+    public async Task<List<Reply>> GetReplies(int reviewId)
+    {
+    return await _context.Reply
+        .Where(r => r.ReviewId == reviewId)
+        .ToListAsync();
+    }
 
     public async Task<bool> RemoveReview(int reviewId)
     {

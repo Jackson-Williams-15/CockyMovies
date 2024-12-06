@@ -32,4 +32,7 @@ public interface IReviewService
     Task<bool> RemoveReview(int reviewId);
 
     Task<Review> GetReviewById(int reviewId);
+    Task<List<Reply>> GetReplies(int reviewId);
+    Task<bool> AddReply(Reply reply);
+
 }
