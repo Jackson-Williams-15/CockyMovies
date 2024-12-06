@@ -44,7 +44,7 @@ public class AccountController : ControllerBase
         if (userDto == null)
             return BadRequest(new { message = "User registration failed" });
 
-        var cart = await _cartService.GetCartByUserId(userDto.Id);
+    var cart = await _cartService.GetCartByUserId(userDto.Id);
 
         // Send verification email
         var user = await _accountService.GetUserById(userDto.Id.ToString());
@@ -67,8 +67,8 @@ public class AccountController : ControllerBase
     {
         var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
 
-        if (userDto == null)
-            return Unauthorized(new { message = "Invalid username or password" });
+    if (userDto == null)
+        return Unauthorized(new { message = "Invalid username or password" });
 
         var cart = await _cartService.GetCartByUserId(userDto.Id);
         var token = GenerateJwtToken(userDto);
