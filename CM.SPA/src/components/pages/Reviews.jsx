@@ -179,12 +179,14 @@ export default function Reviews() {
                 >
                   {review.description}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
                   Likes: {review.likes}
                 </Typography>
-                <Button onClick={() => handleLikeClick(review.id)}>
-                  Like
-                </Button>
+                <Button onClick={() => handleLikeClick(review.id)}>Like</Button>
                 <Button onClick={() => handleViewRepliesClick(review.id)}>
                   View Replies
                 </Button>

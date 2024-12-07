@@ -50,26 +50,33 @@ export default function ReviewReplies() {
       ) : (
         replies.map((reply) => (
           <Box key={reply.id} sx={{ mb: 2 }}>
-            <Typography variant="body1"><strong>{reply.author}</strong></Typography>
+            <Typography variant="body1">
+              <strong>{reply.author}</strong>
+            </Typography>
             <Typography variant="body2">{reply.body}</Typography>
           </Box>
         ))
       )}
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Reply"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            fullWidth
-            margin="normal"
-            multiline
-            rows={4}
-            required
-          />
-          <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-            Add Reply
-          </Button>
-        </form>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Reply"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          fullWidth
+          margin="normal"
+          multiline
+          rows={4}
+          required
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+        >
+          Add Reply
+        </Button>
+      </form>
     </Box>
   );
 }
