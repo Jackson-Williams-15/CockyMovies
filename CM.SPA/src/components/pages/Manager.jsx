@@ -7,7 +7,8 @@ const Manager = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
-  const [showForm, setShowForm] = useState(false);
+  const [showMovieForm, setShowMovieForm] = useState(false);
+  const [showShowtimeForm, setShowShowtimeForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,8 +17,14 @@ const Manager = () => {
     ratingId: '',
     genreIds: []
   });
+  const [showtimeData, setShowtimeData] = useState({
+    movieId: '',
+    startTime: '',
+    capacity: ''
+  });
   const [genres, setGenres] = useState([]);
   const [ratings, setRatings] = useState([]);
+  const [movies, setMovies] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,24 +44,34 @@ const Manager = () => {
       }
     };
 
-    const fetchGenresAndRatings = async () => {
+    const fetchGenresRatingsMovies = async () => {
       try {
         const genresResponse = await axios.get('/api/genre');
         const ratingsResponse = await axios.get('/api/ratings');
+        const moviesResponse = await axios.get('/api/movies');
         setGenres(genresResponse.data);
         setRatings(ratingsResponse.data);
+        setMovies(moviesResponse.data);
       } catch (error) {
-        console.error('Error fetching genres and ratings:', error);
+        console.error('Error fetching genres, ratings, and movies:', error);
       }
     };
 
     fetchManagerData();
-    fetchGenresAndRatings();
+    fetchGenresRatingsMovies();
   }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleShowtimeChange = (e) => {
+    const { name, value } = e.target;
+    setShowtimeData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -68,7 +85,7 @@ const Manager = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleMovieSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post('/api/movies', formData, {
@@ -77,10 +94,26 @@ const Manager = () => {
         },
       });
       setMessage('Movie added successfully.');
-      setShowForm(false);
+      setShowMovieForm(false);
     } catch (error) {
       setError('Error adding movie. Please try again.');
       console.error('Error adding movie:', error);
+    }
+  };
+
+  const handleShowtimeSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('/api/showtimes', showtimeData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setMessage('Showtime added successfully.');
+      setShowShowtimeForm(false);
+    } catch (error) {
+      setError('Error adding showtime. Please try again.');
+      console.error('Error adding showtime:', error);
     }
   };
 
@@ -103,11 +136,11 @@ const Manager = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>
       <Typography variant="h4">{message}</Typography>
-      <Button variant="contained" color="primary" onClick={() => setShowForm(!showForm)} sx={{ mt: 2 }}>
-        {showForm ? 'Cancel' : 'Add Movie'}
+      <Button variant="contained" color="primary" onClick={() => setShowMovieForm(!showMovieForm)} sx={{ mt: 2 }}>
+        {showMovieForm ? 'Cancel' : 'Add Movie'}
       </Button>
-      {showForm && (
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4, width: '100%', maxWidth: 600 }}>
+      {showMovieForm && (
+        <Box component="form" onSubmit={handleMovieSubmit} sx={{ mt: 4, width: '100%', maxWidth: 600 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -196,6 +229,65 @@ const Manager = () => {
             <Grid item xs={12}>
               <Button type="submit" variant="contained" color="primary" fullWidth>
                 Add Movie
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      )}
+      <Button variant="contained" color="primary" onClick={() => setShowShowtimeForm(!showShowtimeForm)} sx={{ mt: 2 }}>
+        {showShowtimeForm ? 'Cancel' : 'Add Showtime'}
+      </Button>
+      {showShowtimeForm && (
+        <Box component="form" onSubmit={handleShowtimeSubmit} sx={{ mt: 4, width: '100%', maxWidth: 600 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth required>
+                <InputLabel>Movie</InputLabel>
+                <Select
+                  label="Movie"
+                  name="movieId"
+                  value={showtimeData.movieId}
+                  onChange={handleShowtimeChange}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {movies.map((movie) => (
+                    <MenuItem key={movie.id} value={movie.id}>
+                      {movie.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Start Time"
+                name="startTime"
+                type="datetime-local"
+                value={showtimeData.startTime}
+                onChange={handleShowtimeChange}
+                fullWidth
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Capacity"
+                name="capacity"
+                type="number"
+                value={showtimeData.capacity}
+                onChange={handleShowtimeChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button type="submit" variant="contained" color="secondary" fullWidth>
+                Add Showtime
               </Button>
             </Grid>
           </Grid>
