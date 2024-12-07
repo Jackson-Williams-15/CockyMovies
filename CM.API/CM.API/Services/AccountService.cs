@@ -59,6 +59,7 @@ public class AccountService : IAccountService
             Email = user.Email,
             Username = user.Username,
             DateOfBirth = user.DateOfBirth,
+            Role = user.Role,
             Cart = new CartDto
             {
                 CartId = cart.CartId,
