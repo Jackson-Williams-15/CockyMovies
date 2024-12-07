@@ -20,7 +20,7 @@ namespace CM.API.Services
 
             if (hasProfanity)
             {
-                  // Use Regex to find and replace profane words with asterisks
+                // Use Regex to find and replace profane words with asterisks
                 var regex = new Regex(@"\b\w+\b", RegexOptions.IgnoreCase);
                 content = regex.Replace(content, match =>
                 {
