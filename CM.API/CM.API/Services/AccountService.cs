@@ -95,7 +95,8 @@ public class AccountService : IAccountService
             Email = email,
             Username = username,
             Password = hashedPassword,
-            DateOfBirth = dateOfBirth
+            DateOfBirth = dateOfBirth,
+            Role = "User"
         };
 
         _context.Users.Add(user);
