@@ -27,6 +27,10 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+         modelBuilder.Entity<User>().HasData(
+        new User { Id = 1, Username = "manager", Email = "manager@example.com", Password = "hashedpassword", Role = "Manager" }
+    );
         // This makes the title required
         modelBuilder.Entity<Movie>()
             .Property(m => m.Title)
