@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box, Typography, CircularProgress, Alert, TextField, Button, Grid, Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText } from '@mui/material';
+import { Box, Typography, CircularProgress, Alert, Button } from '@mui/material';
+import MovieForm from './MovieForm';
+import ShowtimeForm from './ShowtimeForm';
 
 const Manager = () => {
   const [loading, setLoading] = useState(true);
@@ -140,158 +142,25 @@ const Manager = () => {
         {showMovieForm ? 'Cancel' : 'Add Movie'}
       </Button>
       {showMovieForm && (
-        <Box component="form" onSubmit={handleMovieSubmit} sx={{ mt: 4, width: '100%', maxWidth: 600 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                label="Title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Date Released"
-                name="dateReleased"
-                type="date"
-                value={formData.dateReleased}
-                onChange={handleChange}
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Image URL"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Rating</InputLabel>
-                <Select
-                  label="Rating"
-                  name="ratingId"
-                  value={formData.ratingId}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {ratings.map((rating) => (
-                    <MenuItem key={rating.id} value={rating.id}>
-                      {rating.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Genres</InputLabel>
-                <Select
-                  label="Genres"
-                  name="genreIds"
-                  multiple
-                  value={formData.genreIds}
-                  onChange={handleGenreChange}
-                  renderValue={(selected) => selected.map(id => genres.find(g => g.id === id)?.name).join(', ')}
-                >
-                  {genres.map((genre) => (
-                    <MenuItem key={genre.id} value={genre.id}>
-                      <Checkbox checked={formData.genreIds.indexOf(genre.id) > -1} />
-                      <ListItemText primary={genre.name} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary" fullWidth>
-                Add Movie
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
+        <MovieForm
+          formData={formData}
+          handleChange={handleChange}
+          handleGenreChange={handleGenreChange}
+          handleMovieSubmit={handleMovieSubmit}
+          genres={genres}
+          ratings={ratings}
+        />
       )}
       <Button variant="contained" color="primary" onClick={() => setShowShowtimeForm(!showShowtimeForm)} sx={{ mt: 2 }}>
         {showShowtimeForm ? 'Cancel' : 'Add Showtime'}
       </Button>
       {showShowtimeForm && (
-        <Box component="form" onSubmit={handleShowtimeSubmit} sx={{ mt: 4, width: '100%', maxWidth: 600 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Movie</InputLabel>
-                <Select
-                  label="Movie"
-                  name="movieId"
-                  value={showtimeData.movieId}
-                  onChange={handleShowtimeChange}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {movies.map((movie) => (
-                    <MenuItem key={movie.id} value={movie.id}>
-                      {movie.title}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Start Time"
-                name="startTime"
-                type="datetime-local"
-                value={showtimeData.startTime}
-                onChange={handleShowtimeChange}
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Capacity"
-                name="capacity"
-                type="number"
-                value={showtimeData.capacity}
-                onChange={handleShowtimeChange}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="secondary" fullWidth>
-                Add Showtime
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
+        <ShowtimeForm
+          showtimeData={showtimeData}
+          handleShowtimeChange={handleShowtimeChange}
+          handleShowtimeSubmit={handleShowtimeSubmit}
+          movies={movies}
+        />
       )}
     </Box>
   );
