@@ -28,8 +28,18 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-         modelBuilder.Entity<User>().HasData(
-        new User { Id = 1, Username = "manager", Email = "manager@example.com", Password = "hashedpassword", Role = "Manager" }
+         // Hash the password for the manager account
+    var hashedPassword = BCrypt.Net.BCrypt.HashPassword("managerpassword");
+
+    modelBuilder.Entity<User>().HasData(
+        new User
+        {
+            Id = 2,
+            Username = "Manager",
+            Email = "managerEmail@example.com",
+            Password = hashedPassword, // Use the hashed password
+            Role = "Manager"
+        }
     );
         // This makes the title required
         modelBuilder.Entity<Movie>()
