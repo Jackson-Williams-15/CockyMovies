@@ -58,10 +58,19 @@ export default function Reviews() {
     fetchMovie();
   }, [movieId]);
 
+  const refreshReviews = async () => {
+    try {
+      const reviewsData = await getReviews(movieId);
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error('Failed to refresh reviews:', error);
+    }
+  };
+
   const handleAddReviewSubmit = async (newReview) => {
     try {
       await addReview(newReview);
-      setReviews((prevReviews) => [...prevReviews, newReview]);
+      await refreshReviews();
       setAddingReview(false);
     } catch (error) {
       console.error('Failed to add review:', error);
@@ -80,9 +89,7 @@ export default function Reviews() {
     if (deletedReviewId) {
       try {
         await removeReview(deletedReviewId);
-        setReviews((prevReviews) =>
-          prevReviews.filter((review) => review.id !== deletedReviewId),
-        );
+        await refreshReviews();
         setEditingReview(null);
       } catch (error) {
         console.error('Failed to delete review:', error);
@@ -91,11 +98,7 @@ export default function Reviews() {
     }
     try {
       await editReview(updatedReview.id, updatedReview);
-      setReviews((prevReviews) =>
-        prevReviews.map((review) =>
-          review.id === updatedReview.id ? updatedReview : review,
-        ),
-      );
+      await refreshReviews();
       setEditingReview(null);
     } catch (error) {
       console.error('Failed to update review:', error);
@@ -142,13 +145,13 @@ export default function Reviews() {
         </Typography>
       )}
       <Divider sx={{ mb: 4 }} />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddReviewClick}
-          >
-            Add Review
-          </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleAddReviewClick}
+      >
+        Add Review
+      </Button>
       {addingReview && (
         <ReviewForm
           onSubmit={handleAddReviewSubmit}

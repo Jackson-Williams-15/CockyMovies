@@ -18,13 +18,26 @@ export default function ReviewReplies() {
     fetchReplies();
   }, [reviewId]);
 
+  const refreshReplies = async () => {
+    try {
+      const data = await getReplies(reviewId);
+      setReplies(data);
+    } catch (error) {
+      console.error('Failed to refresh replies:', error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const replyAuthor = isLoggedIn ? username : 'Anonymous';
-    const newReply = { author: replyAuthor, body };    
-    await addReply(reviewId, newReply);
-    setReplies([...replies, newReply]);
-    setBody('');
+    const newReply = { author: replyAuthor, body };
+    try {
+      await addReply(reviewId, newReply);
+      await refreshReplies();
+      setBody('');
+    } catch (error) {
+      console.error('Failed to add reply:', error);
+    }
   };
 
   return (
