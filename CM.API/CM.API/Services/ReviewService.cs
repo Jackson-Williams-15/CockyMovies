@@ -13,11 +13,13 @@ public class ReviewService : IReviewService
 {
     private readonly AppDbContext _context;
     private readonly ILogger<ReviewService> _logger;
+    private readonly ContentModerationService _contentModerationService;
 
-    public ReviewService(AppDbContext context, ILogger<ReviewService> logger)
+    public ReviewService(AppDbContext context, ILogger<ReviewService> logger, ContentModerationService contentModerationService)
     {
         _context = context;
         _logger = logger;
+        _contentModerationService = contentModerationService;
     }
 
     /// <summary>
@@ -31,6 +33,8 @@ public class ReviewService : IReviewService
     {
         try
         {
+            review.Title = _contentModerationService.CensorContent(review.Title);
+            review.Description = _contentModerationService.CensorContent(review.Description);
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
             return true;
@@ -112,6 +116,7 @@ public class ReviewService : IReviewService
         {
             try
             {
+                reply.Body = _contentModerationService.CensorContent(reply.Body);
                 _context.Reply.Add(reply);
                 await _context.SaveChangesAsync();
                 return true;
