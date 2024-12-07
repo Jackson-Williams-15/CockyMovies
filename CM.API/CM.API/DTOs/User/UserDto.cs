@@ -7,4 +7,5 @@ public class UserDto
     public DateTime DateOfBirth { get; set; }
     public CartDto Cart { get; set; }
     public PaymentDetailsDto? PaymentDetails { get; set; }
+    public string? Role {get; set;}
 }
