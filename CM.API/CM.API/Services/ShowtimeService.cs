@@ -53,6 +53,20 @@ public class ShowtimeService : IShowtimeService
         return true;
     }
 
+    public async Task<bool> RemoveShowtime(int id)
+        {
+            var showtime = await _context.Showtime.FindAsync(id);
+            if (showtime == null)
+            {
+                return false; // Showtime not found
+            }
+
+            _context.Showtime.Remove(showtime);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     public async Task<bool> EditShowtime(int id, Showtime editedShowtime)
     {
         var existingShowtime = await _context.Showtime
