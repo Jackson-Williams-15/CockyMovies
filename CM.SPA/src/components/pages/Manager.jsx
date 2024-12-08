@@ -99,7 +99,7 @@ const Manager = () => {
           id: showtime.id,
           startTime: showtime.startTime,
           capacity: showtime.capacity,
-          movieId: showtime.movieId
+          movieId: showtime.movie.id // Ensure movieId is set correctly
         });
       } catch (error) {
         console.error('Error fetching showtime details:', error);
@@ -155,7 +155,12 @@ const Manager = () => {
   const handleEditShowtimeSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/api/showtimes/${editShowtimeData.id}`, editShowtimeData, {
+      await axios.put(`/api/showtimes/${editShowtimeData.id}`, {
+        id: editShowtimeData.id,
+        startTime: editShowtimeData.startTime,
+        capacity: editShowtimeData.capacity,
+        movieId: editShowtimeData.movieId // Include movieId in the payload
+      }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
