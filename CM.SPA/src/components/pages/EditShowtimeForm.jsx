@@ -106,6 +106,20 @@ const EditShowtimeForm = ({ editShowtimeData, handleEditShowtimeChange, handleEd
           />
         </Grid>
         <Grid item xs={12}>
+          <TextField
+            label="Ticket Price"
+            name="ticketPrice"
+            type="number"
+            value={editShowtimeData.ticketPrice}
+            onChange={handleEditShowtimeChange}
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            required
+          />
+        </Grid>
+        <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Edit Showtime
           </Button>
