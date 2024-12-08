@@ -141,14 +141,15 @@ public class ShowtimesController : ControllerBase
                 Title = showtime.Movie.Title,
                 Description = showtime.Movie.Description,
                 Rating = showtime.Movie.Rating?.ToString() ?? "Unrated",
-                DateReleased = showtime.Movie.DateReleased
+                DateReleased = showtime.Movie.DateReleased,
             },
             Tickets = showtime.Tickets.Select(t => new TicketDto
             {
                 Id = t.Id,
                 Price = t.Price
             }).ToList(),
-            AvailableTickets = showtime.TicketsAvailable
+            AvailableTickets = showtime.TicketsAvailable,
+            Capacity = showtime.Capacity
         };
 
         return Ok(showtimeDto);
