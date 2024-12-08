@@ -30,29 +30,29 @@ namespace CM.API.Services
             return true;
         }
 
-       public async Task<bool> EditTicket(int showtimeId, decimal newPrice)
-{
-    // Find the showtime
-    var showtime = await _context.Showtime
-        .Include(s => s.Tickets) // Include tickets to make sure we can access them
-        .FirstOrDefaultAsync(s => s.Id == showtimeId);
+        public async Task<bool> EditTicket(int showtimeId, decimal newPrice)
+        {
+            // Find the showtime
+            var showtime = await _context.Showtime
+                .Include(s => s.Tickets) // Include tickets to make sure we can access them
+                .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
-    if (showtime == null)
-    {
-        return false; // Showtime not found
-    }
+            if (showtime == null)
+            {
+                return false; // Showtime not found
+            }
 
-    // Update the price of all tickets within the showtime
-    foreach (var ticket in showtime.Tickets)
-    {
-        ticket.Price = newPrice;
-    }
+            // Update the price of all tickets within the showtime
+            foreach (var ticket in showtime.Tickets)
+            {
+                ticket.Price = newPrice;
+            }
 
-    // Save changes to the database
-    await _context.SaveChangesAsync();
+            // Save changes to the database
+            await _context.SaveChangesAsync();
 
-    return true;
-}
+            return true;
+        }
 
 
 
@@ -142,7 +142,7 @@ namespace CM.API.Services
             {
                 return false; // Showtime not found
             }
-             //if adding the tickets would exceed the capacity
+            //if adding the tickets would exceed the capacity
             if (showtime.TicketsAvailable + numberOfTickets > showtime.Capacity)
             {
                 return false;

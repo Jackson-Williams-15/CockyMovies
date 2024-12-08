@@ -36,23 +36,23 @@ namespace CM.API.Controllers
         }
 
         // PUT: api/tickets/edit-price/{showtimeId}
-[HttpPut("edit-price/{showtimeId}")]
-public async Task<IActionResult> EditTicketPrice(int showtimeId, [FromBody] EditTicketPriceDto editTicketPriceDto)
-{
-    if (editTicketPriceDto.NewPrice <= 0)
-    {
-        return BadRequest("Invalid price.");
-    }
+        [HttpPut("edit-price/{showtimeId}")]
+        public async Task<IActionResult> EditTicketPrice(int showtimeId, [FromBody] EditTicketPriceDto editTicketPriceDto)
+        {
+            if (editTicketPriceDto.NewPrice <= 0)
+            {
+                return BadRequest("Invalid price.");
+            }
 
-    var success = await _ticketService.EditTicket(showtimeId, editTicketPriceDto.NewPrice);
+            var success = await _ticketService.EditTicket(showtimeId, editTicketPriceDto.NewPrice);
 
-    if (success)
-    {
-        return Ok("Ticket prices updated successfully.");
-    }
+            if (success)
+            {
+                return Ok("Ticket prices updated successfully.");
+            }
 
-    return NotFound("Showtime not found or update failed.");
-}
+            return NotFound("Showtime not found or update failed.");
+        }
 
 
         // GET: api/tickets

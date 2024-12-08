@@ -63,7 +63,7 @@ public class EmailService : IEmailService
 
         await SendEmail(to, subject, body);
     }
-    
+
     /// <summary>
     /// Creates the email body for an order receipt.
     /// </summary>
