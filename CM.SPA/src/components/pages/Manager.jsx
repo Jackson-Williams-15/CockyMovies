@@ -31,7 +31,8 @@ const Manager = () => {
     startTime: '',
     capacity: '',
     movieId: '',
-    addTickets: 0 // Add this field
+    addTickets: 0, // Add this field
+    removeTickets: 0 // Add this field
   });
   const [selectedMovieId, setSelectedMovieId] = useState('');
   const [genres, setGenres] = useState([]);
@@ -101,7 +102,8 @@ const Manager = () => {
           startTime: showtime.startTime,
           capacity: showtime.capacity,
           movieId: showtime.movie.id, // Ensure movieId is set correctly
-          addTickets: 0 // Default value for adding tickets
+          addTickets: 0, // Default value for adding tickets
+          removeTickets: 0 // Default value for removing tickets
         });
       } catch (error) {
         console.error('Error fetching showtime details:', error);
@@ -171,6 +173,15 @@ const Manager = () => {
       // If addTickets is greater than 0, call the add-to-showtime endpoint
       if (editShowtimeData.addTickets > 0) {
         await axios.post(`/api/tickets/add-to-showtime/${editShowtimeData.id}/${editShowtimeData.addTickets}`, {}, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+      }
+
+      // If removeTickets is greater than 0, call the remove-from-showtime endpoint
+      if (editShowtimeData.removeTickets > 0) {
+        await axios.delete(`/api/tickets/remove-from-showtime/${editShowtimeData.id}/${editShowtimeData.removeTickets}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
