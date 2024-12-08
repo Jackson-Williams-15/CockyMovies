@@ -136,7 +136,8 @@ namespace CM.API.Services
             {
                 return false; // Showtime not found
             }
-            if (showtime.TicketsAvailable == showtime.Capacity)
+             //if adding the tickets would exceed the capacity
+            if (showtime.TicketsAvailable + numberOfTickets > showtime.Capacity)
             {
                 return false;
             }
