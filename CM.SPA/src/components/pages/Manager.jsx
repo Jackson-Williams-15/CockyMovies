@@ -30,7 +30,8 @@ const Manager = () => {
     id: '',
     startTime: '',
     capacity: '',
-    movieId: ''
+    movieId: '',
+    addTickets: 0 // Add this field
   });
   const [selectedMovieId, setSelectedMovieId] = useState('');
   const [genres, setGenres] = useState([]);
@@ -99,7 +100,8 @@ const Manager = () => {
           id: showtime.id,
           startTime: showtime.startTime,
           capacity: showtime.capacity,
-          movieId: showtime.movie.id // Ensure movieId is set correctly
+          movieId: showtime.movie.id, // Ensure movieId is set correctly
+          addTickets: 0 // Default value for adding tickets
         });
       } catch (error) {
         console.error('Error fetching showtime details:', error);
@@ -159,12 +161,22 @@ const Manager = () => {
         id: editShowtimeData.id,
         startTime: editShowtimeData.startTime,
         capacity: editShowtimeData.capacity,
-        movieId: editShowtimeData.movieId // Include movieId in the payload
+        movieId: editShowtimeData.movieId, // Include movieId in the payload
       }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
+
+      // If addTickets is greater than 0, call the add-to-showtime endpoint
+      if (editShowtimeData.addTickets > 0) {
+        await axios.post(`/api/tickets/add-to-showtime/${editShowtimeData.id}/${editShowtimeData.addTickets}`, {}, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+      }
+
       setMessage('Showtime edited successfully.');
       setShowEditShowtimeForm(false);
     } catch (error) {
@@ -258,6 +270,7 @@ const Manager = () => {
             handleEditShowtimeChange={handleEditShowtimeChange}
             handleEditShowtimeSubmit={handleEditShowtimeSubmit}
             showtimes={showtimes}
+            movies={movies}
           />
         </>
       )}

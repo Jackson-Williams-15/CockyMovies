@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-const EditShowtimeForm = ({ editShowtimeData, handleEditShowtimeChange, handleEditShowtimeSubmit, showtimes }) => {
+const EditShowtimeForm = ({ editShowtimeData, handleEditShowtimeChange, handleEditShowtimeSubmit, showtimes, movies }) => {
   return (
     <Box component="form" onSubmit={handleEditShowtimeSubmit} sx={{ mt: 4, width: '100%', maxWidth: 600 }}>
       <Grid container spacing={2}>
@@ -33,6 +33,26 @@ const EditShowtimeForm = ({ editShowtimeData, handleEditShowtimeChange, handleEd
           </FormControl>
         </Grid>
         <Grid item xs={12}>
+          <FormControl fullWidth required>
+            <InputLabel>Movie</InputLabel>
+            <Select
+              label="Movie"
+              name="movieId"
+              value={editShowtimeData.movieId}
+              onChange={handleEditShowtimeChange}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {movies.map((movie) => (
+                <MenuItem key={movie.id} value={movie.id}>
+                  {movie.title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12}>
           <TextField
             label="Start Time"
             name="startTime"
@@ -55,6 +75,20 @@ const EditShowtimeForm = ({ editShowtimeData, handleEditShowtimeChange, handleEd
             onChange={handleEditShowtimeChange}
             fullWidth
             required
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Add Tickets"
+            name="addTickets"
+            type="number"
+            value={editShowtimeData.addTickets}
+            onChange={handleEditShowtimeChange}
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            defaultValue={0}
           />
         </Grid>
         <Grid item xs={12}>
