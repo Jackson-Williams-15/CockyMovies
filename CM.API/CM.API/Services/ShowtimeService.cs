@@ -71,13 +71,14 @@ public class ShowtimeService : IShowtimeService
         // Check if capacity has changed
         if (editedShowtime.Capacity != existingShowtime.Capacity)
         {
-            if (editedShowtime.Capacity < existingShowtime.TicketsSold)
+            if (editedShowtime.Capacity < existingShowtime.TicketsAvailable)
             {
-                throw new InvalidOperationException("New capacity cannot be less than the number of tickets already sold.");
+                throw new InvalidOperationException("New capacity cannot be less than the number of tickets available.");
             }
 
             existingShowtime.Capacity = editedShowtime.Capacity;
-            existingShowtime.TicketsAvailable = editedShowtime.Capacity - existingShowtime.TicketsSold;
+            existingShowtime.TicketsAvailable = editedShowtime.Capacity - (existingShowtime.Capacity - existingShowtime.TicketsAvailable);
+
         }
 
         try
