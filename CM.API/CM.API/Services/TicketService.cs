@@ -30,23 +30,29 @@ namespace CM.API.Services
             return true;
         }
 
-        public async Task<bool> EditTicket(int id, TicketUpdateDto updatedTicketDto)
-        {
-            // Find the ticket to update
-            var ticket = await _context.Ticket.FirstOrDefaultAsync(t => t.Id == id);
-            if (ticket == null)
-            {
-                return false; // Ticket not found
-            }
+       public async Task<bool> EditTicket(int showtimeId, decimal newPrice)
+{
+    // Find the showtime
+    var showtime = await _context.Showtime
+        .Include(s => s.Tickets) // Include tickets to make sure we can access them
+        .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
-            // Update ticket properties with values from the DTO
-            ticket.Price = updatedTicketDto.Price;
-            ticket.ShowtimeId = updatedTicketDto.ShowtimeId;
+    if (showtime == null)
+    {
+        return false; // Showtime not found
+    }
 
-            // Save changes to the database
-            await _context.SaveChangesAsync();
-            return true;
-        }
+    // Update the price of all tickets within the showtime
+    foreach (var ticket in showtime.Tickets)
+    {
+        ticket.Price = newPrice;
+    }
+
+    // Save changes to the database
+    await _context.SaveChangesAsync();
+
+    return true;
+}
 
 
 
