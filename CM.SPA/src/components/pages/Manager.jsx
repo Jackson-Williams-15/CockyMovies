@@ -6,6 +6,7 @@ import MovieForm from './MovieForm';
 import ShowtimeForm from './ShowtimeForm';
 import EditShowtimeForm from './EditShowtimeForm';
 import RemoveShowtimeForm from './RemoveShowtimeForm';
+import RemoveMovieForm from './RemoveMovieForm';
 
 const Manager = () => {
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,7 @@ const Manager = () => {
   const [showShowtimeForm, setShowShowtimeForm] = useState(false);
   const [showEditShowtimeForm, setShowEditShowtimeForm] = useState(false);
   const [showRemoveShowtimeForm, setShowRemoveShowtimeForm] = useState(false);
+  const [showRemoveMovieForm, setShowRemoveMovieForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -39,6 +41,9 @@ const Manager = () => {
   });
   const [removeShowtimeData, setRemoveShowtimeData] = useState({
     movieId: '',
+    id: ''
+  });
+  const [removeMovieData, setRemoveMovieData] = useState({
     id: ''
   });
   const [selectedMovieId, setSelectedMovieId] = useState('');
@@ -139,6 +144,14 @@ const Manager = () => {
         console.error('Error fetching showtimes:', error);
       }
     }
+  };
+
+  const handleRemoveMovieChange = (e) => {
+    const { name, value } = e.target;
+    setRemoveMovieData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleGenreChange = (e) => {
@@ -247,6 +260,22 @@ const Manager = () => {
     }
   };
 
+  const handleRemoveMovieSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.delete(`/api/movies/${removeMovieData.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setMessage('Movie removed successfully.');
+      setShowRemoveMovieForm(false);
+    } catch (error) {
+      setError('Error removing movie. Please try again.');
+      console.error('Error removing movie:', error);
+    }
+  };
+
   const handleMovieSelectChange = async (e) => {
     const movieId = e.target.value;
     setSelectedMovieId(movieId);
@@ -350,6 +379,17 @@ const Manager = () => {
           handleRemoveShowtimeSubmit={handleRemoveShowtimeSubmit}
           movies={movies}
           showtimes={showtimes}
+        />
+      )}
+      <Button variant="contained" color="primary" onClick={() => setShowRemoveMovieForm(!showRemoveMovieForm)} sx={{ mt: 2 }}>
+        {showRemoveMovieForm ? 'Cancel' : 'Remove Movie'}
+      </Button>
+      {showRemoveMovieForm && (
+        <RemoveMovieForm
+          removeMovieData={removeMovieData}
+          handleRemoveMovieChange={handleRemoveMovieChange}
+          handleRemoveMovieSubmit={handleRemoveMovieSubmit}
+          movies={movies}
         />
       )}
     </Box>
