@@ -12,7 +12,7 @@ import './Navbar.css';
 
 export default function Navbar() {
   const location = useLocation();
-  const { isAuthenticated, user, handleLogout } = useContext(AuthContext);
+  const { isLoggedIn, username, handleLogout } = useContext(AuthContext);
 
   return (
     <AppBar position="sticky" enableColorOnDark>
@@ -66,18 +66,18 @@ export default function Navbar() {
           Movies
         </Button>
 
-        {isAuthenticated ? (
+        {isLoggedIn ? (
           <>
             <Button
               component={Link}
-              to={`/profile/${user?.username}`}
+              to={`/profile/${username}`}
               sx={{
                 color: 'inherit',
                 fontWeight: 500,
                 marginRight: '10px',
               }}
             >
-              Signed in as {user?.username}
+              Signed in as {username}
             </Button>
             <Button
               onClick={handleLogout}

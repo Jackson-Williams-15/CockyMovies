@@ -47,6 +47,7 @@ builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
 builder.Services.AddScoped<GenreRepository>();
+builder.Services.AddScoped<ContentModerationService>();
 builder.Services.AddControllers();
 
 builder.Services.AddControllers()

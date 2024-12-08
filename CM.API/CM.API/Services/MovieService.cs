@@ -92,6 +92,7 @@ public class MovieService : IMovieService
             .Include(m => m.Showtimes)
             .ThenInclude(s => s.Tickets)
             .Include(m => m.Rating)
+            .Include(m => m.Reviews)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
@@ -102,6 +103,7 @@ public class MovieService : IMovieService
             .Include(m => m.Showtimes)
             .ThenInclude(s => s.Tickets)
             .Include(m => m.Rating)
+            .Include(m => m.Reviews)
             .AsQueryable();
 
         if (genreIds != null && genreIds.Any())
