@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box, Typography, CircularProgress, Alert, Button } from '@mui/material';
+import { Box, Typography, CircularProgress, Alert, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import MovieForm from './MovieForm';
 import ShowtimeForm from './ShowtimeForm';
+import EditShowtimeForm from './EditShowtimeForm';
 
 const Manager = () => {
   const [loading, setLoading] = useState(true);
@@ -11,6 +12,7 @@ const Manager = () => {
   const [message, setMessage] = useState('');
   const [showMovieForm, setShowMovieForm] = useState(false);
   const [showShowtimeForm, setShowShowtimeForm] = useState(false);
+  const [showEditShowtimeForm, setShowEditShowtimeForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -24,9 +26,17 @@ const Manager = () => {
     startTime: '',
     capacity: ''
   });
+  const [editShowtimeData, setEditShowtimeData] = useState({
+    id: '',
+    startTime: '',
+    capacity: '',
+    movieId: ''
+  });
+  const [selectedMovieId, setSelectedMovieId] = useState('');
   const [genres, setGenres] = useState([]);
   const [ratings, setRatings] = useState([]);
   const [movies, setMovies] = useState([]);
+  const [showtimes, setShowtimes] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,6 +89,29 @@ const Manager = () => {
     }));
   };
 
+  const handleEditShowtimeChange = async (e) => {
+    const { name, value } = e.target;
+    if (name === 'id') {
+      try {
+        const response = await axios.get(`/api/showtimes/${value}`);
+        const showtime = response.data;
+        setEditShowtimeData({
+          id: showtime.id,
+          startTime: showtime.startTime,
+          capacity: showtime.capacity,
+          movieId: showtime.movieId
+        });
+      } catch (error) {
+        console.error('Error fetching showtime details:', error);
+      }
+    } else {
+      setEditShowtimeData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
   const handleGenreChange = (e) => {
     const { value } = e.target;
     setFormData((prevData) => ({
@@ -116,6 +149,37 @@ const Manager = () => {
     } catch (error) {
       setError('Error adding showtime. Please try again.');
       console.error('Error adding showtime:', error);
+    }
+  };
+
+  const handleEditShowtimeSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`/api/showtimes/${editShowtimeData.id}`, editShowtimeData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setMessage('Showtime edited successfully.');
+      setShowEditShowtimeForm(false);
+    } catch (error) {
+      setError('Error editing showtime. Please try again.');
+      console.error('Error editing showtime:', error);
+    }
+  };
+
+  const handleMovieSelectChange = async (e) => {
+    const movieId = e.target.value;
+    setSelectedMovieId(movieId);
+    try {
+      const response = await axios.get(`/api/showtimes/movie/${movieId}`);
+      setShowtimes(response.data);
+      setEditShowtimeData((prevData) => ({
+        ...prevData,
+        movieId: movieId
+      }));
+    } catch (error) {
+      console.error('Error fetching showtimes:', error);
     }
   };
 
@@ -161,6 +225,36 @@ const Manager = () => {
           handleShowtimeSubmit={handleShowtimeSubmit}
           movies={movies}
         />
+      )}
+      <Button variant="contained" color="primary" onClick={() => setShowEditShowtimeForm(!showEditShowtimeForm)} sx={{ mt: 2 }}>
+        {showEditShowtimeForm ? 'Cancel' : 'Edit Showtime'}
+      </Button>
+      {showEditShowtimeForm && (
+        <>
+          <FormControl fullWidth required sx={{ mt: 2 }}>
+            <InputLabel>Movie</InputLabel>
+            <Select
+              label="Movie"
+              value={selectedMovieId}
+              onChange={handleMovieSelectChange}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {movies.map((movie) => (
+                <MenuItem key={movie.id} value={movie.id}>
+                  {movie.title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <EditShowtimeForm
+            editShowtimeData={editShowtimeData}
+            handleEditShowtimeChange={handleEditShowtimeChange}
+            handleEditShowtimeSubmit={handleEditShowtimeSubmit}
+            showtimes={showtimes}
+          />
+        </>
       )}
     </Box>
   );
