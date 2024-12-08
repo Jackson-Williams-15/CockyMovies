@@ -5,6 +5,7 @@ import { Box, Typography, CircularProgress, Alert, Button, FormControl, InputLab
 import MovieForm from './MovieForm';
 import ShowtimeForm from './ShowtimeForm';
 import EditShowtimeForm from './EditShowtimeForm';
+import RemoveShowtimeForm from './RemoveShowtimeForm';
 
 const Manager = () => {
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const Manager = () => {
   const [showMovieForm, setShowMovieForm] = useState(false);
   const [showShowtimeForm, setShowShowtimeForm] = useState(false);
   const [showEditShowtimeForm, setShowEditShowtimeForm] = useState(false);
+  const [showRemoveShowtimeForm, setShowRemoveShowtimeForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -34,6 +36,10 @@ const Manager = () => {
     addTickets: 0, // Add this field
     removeTickets: 0, // Add this field
     ticketPrice: 0 // Add this field
+  });
+  const [removeShowtimeData, setRemoveShowtimeData] = useState({
+    movieId: '',
+    id: ''
   });
   const [selectedMovieId, setSelectedMovieId] = useState('');
   const [genres, setGenres] = useState([]);
@@ -115,6 +121,23 @@ const Manager = () => {
         ...prevData,
         [name]: value,
       }));
+    }
+  };
+
+  const handleRemoveShowtimeChange = async (e) => {
+    const { name, value } = e.target;
+    setRemoveShowtimeData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    if (name === 'movieId') {
+      try {
+        const response = await axios.get(`/api/showtimes/movie/${value}`);
+        setShowtimes(response.data);
+      } catch (error) {
+        console.error('Error fetching showtimes:', error);
+      }
     }
   };
 
@@ -208,6 +231,22 @@ const Manager = () => {
     }
   };
 
+  const handleRemoveShowtimeSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.delete(`/api/showtimes/${removeShowtimeData.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setMessage('Showtime removed successfully.');
+      setShowRemoveShowtimeForm(false);
+    } catch (error) {
+      setError('Error removing showtime. Please try again.');
+      console.error('Error removing showtime:', error);
+    }
+  };
+
   const handleMovieSelectChange = async (e) => {
     const movieId = e.target.value;
     setSelectedMovieId(movieId);
@@ -215,6 +254,10 @@ const Manager = () => {
       const response = await axios.get(`/api/showtimes/movie/${movieId}`);
       setShowtimes(response.data);
       setEditShowtimeData((prevData) => ({
+        ...prevData,
+        movieId: movieId
+      }));
+      setRemoveShowtimeData((prevData) => ({
         ...prevData,
         movieId: movieId
       }));
@@ -296,6 +339,18 @@ const Manager = () => {
             movies={movies}
           />
         </>
+      )}
+      <Button variant="contained" color="primary" onClick={() => setShowRemoveShowtimeForm(!showRemoveShowtimeForm)} sx={{ mt: 2 }}>
+        {showRemoveShowtimeForm ? 'Cancel' : 'Remove Showtime'}
+      </Button>
+      {showRemoveShowtimeForm && (
+        <RemoveShowtimeForm
+          removeShowtimeData={removeShowtimeData}
+          handleRemoveShowtimeChange={handleRemoveShowtimeChange}
+          handleRemoveShowtimeSubmit={handleRemoveShowtimeSubmit}
+          movies={movies}
+          showtimes={showtimes}
+        />
       )}
     </Box>
   );
