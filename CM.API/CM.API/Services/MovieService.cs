@@ -8,17 +8,32 @@ using CM.API.Repositories;
 using System.Threading.Tasks;
 
 namespace CM.API.Services;
+
+/// <summary>
+/// Service for managing movies.
+/// </summary>
 public class MovieService : IMovieService
 {
     private readonly AppDbContext _context;
     private readonly GenreRepository _genreRepository;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MovieService"/> class.
+    /// </summary>
+    /// <param name="context">The application database context.</param>
+    /// <param name="genreRepository">The Genre repo 
+    /// <see cref="CM.API.Repositories.GenreRepository"/></param>
     public MovieService(AppDbContext context, GenreRepository genreRepository)
     {
         _context = context;
         _genreRepository = genreRepository;
     }
 
+    /// <summary>
+    /// Adds a new movie.
+    /// </summary>
+    /// <param name="movie">The movie to add.</param>
+    /// <returns>A boolean indicating the success or failure of adding a movie.</returns>
     public async Task<bool> AddMovie(Movie movie)
     {
         // if movie already exists
@@ -39,6 +54,11 @@ public class MovieService : IMovieService
         return true;
     }
 
+    /// <summary>
+    /// Removes a movie.
+    /// </summary>
+    /// <param name="movie">The movie to remove.</param>
+    /// <returns>A boolean indicating the success or failure of removing a movie.</returns>
     public async Task<bool> RemoveMovie(Movie movie)
     {
         var existingMovie = await _context.Movies.FindAsync(movie.Id);
@@ -52,6 +72,12 @@ public class MovieService : IMovieService
         return true;
     }
 
+    /// <summary>
+    /// Edits an existing movie.
+    /// </summary>
+    /// <param name="oldMovie">The existing movie.</param>
+    /// <param name="newMovie">The new movie data.</param>
+    /// <returns>A boolean indicating the success or failure of editing a movie.</returns>
     public async Task<bool> EditMovie(Movie oldMovie, Movie newMovie)
     {
         var existingMovie = await _context.Movies
@@ -85,8 +111,14 @@ public class MovieService : IMovieService
         return true;
     }
 
+    /// <summary>
+    /// Gets a movie by its ID.
+    /// </summary>
+    /// <param name="id">The movie ID.</param>
+    /// <returns>The movie with the specified ID.</returns>
     public async Task<Movie?> GetMovieById(int id)
     {
+        // Fetch the movie by ID and include related entities
         return await _context.Movies
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
@@ -96,8 +128,15 @@ public class MovieService : IMovieService
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
+    /// <summary>
+    /// Gets a list of movies, optionally filtered by the genre and rating IDs.
+    /// </summary>
+    /// <param name="genreIds">Optional list of genre IDs to filter movies.</param>
+    /// <param name="ratingIds">Optional list of rating IDs to filter movies.</param>
+    /// <returns>A list of movies.</returns>
     public async Task<List<Movie>> GetMovies(List<int>? genreIds = null, List<int>? ratingIds = null)
     {
+        // Linq query for movies and related entities
         var query = _context.Movies
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
@@ -106,25 +145,33 @@ public class MovieService : IMovieService
             .Include(m => m.Reviews)
             .AsQueryable();
 
+        // Filter by genre IDs
         if (genreIds != null && genreIds.Any())
         {
             query = query.Where(m => m.Genres != null && m.Genres.Any(g => genreIds.Contains(g.Id)));
         }
 
+        // Filter by rating IDs
         if (ratingIds != null && ratingIds.Any())
         {
             query = query.Where(m => ratingIds.Contains(m.RatingId));
         }
-
+        // Execute the query
         return await query.ToListAsync();
     }
 
+    /// <summary>
+    /// Gets a list of genres by their IDs.
+    /// </summary>
+    /// <param name="genreIds">The list of genre IDs.</param>
+    /// <returns>A list of genres.</returns>
     public async Task<List<Genre>> GetGenresByIds(List<int> genreIds)
     {
         // Show in console the genre IDs 
         System.Console.WriteLine("Provided genre IDs: " + string.Join(", ", genreIds));
-
+        // Get genres from the genre repo
         var genres = await _genreRepository.GetGenres();
+        // Filter genres by their ids
         var fetchedGenres = genres
             .Where(g => genreIds.Contains(g.Id))
             .ToList();
