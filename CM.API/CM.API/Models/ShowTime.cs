@@ -9,9 +9,9 @@ public class Showtime
     // Foreign key for the associated movie
     public int MovieId { get; set; }
 
-    public required Movie Movie { get; set; }
+    public Movie? Movie { get; set; }
 
-    public required ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+    public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 
     // Max number of seats available
     public int Capacity { get; set; }
