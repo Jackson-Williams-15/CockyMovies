@@ -135,30 +135,31 @@ public class MovieService : IMovieService
     /// <param name="ratingIds">Optional list of rating IDs to filter movies.</param>
     /// <returns>A list of movies.</returns>
     public async Task<List<Movie>> GetMovies(List<int>? genreIds = null, List<int>? ratingIds = null)
+{
+    // Linq query for movies and related entities
+    var query = _context.Movies
+        .Include(m => m.Genres)
+        .Include(m => m.Showtimes)
+        .ThenInclude(s => s.Tickets)
+        .Include(m => m.Rating)
+        .Include(m => m.Reviews)
+        .AsQueryable();
+
+    // Filter by genre IDs
+    if (genreIds != null && genreIds.Any())
     {
-        // Linq query for movies and related entities
-        var query = _context.Movies
-            .Include(m => m.Genres)
-            .Include(m => m.Showtimes)
-            .ThenInclude(s => s.Tickets)
-            .Include(m => m.Rating)
-            .Include(m => m.Reviews)
-            .AsQueryable();
-
-        // Filter by genre IDs
-        if (genreIds != null && genreIds.Any())
-        {
-            query = query.Where(m => m.Genres != null && m.Genres.Any(g => genreIds.Contains(g.Id)));
-        }
-
-        // Filter by rating IDs
-        if (ratingIds != null && ratingIds.Any())
-        {
-            query = query.Where(m => ratingIds.Contains(m.RatingId));
-        }
-        // Execute the query
-        return await query.ToListAsync();
+        query = query.Where(m => m.Genres.Any(g => genreIds.Contains(g.Id)));
     }
+
+    // Filter by rating IDs
+    if (ratingIds != null && ratingIds.Any())
+    {
+        query = query.Where(m => ratingIds.Contains(m.RatingId));
+    }
+
+    // Execute the query
+    return await query.ToListAsync();
+}
 
     /// <summary>
     /// Gets a list of genres by their IDs.
