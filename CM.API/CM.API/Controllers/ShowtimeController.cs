@@ -1,10 +1,10 @@
-using CM.API.Data;  // Database context
-using CM.API.Interfaces;  // Interfaces for services
-using CM.API.Models;  // Models like Showtime, Movie, etc.
-using Microsoft.AspNetCore.Mvc;  // ASP.NET Core MVC
-using Microsoft.EntityFrameworkCore;  // Entity Framework Core
-using System.Linq;  // LINQ queries
-using System.Threading.Tasks;  // Asynchronous programming
+using CM.API.Data;
+using CM.API.Interfaces;
+using CM.API.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CM.API.Controllers
 {
@@ -12,12 +12,10 @@ namespace CM.API.Controllers
     [Route("api/[controller]")]
     public class ShowtimesController : ControllerBase
     {
-        private readonly IShowtimeService _showtimeService;  // Showtime service
-        private readonly IMovieService _movieService;  // Movie service
-        private readonly AppDbContext _context;  // Database context
-        private readonly ILogger<ShowtimesController> _logger;  // Logger for error handling
-
-        // Constructor for injecting services and dependencies
+        private readonly IShowtimeService _showtimeService;
+        private readonly IMovieService _movieService;
+        private readonly AppDbContext _context;
+        private readonly ILogger<ShowtimesController> _logger;
         public ShowtimesController(IShowtimeService showtimeService, IMovieService movieService, AppDbContext context, ILogger<ShowtimesController> logger)
         {
             _showtimeService = showtimeService;
@@ -26,7 +24,7 @@ namespace CM.API.Controllers
             _logger = logger;
         }
 
-        // POST: api/showtimes (Add a new showtime)
+        // POST: api/showtimes
         [HttpPost]
         public async Task<IActionResult> AddShowtime([FromBody] ShowtimeCreateDto showtimeDto)
         {
@@ -36,12 +34,7 @@ namespace CM.API.Controllers
             {
                 return NotFound("Movie not found.");
             }
-            if (movie == null)
-            {
-                return NotFound("Movie not found.");
-            }
 
-            // Create new Showtime entity
             var showtime = new Showtime
             {
                 StartTime = showtimeDto.StartTime,
@@ -51,24 +44,17 @@ namespace CM.API.Controllers
                 Tickets = new List<Ticket>(),
             };
 
-            // Add the showtime using the service
             var success = await _showtimeService.AddShowtime(showtime);
 
             if (!success)
             {
                 return BadRequest("A showtime with the same ID already exists.");
             }
-            if (!success)
-            {
-                return BadRequest("A showtime with the same ID already exists.");
-            }
 
             return Ok("Showtime added successfully.");
         }
-            return Ok("Showtime added successfully.");
-        }
 
-        // PUT: api/showtimes/{id} (Edit an existing showtime)
+        // POST: api/showtimes/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> EditShowtime(int id, [FromBody] ShowtimeUpdateDto showtimeDto)
         {
@@ -84,27 +70,19 @@ namespace CM.API.Controllers
                 return NotFound("Movie not found.");
             }
 
-            // Create the updated showtime entity
             var editedShowtime = new Showtime
             {
                 StartTime = showtimeDto.StartTime,
                 MovieId = showtimeDto.MovieId,
-                Movie = movie,  // Ensure the Movie property is set
+                Movie = movie,  // Set the Movie property explicitly
                 Capacity = showtimeDto.Capacity,
-                Tickets = new List<Ticket>()  // Initialize Tickets
+                Tickets = new List<Ticket>()  // Explicitly initialize Tickets
             };
 
             try
             {
                 var success = await _showtimeService.EditShowtime(id, editedShowtime);
-            try
-            {
-                var success = await _showtimeService.EditShowtime(id, editedShowtime);
 
-                if (!success)
-                {
-                    return NotFound("Showtime not found.");
-                }
                 if (!success)
                 {
                     return NotFound("Showtime not found.");
@@ -122,20 +100,8 @@ namespace CM.API.Controllers
                 return StatusCode(500, "Internal server error while editing showtime.");
             }
         }
-                return Ok("Showtime edited successfully.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error editing showtime with ID {id}: {ex.Message}");
-                return StatusCode(500, "Internal server error while editing showtime.");
-            }
-        }
 
-        // GET: api/showtimes/movie/{movieId} (Get all showtimes for a specific movie)
+        // GET: api/showtimes/movie/{movieId}
         [HttpGet("movie/{movieId}")]
         public async Task<IActionResult> GetShowtimesByMovieId(int movieId)
         {
@@ -145,21 +111,17 @@ namespace CM.API.Controllers
             {
                 return NotFound("No showtimes found for the specified movie.");
             }
-            if (showtimes == null || showtimes.Count == 0)
-            {
-                return NotFound("No showtimes found for the specified movie.");
-            }
 
             return Ok(showtimes);
         }
 
-        // GET: api/showtimes/{id} (Get details of a specific showtime)
+        // GET: api/showtimes/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetShowtimeById(int id)
         {
             var showtime = await _context.Showtime
-                .Include(s => s.Movie)  // Include movie details
-                .Include(s => s.Tickets)  // Include ticket details
+                .Include(s => s.Movie)
+                .Include(s => s.Tickets)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (showtime == null)
@@ -167,13 +129,7 @@ namespace CM.API.Controllers
                 _logger.LogWarning($"Showtime with ID {id} not found.");
                 return NotFound("Showtime not found.");
             }
-            if (showtime == null)
-            {
-                _logger.LogWarning($"Showtime with ID {id} not found.");
-                return NotFound("Showtime not found.");
-            }
 
-            // Map the Showtime entity to ShowtimeDto for response
             var showtimeDto = new ShowtimeDto
             {
                 Id = showtime.Id,
@@ -184,14 +140,15 @@ namespace CM.API.Controllers
                     Title = showtime.Movie.Title,
                     Description = showtime.Movie.Description,
                     Rating = showtime.Movie.Rating?.ToString() ?? "Unrated",
-                    DateReleased = showtime.Movie.DateReleased
+                    DateReleased = showtime.Movie.DateReleased,
                 },
                 Tickets = showtime.Tickets.Select(t => new TicketDto
                 {
                     Id = t.Id,
                     Price = t.Price
                 }).ToList(),
-                AvailableTickets = showtime.TicketsAvailable
+                AvailableTickets = showtime.TicketsAvailable,
+                Capacity = showtime.Capacity
             };
 
             return Ok(showtimeDto);
