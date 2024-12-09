@@ -43,12 +43,12 @@ class T4LISTS
         };
 
         //This is the Database Parameters for Site Load
-        public List<string> users = new List<string>() { "john@test.com", "ryan@gmail.com", "brenan@microsoft.com", "scott@wsfs.com", "jackson@fort.com" };
-        public List<string> ratings = new List<string>() { "G", "PG", "R" };
+        public List<string> users = new List<string>() { "john@test.com", "ryan@gmail.com", "brenan@microsoft.com", "scott@wsfs.com", "jackson@fort.com", "liam@taken.com" };
+        public List<string> ratings = new List<string>() { "G", "PG", "R", "Adult", "History", "PG-13" };
         public List<string> movies = new List<string>() { "TopGun2", "BlueCrush", "IronMan2"};
         public List<string> genres = new List<string>() { "70s", "80s", "90s"};
         public List<string> regions = new List<string>() {"NE", "SE", "NC", "SC", "SW", "NW"};
-        public List<string> showtimes = new List<string>() {"1:30", "3:30", "5:30"};
+        public List<string> showtimes = new List<string>() {"1:30", "3:30", "5:30", "7:30", "9:30"};
         public List<string> employees = new List<string>() {"John", "Hannah", "Lucy", "Bill"};
         public List<string> sstores = new List<string>() {"Forrest33", "Chicago01", "Dallas01", "Seattle01", "Sacremento01"};
      
