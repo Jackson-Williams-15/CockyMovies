@@ -1,39 +1,32 @@
-using CM.API.Interfaces;  // Interfaces for service layer
-using CM.API.Models;      // Application models like Genre
-using System.Collections.Generic;  // Collection types (e.g., List<T>)
-using System.Linq;        // LINQ (not used here but might be useful)
-using CM.API.Repositories;  // Repository classes for data access
+using CM.API.Interfaces;
+using CM.API.Models;
+using System.Collections.Generic;
+using System.Linq;
+using CM.API.Repositories;
+namespace CM.API.Services;
 
-namespace CM.API.Services
+public class GenreService : IGenreService
 {
-    // Service class for genre-related operations
-    public class GenreService : IGenreService
+    private readonly GenreRepository _genreRepository;
+
+    public GenreService(GenreRepository genreRepository)
     {
-        // Repository for accessing genre data
-        private readonly GenreRepository _genreRepository;
+        _genreRepository = genreRepository;
+    }
 
-        // Constructor to inject the repository
-        public GenreService(GenreRepository genreRepository)
-        {
-            _genreRepository = genreRepository;
-        }
+    public async Task<List<Genre>> GetGenres()
+    {
+        return await _genreRepository.GetGenres();
+    }
 
-        // Get all genres
-        public async Task<List<Genre>> GetGenres()
-        {
-            return await _genreRepository.GetGenres();
-        }
+    public async Task<Genre?> GetGenreById(int id)
+    {
+        return await _genreRepository.GetGenreById(id);
+    }
 
-        // Get a genre by its ID
-        public async Task<Genre?> GetGenreById(int id)
-        {
-            return await _genreRepository.GetGenreById(id);
-        }
-
-        // Add a new genre
-        public async Task<bool> AddGenre(Genre genre)
-        {
-            return await _genreRepository.AddGenre(genre);
-        }
+    public async Task<bool> AddGenre(Genre genre)
+    {
+        return await _genreRepository.AddGenre(genre);
     }
 }
+

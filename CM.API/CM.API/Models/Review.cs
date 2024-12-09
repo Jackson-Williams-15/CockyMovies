@@ -1,33 +1,14 @@
-namespace CM.API.Models
+namespace CM.API.Models;
+
+public class Review
 {
-    // Represents a movie review.
-    public class Review
-    {
-        // Unique identifier for the review.
-        public int Id { get; set; }
-
-        // Title of the review.
-        public string? Title { get; set; }
-
-        // Rating given in the review.
-        public int Rating { get; set; }
-
-        // Detailed description of the review.
-        public string? Description { get; set; }
-
-        // ID of the movie being reviewed.
-        public int MovieId { get; set; }
-
-        // Navigation property for the related Movie.
-        public Movie? Movie { get; set; }
-
-        // Username of the person who wrote the review.
-        public string? Username { get; set; }
-
-        // Number of likes the review has received.
-        public int Likes { get; set; }
-
-        // Collection of replies to the review.
-        public ICollection<Reply>? Reply { get; set; }
-    }
+    public int Id { get; set; }
+    public string? Title { get; set; }
+    public int Rating { get; set; } // Rating out of 5
+    public string? Description { get; set; }
+    public int MovieId { get; set; }
+    public Movie? Movie { get; set; } // Navigation property
+    public string? Username { get; set; }
+    public int Likes { get; set; }
+    public ICollection<Reply>? Reply { get; set; }
 }
