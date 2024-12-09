@@ -56,4 +56,6 @@ public class User
 
     // Navigation property to the PaymentDetails entity, which contains the user's payment information.
     public PaymentDetails? PaymentDetails { get; set; }
+
+    public string? Role { get; set; }
 }

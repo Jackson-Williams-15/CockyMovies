@@ -19,4 +19,5 @@ public class UserDto
 
     // User's payment details (optional).
     public PaymentDetailsDto? PaymentDetails { get; set; }
+    public string? Role { get; set; }
 }

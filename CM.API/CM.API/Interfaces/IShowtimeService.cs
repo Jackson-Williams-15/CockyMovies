@@ -9,4 +9,5 @@ public interface IShowtimeService
     Task<bool> EditShowtime(int id, Showtime editedShowtime);
 
     Task<List<ShowtimeDto>> GetShowtimesByMovieId(int movieId);
+    Task<bool> RemoveShowtime(int id);
 }

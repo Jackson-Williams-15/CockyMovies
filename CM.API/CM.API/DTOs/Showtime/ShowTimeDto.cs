@@ -6,4 +6,5 @@ public class ShowtimeDto
     public int AvailableTickets { get; set; }
     public decimal TicketPrice => Tickets.FirstOrDefault()?.Price ?? 0;
     public MovieDto? Movie { get; set; }
+    public int Capacity { get; set; }
 }
