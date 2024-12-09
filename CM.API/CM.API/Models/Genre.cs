@@ -1,8 +1,15 @@
-namespace CM.API.Models;
-
-public class Genre
+namespace CM.API.Models
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public List<Movie> Movies { get; set; } = new();
+    // Model representing a genre
+    public class Genre
+    {
+        // Genre's unique identifier
+        public int Id { get; set; }
+
+        // Name of the genre
+        public string Name { get; set; } = string.Empty;
+
+        // List of movies associated with this genre
+        public List<Movie> Movies { get; set; } = new();
+    }
 }
