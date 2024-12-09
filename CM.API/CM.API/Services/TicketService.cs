@@ -8,15 +8,29 @@ using System.Threading.Tasks;
 
 namespace CM.API.Services
 {
+    /// <summary>
+    /// Service for managing tickets.
+    /// </summary>
     public class TicketService : ITicketService
     {
         private readonly AppDbContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TicketService"/> class.
+        /// </summary>
+        /// <param name="context">The application database context.</param>
         public TicketService(AppDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Adds a new ticket.
+        /// </summary>
+        /// <param name="ticket">The ticket to add.</param>
+        /// <returns>
+        /// true if the ticket was added successfully, false otherwise.
+        /// </returns>
         public async Task<bool> AddTicket(Ticket ticket)
         {
             // Check if the ticket already exists
@@ -30,6 +44,14 @@ namespace CM.API.Services
             return true;
         }
 
+        /// <summary>
+        /// Edits the price of tickets for a specific showtime.
+        /// </summary>
+        /// <param name="showtimeId">The showtime ID.</param>
+        /// <param name="newPrice">The new ticket price.</param>
+        /// <returns>
+        /// true if the ticket prices were updated successfully, false otherwise.
+        /// </returns>
         public async Task<bool> EditTicket(int showtimeId, decimal newPrice)
         {
             // Find the showtime
@@ -54,15 +76,24 @@ namespace CM.API.Services
             return true;
         }
 
-
-
-        // Get all tickets
+        /// <summary>
+        /// Gets all tickets.
+        /// </summary>
+        /// <returns>
+        /// Returns a list of all tickets.
+        /// </returns>
         public async Task<List<Ticket>> GetAllTickets()
         {
             return await _context.Ticket.ToListAsync();
         }
 
-        // Get tickets by showtime
+        /// <summary>
+        /// Gets tickets by movie ID.
+        /// </summary>
+        /// <param name="movieId">The movie ID.</param>
+        /// <returns>
+        /// A list of tickets for the specified movie showtime.
+        /// </returns>
         public async Task<List<Ticket>> GetTicketsByMovieId(int movieId)
         {
             return await _context.Ticket
@@ -70,6 +101,13 @@ namespace CM.API.Services
                                  .ToListAsync();
         }
 
+        /// <summary>
+        /// Gets a ticket by ID.
+        /// </summary>
+        /// <param name="id">The ticket ID.</param>
+        /// <returns>
+        /// The ticket details, or null if the ticket is not found.
+        /// </returns>
         public async Task<TicketDto?> GetTicketById(int id)
         {
             var ticket = await _context.Ticket.FindAsync(id);
@@ -82,6 +120,14 @@ namespace CM.API.Services
             };
         }
 
+        /// <summary>
+        /// Removes tickets from a specific showtime.
+        /// </summary>
+        /// <param name="showtimeId">The showtime ID.</param>
+        /// <param name="numberOfTickets">The number of tickets to remove.</param>
+        /// <returns>
+        /// A value of true if the tickets were removed successfully, false otherwise.
+        /// </returns>
         public async Task<bool> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
         {
             if (numberOfTickets <= 0)
@@ -126,6 +172,15 @@ namespace CM.API.Services
 
             return true;
         }
+
+        /// <summary>
+        /// Adds tickets to a specific showtime.
+        /// </summary>
+        /// <param name="showtimeId">The showtime ID.</param>
+        /// <param name="numberOfTickets">The number of tickets to add.</param>
+        /// <returns>
+        /// A value of true if the tickets were added successfully, false otherwise.
+        /// </returns>
         public async Task<bool> AddTicketsToShowtime(int showtimeId, int numberOfTickets)
         {
             if (numberOfTickets <= 0)
