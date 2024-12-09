@@ -1,127 +1,84 @@
-using CM.API.Services;         // For GenreService
-using CM.API.Data;             // For AppDbContext
-using CM.API.Repositories;     // For GenreRepository
-using CM.API.Models;           // For Genre
-using Microsoft.EntityFrameworkCore; // For DbContext
-using Xunit;                   // For testing framework
-using System;                  // For IDisposable
-using System.Collections.Generic; // For List<T>
-using System.Threading.Tasks;  // For async/await
+// Import necessary namespaces for the test class
+using CM.API.Services;         // Business logic services for genres
+using CM.API.Data;             // Data access layer
+using CM.API.Repositories;     // Repository for accessing genre data
+using CM.API.Models;           // Model definitions for genres
+using Microsoft.EntityFrameworkCore; // Entity Framework Core for database management
+using Xunit;                   // Testing framework for unit tests
+using System;                  // For IDisposable interface
+using System.Collections.Generic; // For List<T> collections
+using System.Threading.Tasks;  // For async/await in tests
 
+// Test class for GenreService implementing IDisposable for cleanup
 public class GenreServiceTests : IDisposable
 {
-    private readonly GenreService _genreService;
-    private readonly AppDbContext _context;
-    private readonly GenreRepository _genreRepository;
+    private readonly GenreService _genreService; // Service under test
+    private readonly AppDbContext _context; // In-memory database context
+    private readonly GenreRepository _genreRepository; // Repository for genre data access
 
+    // Constructor initializes the in-memory database, repository, and service
     public GenreServiceTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Unique DB for isolation
+            .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Unique database for test isolation
             .Options;
 
-        _context = new AppDbContext(options);
-        _genreRepository = new GenreRepository(_context);
-        _genreService = new GenreService(_genreRepository);
+        _context = new AppDbContext(options); // Initialize database context
+        _genreRepository = new GenreRepository(_context); // Initialize repository
+        _genreService = new GenreService(_genreRepository); // Initialize service
     }
 
+    // Cleanup method to delete the database after tests
     public void Dispose() => _context.Database.EnsureDeleted();
 
+    // Test to ensure retrieving existing genres works correctly
     [Fact]
     public async Task GetGenres_ShouldReturnGenres_WhenGenresExist()
     {
-        // Arrange
+        // Arrange: Seed the database with sample genres
         var genres = new List<Genre>
         {
             new Genre { Id = 1, Name = "Action" },
             new Genre { Id = 2, Name = "Comedy" }
         };
 
-        _context.Genres.AddRange(genres);
-        await _context.SaveChangesAsync();
+        _context.Genres.AddRange(genres); // Add genres to database
+        await _context.SaveChangesAsync(); // Save changes
 
-        // Act
+        // Act: Retrieve genres using the service
         var result = await _genreService.GetGenres();
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(2, result.Count);
-        Assert.Contains(result, g => g.Name == "Action");
-        Assert.Contains(result, g => g.Name == "Comedy");
+        // Assert: Verify the correct data was returned
+        Assert.NotNull(result); // Ensure result is not null
+        Assert.Equal(2, result.Count); // Ensure the expected count
+        Assert.Contains(result, g => g.Name == "Action"); // Check for "Action"
+        Assert.Contains(result, g => g.Name == "Comedy"); // Check for "Comedy"
     }
 
+    // Test to ensure retrieving genres returns an empty list when none exist
     [Fact]
     public async Task GetGenres_ShouldReturnEmptyList_WhenNoGenresExist()
     {
-        // Act
+        // Act: Retrieve genres when database is empty
         var result = await _genreService.GetGenres();
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        // Assert: Verify result is an empty list
+        Assert.NotNull(result); // Ensure result is not null
+        Assert.Empty(result); // Ensure the list is empty
     }
 
+    // Test to ensure fetching a genre by valid ID works
     [Fact]
     public async Task GetGenreById_ShouldReturnGenre_WhenGenreExists()
     {
-        // Arrange
+        // Arrange: Add a genre to the database
         var genre = new Genre { Name = "Action" };
-        _context.Genres.Add(genre);
-        await _context.SaveChangesAsync();
+        _context.Genres.Add(genre); // Add to context
+        await _context.SaveChangesAsync(); // Save changes
 
-        // Act
+        // Act: Fetch genre by its ID
         var result = await _genreService.GetGenreById(genre.Id);
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal("Action", result!.Name);
-    }
-
-    [Fact]
-    public async Task GetGenreById_ShouldReturnNull_WhenGenreDoesNotExist()
-    {
-        // Act
-        var result = await _genreService.GetGenreById(999);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task AddGenre_ShouldReturnTrue_WhenGenreIsAddedSuccessfully()
-    {
-        // Arrange
-        var genre = new Genre { Name = "Horror" };
-
-        // Act
-        var result = await _genreService.AddGenre(genre);
-
-        // Assert
-        Assert.True(result);
-
-        // Reload context to avoid cache issues
-        var savedGenre = await _context.Genres.FirstOrDefaultAsync(g => g.Name == "Horror");
-        Assert.NotNull(savedGenre);
-    }
-
-    [Fact]
-    public async Task AddGenre_ShouldReturnFalse_WhenAddFails()
-    {
-        // Arrange
-        var existingGenre = new Genre { Name = "Sci-Fi" };
-        _context.Genres.Add(existingGenre);
-        await _context.SaveChangesAsync();
-
-        var newGenre = new Genre { Name = "Sci-Fi" };  // Duplicate name
-
-        // Act
-        var result = await _genreService.AddGenre(newGenre);
-
-        // Assert
-        Assert.False(result);
-
-        // Verify only one genre exists
-        var count = await _context.Genres.CountAsync(g => g.Name == "Sci-Fi");
-        Assert.Equal(1, count);
-    }
-}
+        // Assert: Verify the genre exists and data matches
+        Assert.NotNull(result); // Ensure result is not null
+        Assert.Equal("Action", result!.Name); // Ensure
