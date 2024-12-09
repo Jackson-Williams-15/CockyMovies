@@ -22,7 +22,8 @@ namespace T4MYSQLINSTALLER
     {
         public static void createmysqldb()
         { 
-            string connectionString = "server=localhost;user=root;password=test12345;port=3307"; 
+            string connectionString = "server=localhost;user=root;password=test12345;port=3307";
+            Console.WriteLine("Your Current Connection String is:" + connectionString + "If This is incorrect your installation will give an error.");
             MySqlConnection connection = new MySqlConnection(connectionString); 
             try { 
                 connection.Open(); 

@@ -26,43 +26,11 @@ namespace MENUSYSTEM35
         string storecode;
         string manager;
         string state;
-
-        public class Product
-        {
-            public int ProductID { get; set; }
-            public string ProductName { get; set; }
-            public decimal Price { get; set; }
-        }
-
-        public override string ToString()
-        {
-            return "LinqSelected:" + id + " " + manager + "        " + storecode + "," + state;
-        }
-
+       
         // Driver code 
         static public void DiagMenu()
         {
-            T4LISTS OurLists2 = new T4LISTS();
 
-            List<Menu35> stores = new List<Menu35>()
-    { 
-          
-        // Create 5 Student details 
-        new Menu35{ id = 101, manager = "Sravan", storecode = "Forrest33", state = "SC" },
-        new Menu35{ id = 102, manager = "deepu", storecode = "Chicago01" , state = "IL"},
-        new Menu35{ id = 103, manager = "manoja", storecode = "Dallas01" , state= "TX"},
-        new Menu35{ id = 104, manager = "Sathwik", storecode = "Sacramento01" ,  state="CA" },
-        new Menu35{ id = 105, manager = "Saran", storecode = "Seatle01", state = "WA" },
-        new Menu35{ id = 106, manager = "Joe", storecode = "Smithfield01", state = "VA" },
-        new Menu35{ id = 107, manager = "April", storecode = "Stohrs01", state = "VT" }
-    };
-
-            List<Product> products = new List<Product>
-        {
-        new Product { ProductName = "Sr. Ticket", Price = 5.99m },
-        new Product { ProductName = "Child Ticket", Price = 4.99m },
-        new Product { ProductName = "Adult Ticket", Price = 8.99m }
-        };
             int exit = 0;
             int number = 0;
             do
@@ -95,6 +63,10 @@ namespace MENUSYSTEM35
                         if (somestring[0] == 'O')
                         {
                             T4MYSQL.connectiontest();
+
+
+                            T4MYSQL.showtables();
+
                             exit = 101;
                         }
                         else if (somestring[0] == 'M')

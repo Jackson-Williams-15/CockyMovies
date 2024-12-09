@@ -22,12 +22,14 @@ public class ReviewService : IReviewService
 
     public async Task<bool> AddReview(Review review)
     {
-        try {
-        _context.Reviews.Add(review);
-        await _context.SaveChangesAsync();
-        return true;
+        try
+        {
+            _context.Reviews.Add(review);
+            await _context.SaveChangesAsync();
+            return true;
         }
-        catch(Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(ex, "Error adding review");
             throw;
         }
@@ -38,5 +40,26 @@ public class ReviewService : IReviewService
         return await _context.Reviews
             .Where(r => r.MovieId == movieId)
             .ToListAsync();
+    }
+
+    public async Task<bool> RemoveReview(int reviewId)
+    {
+        try
+        {
+            var review = await _context.Reviews.FindAsync(reviewId);
+
+            if (review == null)
+            {
+                return false;
+            }
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing review.");
+            throw;
+        }
     }
 }

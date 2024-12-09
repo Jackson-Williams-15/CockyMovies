@@ -16,6 +16,7 @@ namespace T4MSSQLINSTALLER
         public static void createmssqldb()
         {
             string connectionString = "Data Source=TEAM4LAB2\\COCKYMSSQL;Initial Catalog=COCKY;Integrated Security=True;";
+            Console.WriteLine("Your Current Connection String is:" + connectionString + "If This is incorrect your installation will give an error.");
             SqlConnection connection = new SqlConnection(connectionString);
 
             try

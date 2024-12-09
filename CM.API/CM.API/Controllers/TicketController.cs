@@ -35,6 +35,26 @@ namespace CM.API.Controllers
             return BadRequest("Ticket already exists or invalid data.");
         }
 
+        // PUT: api/tickets/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditTicket(int id, [FromBody] TicketUpdateDto updatedTicketDto)
+        {
+            if (updatedTicketDto == null)
+            {
+                return BadRequest("Updated ticket cannot be null.");
+            }
+
+            var success = await _ticketService.EditTicket(id, updatedTicketDto);
+
+            if (success)
+            {
+                return Ok("Ticket updated successfully.");
+            }
+
+            return NotFound("Ticket not found or update failed.");
+        }
+
+
         // GET: api/tickets
         [HttpGet]
         public async Task<IActionResult> GetAllTickets()

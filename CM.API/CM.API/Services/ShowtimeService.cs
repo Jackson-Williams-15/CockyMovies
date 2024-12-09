@@ -53,6 +53,48 @@ public class ShowtimeService : IShowtimeService
         return true;
     }
 
+    public async Task<bool> EditShowtime(int id, Showtime editedShowtime)
+    {
+        var existingShowtime = await _context.Showtime
+            .Include(s => s.Tickets)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        if (existingShowtime == null)
+        {
+            return false; // Showtime not found
+        }
+
+        // Update the fields
+        existingShowtime.StartTime = editedShowtime.StartTime;
+        existingShowtime.MovieId = editedShowtime.MovieId;
+
+        // Check if capacity has changed
+        if (editedShowtime.Capacity != existingShowtime.Capacity)
+        {
+            if (editedShowtime.Capacity < existingShowtime.TicketsSold)
+            {
+                throw new InvalidOperationException("New capacity cannot be less than the number of tickets already sold.");
+            }
+
+            existingShowtime.Capacity = editedShowtime.Capacity;
+            existingShowtime.TicketsAvailable = editedShowtime.Capacity - existingShowtime.TicketsSold;
+        }
+
+        try
+        {
+            _context.Showtime.Update(existingShowtime);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            Console.WriteLine($"Error editing showtime: {ex.Message}");
+            return false;
+        }
+    }
+
+
     public async Task<List<ShowtimeDto>> GetShowtimesByMovieId(int movieId)
     {
         var showtimes = await _context.Showtime

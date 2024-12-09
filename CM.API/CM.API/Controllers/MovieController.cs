@@ -140,5 +140,39 @@ namespace CM.API.Controllers
 
             return Ok("Movie removed successfully.");
         }
+
+        // PUT: api/movies/edit
+        // PUT: api/movies/edit/{id}
+        [HttpPut("edit/{id}")]
+        public async Task<IActionResult> EditMovie(int id, [FromBody] EditMovieDto editMovieDto)
+        {
+            var oldMovie = await _movieService.GetMovieById(id);
+            if (oldMovie == null)
+            {
+                return NotFound("Original movie not found.");
+            }
+
+            // Map EditMovieDto to Movie entity
+            var newMovie = new Movie
+            {
+                Title = editMovieDto.Title,
+                Description = editMovieDto.Description,
+                DateReleased = editMovieDto.DateReleased,
+                ImageUrl = editMovieDto.ImageUrl,
+                RatingId = editMovieDto.RatingId,
+                Genres = editMovieDto.GenreIds != null
+                    ? await _movieService.GetGenresByIds(editMovieDto.GenreIds)
+                    : new List<Genre>(),
+                Showtimes = new List<Showtime>()
+            };
+
+            var success = await _movieService.EditMovie(oldMovie, newMovie);
+            if (!success)
+            {
+                return BadRequest("Failed to update the movie.");
+            }
+
+            return Ok("Movie updated successfully.");
+        }
     }
 }
