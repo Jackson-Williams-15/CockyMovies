@@ -20,5 +20,5 @@ public class Movie
     }
 
     public int RatingId { get; set; }
-    public Rating Rating { get; set; }
+    public Rating? Rating { get; set; }
 }
