@@ -29,19 +29,9 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Hash the password for the manager account
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword("managerpassword");
+        // Apply data seeding
+            modelBuilder.Seed();
 
-        modelBuilder.Entity<User>().HasData(
-            new User
-            {
-                Id = 2,
-                Username = "Manager",
-                Email = "managerEmail@example.com",
-                Password = hashedPassword, // Use the hashed password
-                Role = "Manager"
-            }
-        );
         // This makes the title required
         modelBuilder.Entity<Movie>()
             .Property(m => m.Title)
@@ -50,10 +40,15 @@ public class AppDbContext : DbContext
         .Property(p => p.Id)
         .ValueGeneratedOnAdd();
 
+        // Configure many-to-many relationship between Movie and Genre
         modelBuilder.Entity<Movie>()
-       .HasMany(m => m.Genres)
-       .WithMany(g => g.Movies)
-       .UsingEntity(j => j.ToTable("MovieGenres"));
+            .HasMany(m => m.Genres)
+            .WithMany(g => g.Movies)
+            .UsingEntity<Dictionary<string, object>>(
+                "MovieGenres",
+                j => j.HasOne<Genre>().WithMany().HasForeignKey("GenresId"),
+                j => j.HasOne<Movie>().WithMany().HasForeignKey("MoviesId")
+            );
 
         modelBuilder.Entity<Movie>()
                  .HasOne(m => m.Rating)
@@ -81,15 +76,6 @@ public class AppDbContext : DbContext
             .HasOne(u => u.PaymentDetails)
             .WithOne()
             .HasForeignKey<User>(u => u.PaymentDetailsId);
-
-        // Data seed ratings
-        modelBuilder.Entity<Rating>().HasData(
-            new Rating { Id = 1, Name = "G" },
-            new Rating { Id = 2, Name = "PG" },
-            new Rating { Id = 3, Name = "PG-13" },
-            new Rating { Id = 4, Name = "R" },
-            new Rating { Id = 5, Name = "NC-17" }
-        );
 
         modelBuilder.Entity<Showtime>()
            .HasMany(s => s.Tickets)
