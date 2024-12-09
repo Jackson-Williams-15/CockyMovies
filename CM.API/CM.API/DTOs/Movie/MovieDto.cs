@@ -3,7 +3,9 @@ public class MovieDto
 {
     // The unique identifier of the movie.
     public int Id { get; set; }
+    // The title of the movie.
     public string Title { get; set; }
+    // The description of the movie.
     public string? Description { get; set; }
 
     // The release date of the movie.
