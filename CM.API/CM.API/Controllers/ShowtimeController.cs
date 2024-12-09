@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CM.API.Controllers
 {
+    /// <summary>
+    /// Controller for managing showtimes.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class ShowtimesController : ControllerBase
@@ -16,6 +19,14 @@ namespace CM.API.Controllers
         private readonly IMovieService _movieService;
         private readonly AppDbContext _context;
         private readonly ILogger<ShowtimesController> _logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShowtimesController"/> class.
+        /// </summary>
+        /// <param name="showtimeService">The showtime service.</param>
+        /// <param name="movieService">The movie service.</param>
+        /// <param name="context">The database context.</param>
+        /// <param name="logger">The logger.</param>
         public ShowtimesController(IShowtimeService showtimeService, IMovieService movieService, AppDbContext context, ILogger<ShowtimesController> logger)
         {
             _showtimeService = showtimeService;
@@ -24,10 +35,16 @@ namespace CM.API.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Adds a new showtime.
+        /// </summary>
+        /// <param name="showtimeDto">The showtime data transfer object.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of the adding the showtime.</returns>
         // POST: api/showtimes
         [HttpPost]
         public async Task<IActionResult> AddShowtime([FromBody] ShowtimeCreateDto showtimeDto)
         {
+            // Fetch the movie id to add to
             var movie = await _movieService.GetMovieById(showtimeDto.MovieId);
 
             if (movie == null)
@@ -35,6 +52,7 @@ namespace CM.API.Controllers
                 return NotFound("Movie not found.");
             }
 
+            // Creates showtime object
             var showtime = new Showtime
             {
                 StartTime = showtimeDto.StartTime,
@@ -44,6 +62,7 @@ namespace CM.API.Controllers
                 Tickets = new List<Ticket>(),
             };
 
+            // Add showtime using the service
             var success = await _showtimeService.AddShowtime(showtime);
 
             if (!success)
@@ -54,7 +73,13 @@ namespace CM.API.Controllers
             return Ok("Showtime added successfully.");
         }
 
-        // POST: api/showtimes/{id}
+        /// <summary>
+        /// Edits an existing showtime.
+        /// </summary>
+        /// <param name="id">The showtime ID.</param>
+        /// <param name="showtimeDto">The showtime data transfer object.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of editing the showtime.</returns>
+        // PUT: api/showtimes/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> EditShowtime(int id, [FromBody] ShowtimeUpdateDto showtimeDto)
         {
@@ -70,6 +95,7 @@ namespace CM.API.Controllers
                 return NotFound("Movie not found.");
             }
 
+            // Create the edited showtime object
             var editedShowtime = new Showtime
             {
                 StartTime = showtimeDto.StartTime,
@@ -79,6 +105,7 @@ namespace CM.API.Controllers
                 Tickets = new List<Ticket>()  // Explicitly initialize Tickets
             };
 
+            // try and catch for editing the showtimes, throws exception if failed
             try
             {
                 var success = await _showtimeService.EditShowtime(id, editedShowtime);
@@ -101,12 +128,18 @@ namespace CM.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets showtimes by movie ID.
+        /// </summary>
+        /// <param name="movieId">The movie ID.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of the getting specified showtime by the relevant movie.</returns>
         // GET: api/showtimes/movie/{movieId}
         [HttpGet("movie/{movieId}")]
         public async Task<IActionResult> GetShowtimesByMovieId(int movieId)
         {
             var showtimes = await _showtimeService.GetShowtimesByMovieId(movieId);
 
+            // Checks for showtimes in movie
             if (showtimes == null || showtimes.Count == 0)
             {
                 return NotFound("No showtimes found for the specified movie.");
@@ -115,10 +148,16 @@ namespace CM.API.Controllers
             return Ok(showtimes);
         }
 
+        /// <summary>
+        /// Gets a showtime by ID.
+        /// </summary>
+        /// <param name="id">The showtime ID.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of getting specified showtime.</returns>
         // GET: api/showtimes/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetShowtimeById(int id)
         {
+            // Fetch the showtime by ID, including related movie and tickets
             var showtime = await _context.Showtime
                 .Include(s => s.Movie)
                 .Include(s => s.Tickets)
@@ -130,6 +169,7 @@ namespace CM.API.Controllers
                 return NotFound("Showtime not found.");
             }
 
+            // Map Showtime to DTO
             var showtimeDto = new ShowtimeDto
             {
                 Id = showtime.Id,
@@ -154,6 +194,11 @@ namespace CM.API.Controllers
             return Ok(showtimeDto);
         }
 
+        /// <summary>
+        /// Gets a showtime by ID.
+        /// </summary>
+        /// <param name="id">The showtime ID.</param>
+        /// <returns>An <see cref="IActionResult"/> representing the result of removing the showtime.</returns>
         // DELETE: api/showtimes/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveShowtime(int id)
