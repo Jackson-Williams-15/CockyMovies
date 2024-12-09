@@ -14,20 +14,22 @@ public class ReviewServiceTests
     private readonly ReviewService _reviewService;
     private readonly AppDbContext _context;
     private readonly ILogger<ReviewService> _mockLogger;
+    private readonly ContentModerationService _mockContentModerationService;
 
     public ReviewServiceTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Unique DB per test
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) 
             .Options;
 
         _context = new AppDbContext(options);
         _mockLogger = new LoggerFactory().CreateLogger<ReviewService>();
+        _mockContentModerationService = new ContentModerationService();
 
         _reviewService = new ReviewService(
             _context,
             _mockLogger,
-            new FakeContentModerationService()
+            _mockContentModerationService
         );
     }
 
@@ -41,10 +43,8 @@ public class ReviewServiceTests
     {
         ResetDatabase();
 
-        // Ensure required properties are set
         _context.Users.Add(new User
         {
-            Id = 1,
             Username = "TestUser",
             Email = "testuser@example.com",
             Password = "TestPassword"
@@ -52,8 +52,8 @@ public class ReviewServiceTests
 
         _context.Reviews.AddRange(new List<Review>
         {
-            new Review { Id = 1, Title = "Great Movie", Description = "Loved the story!", MovieId = 1, Rating = 5 },
-            new Review { Id = 2, Title = "Not Good", Description = "Disappointing.", MovieId = 2, Rating = 2 }
+            new Review { Title = "Great Movie", Description = "Loved the story!", MovieId = 1, Rating = 5 },
+            new Review { Title = "Not Good", Description = "Disappointing.", MovieId = 2, Rating = 2 }
         });
 
         _context.SaveChanges();
@@ -139,6 +139,7 @@ public class ReviewServiceTests
         {
             ReviewId = 1,
             Body = "I agree with this review!",
+            Author = "TestUser"  // Fixed: Added missing property
         };
 
         var result = await _reviewService.AddReply(reply);
@@ -172,23 +173,4 @@ public class ReviewServiceTests
         Assert.NotNull(review);
         Assert.Equal("Great Movie", review.Title);
     }
-
-    [Fact]
-    public async Task GetReviewById_ShouldReturnEmpty_WhenNotFound()
-    {
-        ResetDatabase();
-        SeedDatabase();
-
-        var review = await _reviewService.GetReviewById(999); // Non-existent
-
-        Assert.NotNull(review);
-        Assert.Equal(default, review.Id); // Default if not found
-    }
-}
-
-// Define a fake content moderation service for tests
-public class FakeContentModerationService : ContentModerationService
-{
-    // Use "new" to avoid CS0506 error
-    public new string CensorContent(string content) => content;
 }

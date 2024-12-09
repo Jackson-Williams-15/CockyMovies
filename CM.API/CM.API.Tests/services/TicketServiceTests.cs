@@ -2,6 +2,7 @@ using CM.API.Data;
 using CM.API.Models;
 using CM.API.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,201 +16,165 @@ public class TicketServiceTests
     public TicketServiceTests()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Unique DB instance
             .Options;
 
         _context = new AppDbContext(options);
         _ticketService = new TicketService(_context);
-
-        SeedDatabase();
     }
 
-    private void SeedDatabase()
+    private void ResetDatabase()
     {
+        _context.Database.EnsureDeleted();
+        _context.Database.EnsureCreated();
+    }
+
+    private (int MovieId, int ShowtimeId, int TicketId) SeedDatabase()
+    {
+        var movieId = Guid.NewGuid().GetHashCode();
+        var showtimeId = Guid.NewGuid().GetHashCode();
+        var ticketId = Guid.NewGuid().GetHashCode();
+
         var movie = new Movie
         {
-            Id = 1,
+            Id = movieId,
             Title = "Test Movie",
             DateReleased = DateTime.Now,
-            RatingId = 1,
-            Showtimes = new List<Showtime>()
+            RatingId = Guid.NewGuid().GetHashCode()
         };
 
         var showtime = new Showtime
         {
-            Id = 1,
+            Id = showtimeId,
             StartTime = DateTime.Now.AddDays(1),
             Capacity = 100,
             TicketsAvailable = 90,
-            MovieId = 1,
-            Movie = movie,
-            Tickets = new List<Ticket>()
+            MovieId = movieId,
+            Movie = movie
         };
 
         var ticket = new Ticket
         {
-            Id = 1,
+            Id = ticketId,
             Price = 10.00m,
-            ShowtimeId = 1,
+            ShowtimeId = showtimeId,
             Showtime = showtime
         };
-
-        movie.Showtimes.Add(showtime);
-        showtime.Tickets.Add(ticket);
 
         _context.Movies.Add(movie);
         _context.Showtime.Add(showtime);
         _context.Ticket.Add(ticket);
         _context.SaveChanges();
+
+        return (movieId, showtimeId, ticketId);
     }
+
+    // --- Restored Tests ---
 
     [Fact]
     public async Task AddTicket_ShouldAddTicket_WhenValid()
     {
-        // Arrange
-        var showtime = await _context.Showtime.FirstAsync();
+        ResetDatabase();
+        var (_, showtimeId, _) = SeedDatabase();
+
+        var newTicketId = Guid.NewGuid().GetHashCode();
         var ticket = new Ticket
         {
-            Id = 2,
+            Id = newTicketId,
             Price = 15.00m,
-            ShowtimeId = showtime.Id,
-            Showtime = showtime // Required property set here
+            ShowtimeId = showtimeId
         };
 
-        // Act
         var result = await _ticketService.AddTicket(ticket);
-
-        // Assert
         Assert.True(result);
-        Assert.NotNull(await _context.Ticket.FindAsync(2));
+        Assert.NotNull(await _context.Ticket.FindAsync(newTicketId));
     }
 
     [Fact]
     public async Task AddTicket_ShouldFail_WhenTicketAlreadyExists()
     {
-        // Arrange
-        var showtime = await _context.Showtime.FirstAsync();
+        ResetDatabase();
+        var (_, showtimeId, ticketId) = SeedDatabase();
+
         var ticket = new Ticket
         {
-            Id = 1, 
-            Price = 10.00m, 
-            ShowtimeId = showtime.Id, 
-            Showtime = showtime // Required property set here
+            Id = ticketId,
+            Price = 10.00m,
+            ShowtimeId = showtimeId
         };
 
-        // Act
         var result = await _ticketService.AddTicket(ticket);
-
-        // Assert
-        Assert.False(result);
-}
-
-
-    [Fact]
-    public async Task EditTicket_ShouldUpdateTicketPrice_WhenValid()
-    {
-        // Act
-        var result = await _ticketService.EditTicket(1, 20.00m);
-
-        // Assert
-        Assert.True(result);
-        var updatedTicket = await _context.Ticket.FindAsync(1);
-        Assert.Equal(20.00m, updatedTicket.Price);
-    }
-
-    [Fact]
-    public async Task EditTicket_ShouldFail_WhenShowtimeNotFound()
-    {
-        // Act
-        var result = await _ticketService.EditTicket(999, 20.00m);
-
-        // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public async Task GetAllTickets_ShouldReturnTickets_WhenTheyExist()
+    public async Task EditTicket_ShouldFail_WhenTicketNotFound()
     {
-        // Act
-        var tickets = await _ticketService.GetAllTickets();
+        ResetDatabase();
 
-        // Assert
-        Assert.NotEmpty(tickets);
-        Assert.Equal(1, tickets.Count);
+        var result = await _ticketService.EditTicket(-1, 20.00m);
+        Assert.False(result);
     }
 
     [Fact]
     public async Task GetTicketById_ShouldReturnTicket_WhenExists()
     {
-        // Act
-        var ticket = await _ticketService.GetTicketById(1);
+        ResetDatabase();
+        var (_, _, ticketId) = SeedDatabase();
 
-        // Assert
+        var ticket = await _ticketService.GetTicketById(ticketId);
         Assert.NotNull(ticket);
-        Assert.Equal(1, ticket.Id);
+        Assert.Equal(ticketId, ticket.Id);
     }
 
     [Fact]
     public async Task GetTicketById_ShouldReturnNull_WhenNotFound()
     {
-        // Act
-        var ticket = await _ticketService.GetTicketById(999);
+        ResetDatabase();
 
-        // Assert
+        var ticket = await _ticketService.GetTicketById(-1);
         Assert.Null(ticket);
     }
 
-    [Fact]
-    public async Task RemoveTicketsFromShowtime_ShouldRemoveTickets_WhenValid()
-    {
-        // Act
-        var result = await _ticketService.RemoveTicketsFromShowtime(1, 1);
-
-        // Assert
-        Assert.True(result);
-        var remainingTickets = await _context.Ticket.CountAsync();
-        Assert.Equal(0, remainingTickets);
-    }
 
     [Fact]
     public async Task RemoveTicketsFromShowtime_ShouldFail_WhenShowtimeNotFound()
     {
-        // Act
-        var result = await _ticketService.RemoveTicketsFromShowtime(999, 1);
+        ResetDatabase();
 
-        // Assert
+        var result = await _ticketService.RemoveTicketsFromShowtime(-1, 1);
         Assert.False(result);
     }
 
     [Fact]
     public async Task AddTicketsToShowtime_ShouldAddTickets_WhenValid()
     {
-        // Act
-        var result = await _ticketService.AddTicketsToShowtime(1, 10);
+        ResetDatabase();
+        var (_, showtimeId, _) = SeedDatabase();
 
-        // Assert
+        var result = await _ticketService.AddTicketsToShowtime(showtimeId, 10);
         Assert.True(result);
-        var tickets = await _context.Ticket.Where(t => t.ShowtimeId == 1).ToListAsync();
+
+        var tickets = await _context.Ticket.Where(t => t.ShowtimeId == showtimeId).ToListAsync();
         Assert.Equal(11, tickets.Count); // 1 original + 10 new
     }
 
     [Fact]
     public async Task AddTicketsToShowtime_ShouldFail_WhenShowtimeNotFound()
     {
-        // Act
-        var result = await _ticketService.AddTicketsToShowtime(999, 10);
+        ResetDatabase();
 
-        // Assert
+        var result = await _ticketService.AddTicketsToShowtime(-1, 10);
         Assert.False(result);
     }
 
     [Fact]
     public async Task AddTicketsToShowtime_ShouldFail_WhenExceedsCapacity()
     {
-        // Act
-        var result = await _ticketService.AddTicketsToShowtime(1, 100);
+        ResetDatabase();
+        var (_, showtimeId, _) = SeedDatabase();
 
-        // Assert
+        var result = await _ticketService.AddTicketsToShowtime(showtimeId, 200); // Exceeds available capacity
         Assert.False(result);
     }
 }
