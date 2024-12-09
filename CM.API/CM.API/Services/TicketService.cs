@@ -1,40 +1,43 @@
-using CM.API.Data;
-using CM.API.Interfaces;
-using CM.API.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using CM.API.Data;  // Database context
+using CM.API.Interfaces;  // Interfaces for services
+using CM.API.Models;  // Models like Ticket, Showtime, etc.
+using Microsoft.EntityFrameworkCore;  // Entity Framework Core for data access
+using System.Collections.Generic;  // For working with lists
+using System.Linq;  // LINQ queries
+using System.Threading.Tasks;  // Asynchronous programming
 
 namespace CM.API.Services
 {
     public class TicketService : ITicketService
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _context;  // Database context
 
+        // Constructor to inject the AppDbContext
         public TicketService(AppDbContext context)
         {
             _context = context;
         }
 
+        // Adds a new ticket to the database
         public async Task<bool> AddTicket(Ticket ticket)
         {
-            // Check if the ticket already exists
+            // Check if the ticket already exists by its ID
             if (await _context.Ticket.AnyAsync(t => t.Id == ticket.Id))
             {
-                return false;
+                return false; // Ticket already exists
             }
 
-            _context.Ticket.Add(ticket);
-            await _context.SaveChangesAsync();
+            _context.Ticket.Add(ticket);  // Add the new ticket
+            await _context.SaveChangesAsync();  // Save changes to the database
             return true;
         }
 
+        // Edits the price of all tickets for a given showtime
         public async Task<bool> EditTicket(int showtimeId, decimal newPrice)
         {
-            // Find the showtime
+            // Find the showtime and include tickets
             var showtime = await _context.Showtime
-                .Include(s => s.Tickets) // Include tickets to make sure we can access them
+                .Include(s => s.Tickets)
                 .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
             if (showtime == null)
@@ -42,38 +45,36 @@ namespace CM.API.Services
                 return false; // Showtime not found
             }
 
-            // Update the price of all tickets within the showtime
+            // Update the price of all tickets for the showtime
             foreach (var ticket in showtime.Tickets)
             {
                 ticket.Price = newPrice;
             }
 
-            // Save changes to the database
-            await _context.SaveChangesAsync();
-
+            await _context.SaveChangesAsync();  // Save changes
             return true;
         }
 
-
-
-        // Get all tickets
+        // Gets all tickets from the database
         public async Task<List<Ticket>> GetAllTickets()
         {
-            return await _context.Ticket.ToListAsync();
+            return await _context.Ticket.ToListAsync();  // Fetch all tickets
         }
 
-        // Get tickets by showtime
+        // Gets tickets for a specific movie
         public async Task<List<Ticket>> GetTicketsByMovieId(int movieId)
         {
+            // Filter tickets by movieId
             return await _context.Ticket
                                  .Where(t => t.Showtime.MovieId == movieId)
                                  .ToListAsync();
         }
 
+        // Gets a specific ticket by ID and returns a DTO
         public async Task<TicketDto> GetTicketById(int id)
         {
             var ticket = await _context.Ticket.FindAsync(id);
-            if (ticket == null) return null;
+            if (ticket == null) return null;  // Ticket not found
 
             return new TicketDto
             {
@@ -82,6 +83,7 @@ namespace CM.API.Services
             };
         }
 
+        // Removes tickets from a showtime
         public async Task<bool> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
         {
             if (numberOfTickets <= 0)
@@ -89,9 +91,9 @@ namespace CM.API.Services
                 return false; // Invalid number of tickets
             }
 
-            // Find the showtime
+            // Find the showtime and include its tickets
             var showtime = await _context.Showtime
-                .Include(s => s.Tickets) // Include tickets to make sure we can access them
+                .Include(s => s.Tickets)
                 .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
             if (showtime == null)
@@ -101,31 +103,28 @@ namespace CM.API.Services
 
             if (showtime.TicketsAvailable == showtime.Capacity)
             {
-                return false;
+                return false; // No tickets to remove
             }
 
-            // Get the tickets associated with this showtime
+            // Get the tickets to remove
             var ticketsToRemove = showtime.Tickets
-                .Take(numberOfTickets) // Limit to the number of tickets you want to remove
+                .Take(numberOfTickets)  // Limit the removal to the specified number
                 .ToList();
 
-            // Check if there are enough tickets
+            // Ensure there are enough tickets to remove
             if (ticketsToRemove.Count < numberOfTickets)
             {
                 return false; // Not enough tickets to remove
             }
 
-            // Remove the tickets from the Ticket table
-            _context.Ticket.RemoveRange(ticketsToRemove);
+            _context.Ticket.RemoveRange(ticketsToRemove);  // Remove the tickets from the database
+            showtime.TicketsAvailable -= numberOfTickets;  // Update the available tickets count
 
-            // Update the Showtime's available ticket count (if applicable)
-            showtime.TicketsAvailable -= numberOfTickets; // Decrease ticket count
-
-            // Save changes to the database
-            await _context.SaveChangesAsync();
-
+            await _context.SaveChangesAsync();  // Save changes
             return true;
         }
+
+        // Adds tickets to a showtime
         public async Task<bool> AddTicketsToShowtime(int showtimeId, int numberOfTickets)
         {
             if (numberOfTickets <= 0)
@@ -133,19 +132,20 @@ namespace CM.API.Services
                 return false; // Invalid number of tickets
             }
 
-            // Find the showtime
+            // Find the showtime and include its tickets
             var showtime = await _context.Showtime
-                .Include(s => s.Tickets) // Include tickets to make sure we can access them
+                .Include(s => s.Tickets)
                 .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
             if (showtime == null)
             {
                 return false; // Showtime not found
             }
-            //if adding the tickets would exceed the capacity
+
+            // Ensure the tickets won't exceed the showtime's capacity
             if (showtime.TicketsAvailable + numberOfTickets > showtime.Capacity)
             {
-                return false;
+                return false; // Exceeds capacity
             }
 
             // Create new tickets
@@ -155,19 +155,14 @@ namespace CM.API.Services
                 newTickets.Add(new Ticket
                 {
                     Showtime = showtime,
-                    Price = 10.00m // Assuming movie has a TicketPrice property
+                    Price = 10.00m  // Default price (could be dynamic if needed)
                 });
             }
 
-            // Add the new tickets to the Ticket table
-            _context.Ticket.AddRange(newTickets);
+            _context.Ticket.AddRange(newTickets);  // Add the new tickets to the database
+            showtime.TicketsAvailable += numberOfTickets;  // Update the available ticket count
 
-            // Update the Showtime's available ticket count (if applicable)
-            showtime.TicketsAvailable += numberOfTickets; // Increase ticket count
-
-            // Save changes to the database
-            await _context.SaveChangesAsync();
-
+            await _context.SaveChangesAsync();  // Save changes
             return true;
         }
     }
