@@ -65,6 +65,11 @@ export default function Navbar() {
         >
           Movies
         </Button>
+        {user && user.role === 'Manager' && (
+          <Button color="inherit" component={Link} to="/manager">
+            Manager
+          </Button>
+        )}
 
         {isLoggedIn ? (
           <>

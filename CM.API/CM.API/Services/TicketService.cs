@@ -30,21 +30,27 @@ namespace CM.API.Services
             return true;
         }
 
-        public async Task<bool> EditTicket(int id, TicketUpdateDto updatedTicketDto)
+        public async Task<bool> EditTicket(int showtimeId, decimal newPrice)
         {
-            // Find the ticket to update
-            var ticket = await _context.Ticket.FirstOrDefaultAsync(t => t.Id == id);
-            if (ticket == null)
+            // Find the showtime
+            var showtime = await _context.Showtime
+                .Include(s => s.Tickets) // Include tickets to make sure we can access them
+                .FirstOrDefaultAsync(s => s.Id == showtimeId);
+
+            if (showtime == null)
             {
-                return false; // Ticket not found
+                return false; // Showtime not found
             }
 
-            // Update ticket properties with values from the DTO
-            ticket.Price = updatedTicketDto.Price;
-            ticket.ShowtimeId = updatedTicketDto.ShowtimeId;
+            // Update the price of all tickets within the showtime
+            foreach (var ticket in showtime.Tickets)
+            {
+                ticket.Price = newPrice;
+            }
 
             // Save changes to the database
             await _context.SaveChangesAsync();
+
             return true;
         }
 
@@ -136,7 +142,8 @@ namespace CM.API.Services
             {
                 return false; // Showtime not found
             }
-            if (showtime.TicketsAvailable == showtime.Capacity)
+            //if adding the tickets would exceed the capacity
+            if (showtime.TicketsAvailable + numberOfTickets > showtime.Capacity)
             {
                 return false;
             }

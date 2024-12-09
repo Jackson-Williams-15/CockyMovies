@@ -13,5 +13,6 @@ namespace CM.API.Interfaces
 
         // Retrieves a list of showtimes for a specific movie by movie ID
         Task<List<ShowtimeDto>> GetShowtimesByMovieId(int movieId);
+        Task<bool> RemoveShowtime(int id);
     }
 }

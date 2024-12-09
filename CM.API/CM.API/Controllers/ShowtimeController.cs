@@ -36,6 +36,10 @@ namespace CM.API.Controllers
             {
                 return NotFound("Movie not found.");
             }
+            if (movie == null)
+            {
+                return NotFound("Movie not found.");
+            }
 
             // Create new Showtime entity
             var showtime = new Showtime
@@ -54,7 +58,13 @@ namespace CM.API.Controllers
             {
                 return BadRequest("A showtime with the same ID already exists.");
             }
+            if (!success)
+            {
+                return BadRequest("A showtime with the same ID already exists.");
+            }
 
+            return Ok("Showtime added successfully.");
+        }
             return Ok("Showtime added successfully.");
         }
 
@@ -67,6 +77,7 @@ namespace CM.API.Controllers
                 return BadRequest("Invalid data.");
             }
 
+            // Fetch the movie from the database to ensure the Movie property is set correctly
             var movie = await _movieService.GetMovieById(showtimeDto.MovieId);
             if (movie == null)
             {
@@ -86,12 +97,31 @@ namespace CM.API.Controllers
             try
             {
                 var success = await _showtimeService.EditShowtime(id, editedShowtime);
+            try
+            {
+                var success = await _showtimeService.EditShowtime(id, editedShowtime);
 
                 if (!success)
                 {
                     return NotFound("Showtime not found.");
                 }
+                if (!success)
+                {
+                    return NotFound("Showtime not found.");
+                }
 
+                return Ok("Showtime edited successfully.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error editing showtime with ID {id}: {ex.Message}");
+                return StatusCode(500, "Internal server error while editing showtime.");
+            }
+        }
                 return Ok("Showtime edited successfully.");
             }
             catch (InvalidOperationException ex)
@@ -115,6 +145,10 @@ namespace CM.API.Controllers
             {
                 return NotFound("No showtimes found for the specified movie.");
             }
+            if (showtimes == null || showtimes.Count == 0)
+            {
+                return NotFound("No showtimes found for the specified movie.");
+            }
 
             return Ok(showtimes);
         }
@@ -128,6 +162,11 @@ namespace CM.API.Controllers
                 .Include(s => s.Tickets)  // Include ticket details
                 .FirstOrDefaultAsync(s => s.Id == id);
 
+            if (showtime == null)
+            {
+                _logger.LogWarning($"Showtime with ID {id} not found.");
+                return NotFound("Showtime not found.");
+            }
             if (showtime == null)
             {
                 _logger.LogWarning($"Showtime with ID {id} not found.");
@@ -156,6 +195,20 @@ namespace CM.API.Controllers
             };
 
             return Ok(showtimeDto);
+        }
+
+        // DELETE: api/showtimes/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveShowtime(int id)
+        {
+            var success = await _showtimeService.RemoveShowtime(id);
+
+            if (!success)
+            {
+                return NotFound("Showtime not found.");
+            }
+
+            return Ok("Showtime removed successfully.");
         }
     }
 }

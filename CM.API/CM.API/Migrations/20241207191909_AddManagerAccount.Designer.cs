@@ -4,6 +4,7 @@ using CM.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CM.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241207191909_AddManagerAccount")]
+    partial class AddManagerAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,35 +274,6 @@ namespace CM.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CM.API.Models.Reply", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Author")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ReviewId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReviewId");
-
-                    b.ToTable("Reply");
-                });
-
             modelBuilder.Entity("CM.API.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -311,9 +285,6 @@ namespace CM.API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
-
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
@@ -321,9 +292,6 @@ namespace CM.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Username")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -534,17 +502,6 @@ namespace CM.API.Migrations
                     b.Navigation("Showtime");
                 });
 
-            modelBuilder.Entity("CM.API.Models.Reply", b =>
-                {
-                    b.HasOne("CM.API.Models.Review", "Review")
-                        .WithMany("Reply")
-                        .HasForeignKey("ReviewId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Review");
-                });
-
             modelBuilder.Entity("CM.API.Models.Review", b =>
                 {
                     b.HasOne("CM.API.Models.Movie", "Movie")
@@ -621,11 +578,6 @@ namespace CM.API.Migrations
             modelBuilder.Entity("CM.API.Models.OrderResult", b =>
                 {
                     b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("CM.API.Models.Review", b =>
-                {
-                    b.Navigation("Reply");
                 });
 
             modelBuilder.Entity("CM.API.Models.Showtime", b =>

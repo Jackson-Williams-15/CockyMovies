@@ -62,6 +62,20 @@ namespace CM.API.Services
             return true;  // Showtimes successfully added
         }
 
+    public async Task<bool> RemoveShowtime(int id)
+    {
+        var showtime = await _context.Showtime.FindAsync(id);
+        if (showtime == null)
+        {
+            return false; // Showtime not found
+        }
+
+        _context.Showtime.Remove(showtime);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
         // Edit an existing showtime
         public async Task<bool> EditShowtime(int id, Showtime editedShowtime)
         {
@@ -83,15 +97,15 @@ namespace CM.API.Services
             if (editedShowtime.Capacity != existingShowtime.Capacity)
             {
                 // Ensure the new capacity is greater than or equal to tickets sold
-                if (editedShowtime.Capacity < existingShowtime.TicketsSold)
+                if (editedShowtime.Capacity < existingShowtime.TicketsAvailable)
                 {
-                    throw new InvalidOperationException("New capacity cannot be less than the number of tickets already sold.");
+                    throw new InvalidOperationException("New capacity cannot be less than the number of tickets available.");
                 }
 
-                // Update capacity and available tickets
-                existingShowtime.Capacity = editedShowtime.Capacity;
-                existingShowtime.TicketsAvailable = editedShowtime.Capacity - existingShowtime.TicketsSold;
-            }
+            existingShowtime.Capacity = editedShowtime.Capacity;
+            existingShowtime.TicketsAvailable = editedShowtime.Capacity - (existingShowtime.Capacity - existingShowtime.TicketsAvailable);
+
+        }
 
             try
             {

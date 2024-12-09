@@ -17,4 +17,5 @@ public class ShowtimeDto
 
     // Movie details related to the showtime
     public MovieDto? Movie { get; set; }
+    public int Capacity { get; set; }
 }
