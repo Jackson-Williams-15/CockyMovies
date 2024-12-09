@@ -89,7 +89,9 @@ export default function Reviews() {
     if (deletedReviewId) {
       try {
         await removeReview(deletedReviewId);
-        await refreshReviews();
+        setReviews((prevReviews) =>
+          prevReviews.filter((review) => review.id !== deletedReviewId),
+        );
         setEditingReview(null);
       } catch (error) {
         console.error('Failed to delete review:', error);
@@ -98,7 +100,11 @@ export default function Reviews() {
     }
     try {
       await editReview(updatedReview.id, updatedReview);
-      await refreshReviews();
+      setReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          review.id === updatedReview.id ? updatedReview : review,
+        ),
+      );
       setEditingReview(null);
     } catch (error) {
       console.error('Failed to update review:', error);
