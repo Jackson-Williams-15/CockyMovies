@@ -7,6 +7,7 @@ import ShowtimeForm from './ShowtimeForm';
 import EditShowtimeForm from './EditShowtimeForm';
 import RemoveShowtimeForm from './RemoveShowtimeForm';
 import RemoveMovieForm from './RemoveMovieForm';
+import EditMovieForm from './EditMovieForm';
 
 const Manager = () => {
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,7 @@ const Manager = () => {
   const [showEditShowtimeForm, setShowEditShowtimeForm] = useState(false);
   const [showRemoveShowtimeForm, setShowRemoveShowtimeForm] = useState(false);
   const [showRemoveMovieForm, setShowRemoveMovieForm] = useState(false);
+  const [showEditMovieForm, setShowEditMovieForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -45,6 +47,13 @@ const Manager = () => {
   });
   const [removeMovieData, setRemoveMovieData] = useState({
     id: ''
+  });
+  const [editMovieData, setEditMovieData] = useState({
+    id: '',
+    title: '',
+    description: '',
+    genreIds: [],
+    ratingId: ''
   });
   const [selectedMovieId, setSelectedMovieId] = useState('');
   const [genres, setGenres] = useState([]);
@@ -149,6 +158,14 @@ const Manager = () => {
   const handleRemoveMovieChange = (e) => {
     const { name, value } = e.target;
     setRemoveMovieData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleEditMovieChange = (e) => {
+    const { name, value } = e.target;
+    setEditMovieData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -276,6 +293,28 @@ const Manager = () => {
     }
   };
 
+  const handleEditMovieSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`/api/movies/edit/${editMovieData.id}`, {
+        title: editMovieData.title,
+        description: editMovieData.description,
+        genreIds: editMovieData.genreIds,
+        ratingId: editMovieData.ratingId,
+        imageUrl: editMovieData.imageUrl
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setMessage('Movie edited successfully.');
+      setShowEditMovieForm(false);
+    } catch (error) {
+      setError('Error editing movie. Please try again.');
+      console.error('Error editing movie:', error);
+    }
+  };
+
   const handleMovieSelectChange = async (e) => {
     const movieId = e.target.value;
     setSelectedMovieId(movieId);
@@ -290,8 +329,18 @@ const Manager = () => {
         ...prevData,
         movieId: movieId
       }));
+      const movieResponse = await axios.get(`/api/movies/${movieId}`);
+      const movie = movieResponse.data;
+      setEditMovieData({
+        id: movie.id,
+        title: movie.title,
+        description: movie.description,
+        genreIds: movie.genres.map(g => g.id),
+        ratingId: ratings.find(r => r.name === movie.rating)?.id || '',
+        imageUrl: movie.imageUrl // Ensure imageUrl is set correctly
+      });
     } catch (error) {
-      console.error('Error fetching showtimes:', error);
+      console.error('Error fetching showtimes or movie details:', error);
     }
   };
 
@@ -391,6 +440,37 @@ const Manager = () => {
           handleRemoveMovieSubmit={handleRemoveMovieSubmit}
           movies={movies}
         />
+      )}
+      <Button variant="contained" color="primary" onClick={() => setShowEditMovieForm(!showEditMovieForm)} sx={{ mt: 2 }}>
+        {showEditMovieForm ? 'Cancel' : 'Edit Movie'}
+      </Button>
+      {showEditMovieForm && (
+        <>
+          <FormControl fullWidth required sx={{ mt: 2 }}>
+            <InputLabel>Movie</InputLabel>
+            <Select
+              label="Movie"
+              value={selectedMovieId}
+              onChange={handleMovieSelectChange}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {movies.map((movie) => (
+                <MenuItem key={movie.id} value={movie.id}>
+                  {movie.title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <EditMovieForm
+            editMovieData={editMovieData}
+            handleEditMovieChange={handleEditMovieChange}
+            handleEditMovieSubmit={handleEditMovieSubmit}
+            genres={genres}
+            ratings={ratings}
+          />
+        </>
       )}
     </Box>
   );
