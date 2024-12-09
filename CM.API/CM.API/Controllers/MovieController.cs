@@ -1,8 +1,13 @@
-using CM.API.Interfaces;       // Importing the interface for the MovieService
-using CM.API.Models;           // Importing the models for movies, genres, and other DTOs
-using Microsoft.AspNetCore.Mvc; // Importing ASP.NET Core MVC components (controller, action result)
-using System.Linq;             // Importing LINQ for working with collections
-using System.Threading.Tasks;  // Importing the Task class for asynchronous programming
+// Importing the interface for the MovieService
+using CM.API.Interfaces;
+// Importing the models for movies, genres, and other DTOs
+using CM.API.Models;
+// Importing ASP.NET Core MVC components (controller, action result)
+using Microsoft.AspNetCore.Mvc;
+// Importing LINQ for working with collections
+using System.Linq;
+ // Importing the Task class for asynchronous programming
+using System.Threading.Tasks;
 
 namespace CM.API.Controllers
 {
