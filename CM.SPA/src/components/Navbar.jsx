@@ -12,7 +12,7 @@ import './Navbar.css';
 
 export default function Navbar() {
   const location = useLocation();
-  const { isLoggedIn, username, handleLogout } = useContext(AuthContext);
+  const { isLoggedIn, username, handleLogout, user } = useContext(AuthContext);
 
   return (
     <AppBar position="sticky" enableColorOnDark>

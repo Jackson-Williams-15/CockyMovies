@@ -26,6 +26,7 @@ export default function ReviewForm({ review, onSubmit, onCancel }) {
     const reviewUsername = isLoggedIn ? username : 'Anonymous';
     try {
       const newReview = {
+        id: review ? review.id : undefined,
         title,
         rating,
         description,
