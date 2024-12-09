@@ -18,6 +18,7 @@ public class AccountControllerTests
     private readonly Mock<ICartService> _mockCartService;
     private readonly Mock<ILogger<AccountController>> _mockLogger;
     private readonly Mock<IConfiguration> _mockConfiguration;
+    private readonly Mock<IEmailService> _mockEmailService;  // Added mock for IEmailService
 
     private readonly AccountController _controller;
 
@@ -27,13 +28,15 @@ public class AccountControllerTests
         _mockCartService = new Mock<ICartService>();
         _mockLogger = new Mock<ILogger<AccountController>>();
         _mockConfiguration = new Mock<IConfiguration>();
+        _mockEmailService = new Mock<IEmailService>();  // Initialize the mock here
 
         _controller = new AccountController(
             _mockAccountService.Object,
             _mockConfiguration.Object,
             _mockLogger.Object,
             _mockCartService.Object,
-            null // Assuming AppDbContext is not relevant for these tests
+            null, // Assuming AppDbContext is not relevant for these tests
+            _mockEmailService.Object // Pass the mock to the controller constructor
         );
 
         // Mock JWT configuration
@@ -41,53 +44,54 @@ public class AccountControllerTests
         _mockConfiguration.Setup(c => c["Jwt:Issuer"]).Returns("testissuer");
     }
 
-[Fact]
-public async Task SignUp_ReturnsOk_WhenRegistrationIsSuccessful()
-{
-    // Arrange
-    var signupRequest = new UserCreateDto
+    [Fact]
+    public async Task SignUp_ReturnsOk_WhenRegistrationIsSuccessful()
     {
-        Email = "test@example.com",
-        Username = "testuser",
-        Password = "password",
-        DateOfBirth = DateTime.Now.AddYears(-20)
-    };
-
-    var userDto = new UserDto
-    {
-        Id = 1,
-        Email = "test@example.com",
-        Username = "testuser",
-        Cart = new CartDto
+        // Arrange
+        var signupRequest = new UserCreateDto
         {
-            CartId = 1,
-            UserId = 1,
-            Tickets = new List<CartTicketDto>()
-        }
-    };
+            Email = "test@example.com",
+            Username = "testuser",
+            Password = "password",
+            DateOfBirth = DateTime.Now.AddYears(-20)
+        };
 
-    _mockAccountService.Setup(s => s.Register(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
-        .ReturnsAsync(userDto);
+        var userDto = new UserDto
+        {
+            Id = 1,
+            Email = "test@example.com",
+            Username = "testuser",
+            Cart = new CartDto
+            {
+                CartId = 1,
+                UserId = 1,
+                Tickets = new List<CartTicketDto>()
+            }
+        };
 
-    _mockCartService.Setup(s => s.GetCartByUserId(It.IsAny<int>()))
-        .ReturnsAsync(new Cart { CartId = 1, UserId = 1 });
+        _mockAccountService.Setup(s => s.Register(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(userDto);
 
-    // Act
-    var result = await _controller.SignUp(signupRequest);
+        _mockCartService.Setup(s => s.GetCartByUserId(It.IsAny<int>()))
+            .ReturnsAsync(new Cart { CartId = 1, UserId = 1 });
 
-    // Assert
-    var okResult = Assert.IsType<OkObjectResult>(result);
-    var response = okResult.Value as SignUpResponseDto;
+        // Mock SendEmail call
+        _mockEmailService.Setup(e => e.SendEmail(It.IsAny<string>(), It.IsAny<EmailType>(), It.IsAny<User>(), It.IsAny<User>()))
+            .Returns(Task.CompletedTask);
 
-    Assert.NotNull(response);
-    Assert.Equal(userDto.Email, response.User.Email);
-    Assert.Equal(userDto.Id, response.User.Id);
-    Assert.Equal(userDto.Username, response.User.Username);
-    Assert.Equal(1, response.CartId);
-}
+        // Act
+        var result = await _controller.SignUp(signupRequest);
 
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var response = okResult.Value as SignUpResponseDto;
 
-
+        Assert.NotNull(response);
+        Assert.Equal(userDto.Email, response.User.Email);
+        Assert.Equal(userDto.Id, response.User.Id);
+        Assert.Equal(userDto.Username, response.User.Username);
+        Assert.Equal(1, response.CartId);
+    }
 
     [Fact]
     public async Task Login_ReturnsUnauthorized_WhenAuthenticationFails()
@@ -115,7 +119,8 @@ public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
     {
         Id = 1,
         Username = "testuser",
-        Email = "test@example.com"
+        Email = "test@example.com",
+        Role = "User" // Ensure this is set
     };
 
     _mockAccountService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
@@ -138,13 +143,11 @@ public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
     var okResult = Assert.IsType<OkObjectResult>(result);
     var response = okResult.Value as LoginResponseDto;
 
-    Assert.NotNull(response.Token);
+    Assert.NotNull(response.Token);  // Assert that the token is not null
     Assert.Equal("testuser", response.User.Username);
     Assert.Equal("test@example.com", response.User.Email);
     Assert.Equal(1, response.CartId);
 }
-
-
 
 
     [Fact]
@@ -152,7 +155,7 @@ public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
     {
         // Arrange
         var userId = "1";
-        var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] 
         {
             new Claim(ClaimTypes.NameIdentifier, userId)
         }));
@@ -187,28 +190,27 @@ public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
     }
 
     [Fact]
-public async Task GetProfile_ReturnsNotFound_WhenUserIsNotFound()
-{
-    // Arrange
-    var userId = "1";
-    var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+    public async Task GetProfile_ReturnsNotFound_WhenUserIsNotFound()
     {
-        new Claim(ClaimTypes.NameIdentifier, userId)
-    }));
+        // Arrange
+        var userId = "1";
+        var claims = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] 
+        {
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        }));
 
-    _controller.ControllerContext = new ControllerContext
-    {
-        HttpContext = new DefaultHttpContext { User = claims }
-    };
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = claims }
+        };
 
-    _mockAccountService.Setup(s => s.GetUserById(It.IsAny<string>()))
-        .ReturnsAsync((User?)null);
+        _mockAccountService.Setup(s => s.GetUserById(It.IsAny<string>()))
+            .ReturnsAsync((User?)null);
 
-    // Act
-    var result = await _controller.GetProfile();
+        // Act
+        var result = await _controller.GetProfile();
 
-    // Assert
-    Assert.IsType<NotFoundObjectResult>(result);
-}
-
+        // Assert
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
 }

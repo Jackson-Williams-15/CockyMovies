@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
@@ -18,6 +19,7 @@ public class CheckoutControllerTests
 {
     private readonly Mock<ICartService> _mockCartService;
     private readonly Mock<IPaymentService> _mockPaymentService;
+    private readonly Mock<IEmailService> _mockEmailService; // Mocked IEmailService
     private readonly Mock<ILogger<CheckoutController>> _mockLogger;
     private readonly CheckoutController _controller;
     private readonly AppDbContext _dbContext;
@@ -26,12 +28,19 @@ public class CheckoutControllerTests
     {
         _mockCartService = new Mock<ICartService>();
         _mockPaymentService = new Mock<IPaymentService>();
+        _mockEmailService = new Mock<IEmailService>(); // Initialize mock
         _mockLogger = new Mock<ILogger<CheckoutController>>();
 
         // Set up in-memory database for testing
         _dbContext = InMemoryDbContextFactory.CreateDbContext();
 
-        _controller = new CheckoutController(_mockCartService.Object, _mockPaymentService.Object, _dbContext, _mockLogger.Object);
+        _controller = new CheckoutController(
+            _mockCartService.Object,
+            _mockPaymentService.Object,
+            _dbContext,
+            _mockLogger.Object,
+            _mockEmailService.Object // Pass the mock email service to controller
+        );
     }
 
     [Fact]
@@ -53,8 +62,16 @@ public class CheckoutControllerTests
 
         var tickets = new List<CartTicketDto>
         {
-            new CartTicketDto { Id = 101, Price = 10, Quantity = 2, ShowtimeId = 1, MovieId = 1 }
+            new CartTicketDto 
+            { 
+                Id = 101, 
+                Price = 10, 
+                Quantity = 2, 
+                ShowtimeId = 1, 
+                MovieId = 1 
+            }
         };
+
         var cart = new CartDto
         {
             CartId = 1,
