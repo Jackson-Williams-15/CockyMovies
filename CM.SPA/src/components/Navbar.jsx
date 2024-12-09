@@ -11,7 +11,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import './Navbar.css';
 
 export default function Navbar() {
-  const location = useLocation();
+  const location = useLocation(); // Get the current path
   const { isAuthenticated, user, handleLogout } = useContext(AuthContext);
 
   return (
@@ -32,40 +32,13 @@ export default function Navbar() {
             cursor: 'pointer',
           }}
         >
-          Cocky Movies
+      Cocky Entertainment [V1.5]
         </Typography>
 
         <Box sx={{ flexGrow: 1 }} />
 
-        <Button
-          component={Link}
-          to="/"
-          className={location.pathname === '/' ? 'MuiButton-root active' : ''}
-          sx={{
-            color: 'inherit',
-            textDecoration: 'none',
-            fontWeight: 500,
-            marginRight: '20px',
-          }}
-        >
-          Home
-        </Button>
-        <Button
-          component={Link}
-          to="/movies"
-          className={
-            location.pathname === '/movies' ? 'MuiButton-root active' : ''
-          }
-          sx={{
-            color: 'inherit',
-            textDecoration: 'none',
-            fontWeight: 500,
-            marginRight: '20px',
-          }}
-        >
-          Movies
-        </Button>
-
+      
+           
         {isAuthenticated ? (
           <>
             <Button
@@ -93,6 +66,16 @@ export default function Navbar() {
           </>
         ) : (
           <>
+        <Button
+              component={Link}
+              to="/homeframe"
+              sx={{ color: 'inherit', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/homeframe' ? 'MuiButton-root active' : ''
+              }
+            >
+              HomeFrame
+            </Button>
             <Button
               component={Link}
               to="/login"
@@ -113,13 +96,101 @@ export default function Navbar() {
             >
               Signup
             </Button>
-          </>
+       <Button
+          component={Link}
+          to="/mail"
+          className={
+            location.pathname === '/mail' ? 'MuiButton-root active' : ''
+          }
+          sx={{
+            color: 'cyan',
+            textDecoration: 'none',
+            fontWeight: 500,
+            marginRight: '20px',
+          }}
+        >
+          Mail
+        </Button>
+        <Button
+          component={Link}
+          to="/"
+          className={location.pathname === '/' ? 'MuiButton-root active' : ''}
+          sx={{
+            color: 'cyan',
+            textDecoration: 'none',
+            fontWeight: 500,
+            marginRight: '20px',
+          }}
+        >
+          NowPlaying
+        </Button> 
+      <Button
+          component={Link}
+          to="/movies"
+          className={
+            location.pathname === '/movies' ? 'MuiButton-root active' : ''
+          }
+          sx={{
+            color: 'cyan',
+            textDecoration: 'none',
+            fontWeight: 500,
+            marginRight: '20px',
+          }}
+        >
+         MovieTickets
+        </Button>
+      <Button
+          component={Link}
+          to="/music"
+          className={
+            location.pathname === '/music' ? 'MuiButton-root active' : ''
+          }
+          sx={{
+            color: 'cyan',
+            textDecoration: 'none',
+            fontWeight: 500,
+            marginRight: '20px',
+          }}
+        >
+          Music
+        </Button> 
+      <Button
+              component={Link}
+              to="/moviereviews"
+              sx={{ color: 'dodgerblue', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/moviereviews' ? 'MuiButton-root active' : ''
+              }
+            >
+              Reviews
+            </Button>
+          <Button
+              component={Link}
+              to="/manager"
+              sx={{ color: 'dodgerblue', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/manager' ? 'MuiButton-root active' : ''
+              }
+            >
+              Manager
+            </Button>
+         <Button
+              component={Link}
+              to="/shop"
+              sx={{ color: 'dodgerblue', fontWeight: 500, marginRight: '20px' }}
+              className={
+                location.pathname === '/shop' ? 'MuiButton-root active' : ''
+              }
+            >
+              Shop
+            </Button>
+            </>
         )}
-
+		
         <Button
           component={Link}
           to="/cart"
-          sx={{ color: 'inherit', fontWeight: 500, marginLeft: '-25px' }}
+          sx={{ color: 'dodgerblue', fontWeight: 500, marginLeft: '-25px' }}
         >
           <ShoppingCartIcon />
         </Button>
