@@ -6,17 +6,28 @@ using System.Threading.Tasks;
 
 namespace CM.API.Controllers;
 
+/// <summary>
+/// Controller for managing genres.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class GenreController : ControllerBase
 {
     private readonly IGenreService _genreService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GenreController"/> class.
+    /// </summary>
+    /// <param name="genreService">The genre service.</param>
     public GenreController(IGenreService genreService)
     {
         _genreService = genreService;
     }
 
+    /// <summary>
+    /// Gets all genres.
+    /// </summary>
+    /// <returns>A list of genres.</returns>
     // GET: api/genre
     [HttpGet]
     public async Task<IActionResult> GetAllGenres()
@@ -33,6 +44,12 @@ public class GenreController : ControllerBase
         return Ok(genreDtos);
     }
 
+
+    /// <summary>
+    /// Gets a genre by its identifier.
+    /// </summary>
+    /// <param name="id">The genre identifier.</param>
+    /// <returns>The genre with the specified identifier.</returns>
     // GET: api/genre/{id}
     [HttpGet("{id}")]
     public async Task<IActionResult> GetGenreById(int id)
@@ -53,6 +70,11 @@ public class GenreController : ControllerBase
         return Ok(genreDto);
     }
 
+    /// <summary>
+    /// Adds a new genre.
+    /// </summary>
+    /// <param name="genreDto">The genre data transfer object.</param>
+    /// <returns>A result indicating whether the genre was added successfully.</returns>
     // POST: api/genre
     [HttpPost]
     public async Task<IActionResult> AddGenre([FromBody] GenreCreateDto genreDto)
