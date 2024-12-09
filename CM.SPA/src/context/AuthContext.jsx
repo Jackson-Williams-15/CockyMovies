@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // handles logins
   const handleLogin = async (credentials) => {
     try {
       const data = await login(credentials);
@@ -35,7 +34,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // handles sign ups
   const handleSignup = async (credentials) => {
     try {
       const data = await signup(credentials);
@@ -54,7 +52,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // handles log outs
   const handleLogout = () => {
     logout();
     setIsAuthenticated(false);
@@ -71,6 +68,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         isLoggedIn: isAuthenticated,
         username: user?.username,
+        user, // Ensure user object is passed to the context
         handleLogin,
         handleSignup,
         handleLogout,
