@@ -10,7 +10,7 @@ public class MovieCreateDto
     /// <summary>
     /// Gets or sets the movie title.
     /// </summary>
-    public string Title { get; set; }
+    public string? Title { get; set; }
     /// <summary>
     /// Gets or sets the movie description.
     /// </summary>

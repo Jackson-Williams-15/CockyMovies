@@ -1,226 +1,183 @@
-using CM.API.Data;
-using CM.API.Models;
-using CM.API.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Moq;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+// Import necessary namespaces for the test class
+using CM.API.Data;                // Data access layer
+using CM.API.Models;              // Models for database entities
+using CM.API.Services;            // Business logic services
+using Microsoft.EntityFrameworkCore; // Entity Framework Core for database management
+using Microsoft.Extensions.Logging;  // Logging framework
+using Moq;                         // Mocking framework
+using System;                      // For DateTime and GUIDs
+using System.Collections.Generic;  // For list collections
+using System.Linq;                 // For LINQ queries
+using System.Threading.Tasks;      // For async methods
+using Xunit;                      // Testing framework
 
+// Namespace for API tests
 namespace CM.API.Tests
 {
+    // Test class for AccountService
     public class AccountServiceTests
     {
-        private readonly Mock<AppDbContext> _mockContext;
-        private readonly Mock<ILogger<AccountService>> _mockLogger;
-        private readonly AccountService _accountService;
+        private readonly Mock<ILogger<AccountService>> _mockLogger; // Mock logger for service
+        private readonly AppDbContext _context;  // In-memory database context
+        private readonly AccountService _accountService;  // Service under test
 
+        // Constructor initializes in-memory database, logger, and service
         public AccountServiceTests()
         {
-            _mockContext = new Mock<AppDbContext>();
-            _mockLogger = new Mock<ILogger<AccountService>>();
-            _accountService = new AccountService(_mockContext.Object, _mockLogger.Object);
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())  // Unique DB for test isolation
+                .Options;
+
+            _context = new AppDbContext(options); // Initialize database context
+            _mockLogger = new Mock<ILogger<AccountService>>(); // Create mock logger
+            _accountService = new AccountService(_context, _mockLogger.Object); // Create service instance
         }
 
+        // Test successful user authentication
         [Fact]
-        public async Task Authenticate_UserNotFound_ReturnsNull()
+        public async Task Authenticate_ShouldReturnUserDto_WhenUserExistsAndPasswordIsCorrect()
         {
-            // Arrange
-            var username = "testUser";
-            var password = "testPassword";
-
-            _mockContext.Setup(c => c.Users.FirstOrDefaultAsync(It.IsAny<Func<User, bool>>()))
-                .ReturnsAsync((User)null);
-
-            // Act
-            var result = await _accountService.Authenticate(username, password);
-
-            // Assert
-            Assert.Null(result);
-            _mockLogger.Verify(log => log.LogWarning(It.IsAny<string>(), username), Times.Once);
-        }
-
-        [Fact]
-        public async Task Authenticate_InvalidPassword_ReturnsNull()
-        {
-            // Arrange
-            var username = "testUser";
-            var password = "wrongPassword";
-            var user = new User { Username = username, Password = "hashedPassword" };
-
-            _mockContext.Setup(c => c.Users.FirstOrDefaultAsync(It.IsAny<Func<User, bool>>()))
-                .ReturnsAsync(user);
-
-            // Act
-            var result = await _accountService.Authenticate(username, password);
-
-            // Assert
-            Assert.Null(result);
-            _mockLogger.Verify(log => log.LogWarning(It.IsAny<string>(), username), Times.Once);
-        }
-
-        [Fact]
-        public async Task Authenticate_ValidUser_ReturnsUserDto()
-        {
-            // Arrange
-            var username = "testUser";
-            var password = "correctPassword";
+            // Arrange: Create and save a test user
             var user = new User
             {
-                Id = 1,
-                Username = username,
-                Password = BCrypt.Net.BCrypt.HashPassword(password),
-                Cart = new Cart { CartId = 1, UserId = 1 }
+                Username = "testuser",
+                Password = BCrypt.Net.BCrypt.HashPassword("password"),
+                Email = "test@example.com",
+                DateOfBirth = DateTime.Parse("2000-01-01"),
+                Role = "User"
             };
 
-            _mockContext.Setup(c => c.Users.Include(It.IsAny<Func<IQueryable<User>, IIncludableQueryable<User, object>>>())
-                .FirstOrDefaultAsync(It.IsAny<Func<User, bool>>()))
-                .ReturnsAsync(user);
+            _context.Users.Add(user);  // Add user to context
+            await _context.SaveChangesAsync();  // Save changes
 
-            _mockContext.Setup(c => c.Carts.Include(It.IsAny<Func<IQueryable<Cart>, IIncludableQueryable<Cart, object>>>())
-                .FirstOrDefaultAsync(It.IsAny<Func<Cart, bool>>()))
-                .ReturnsAsync(user.Cart);
+            // Act: Authenticate the user
+            var result = await _accountService.Authenticate("testuser", "password");
 
-            // Act
-            var result = await _accountService.Authenticate(username, password);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(user.Username, result.Username);
-            Assert.Equal(user.Email, result.Email);
+            // Assert: Ensure correct user data is returned
+            Assert.NotNull(result);  // Verify result is not null
+            Assert.Equal("testuser", result.Username);  // Ensure correct username
+            Assert.Equal("test@example.com", result.Email);  // Ensure correct email
         }
 
+        // Test authentication with non-existent user
         [Fact]
-        public async Task Register_NewUser_CreatesUserAndCart()
+        public async Task Authenticate_ShouldReturnNull_WhenUserDoesNotExist()
         {
-            // Arrange
-            var email = "test@example.com";
-            var username = "newUser";
-            var password = "password123";
-            var dateOfBirth = new DateTime(1990, 1, 1);
+            // Act: Attempt to authenticate nonexistent user
+            var result = await _accountService.Authenticate("nonexistentuser", "password");
 
-            // Act
-            var result = await _accountService.Register(email, username, password, dateOfBirth);
-
-            // Assert
-            _mockContext.Verify(c => c.Users.Add(It.IsAny<User>()), Times.Once);
-            _mockContext.Verify(c => c.SaveChangesAsync(), Times.Exactly(2));
-            Assert.NotNull(result);
-            Assert.Equal(username, result.Username);
-        }
-
-        [Fact]
-        public async Task UpdateUser_UserNotFound_ReturnsNull()
-        {
-            // Arrange
-            var userId = "999";
-            var updateDto = new UserUpdateDto
-            {
-                Email = "updated@example.com",
-                Username = "updatedUser",
-                DateOfBirth = new DateTime(1985, 5, 15)
-            };
-
-            _mockContext.Setup(c => c.Users.FirstOrDefaultAsync(It.IsAny<Func<User, bool>>()))
-                .ReturnsAsync((User)null);
-
-            // Act
-            var result = await _accountService.UpdateUser(userId, updateDto);
-
-            // Assert
+            // Assert: Ensure result is null
             Assert.Null(result);
         }
 
+        // Test authentication with incorrect password
         [Fact]
-        public async Task UpdateUser_ValidUser_UpdatesUser()
+        public async Task Authenticate_ShouldReturnNull_WhenPasswordIsIncorrect()
         {
-            // Arrange
-            var userId = "1";
+            // Arrange: Create and save a test user
+            var user = new User
+            {
+                Username = "testuser",
+                Password = BCrypt.Net.BCrypt.HashPassword("password"),
+                Email = "test@example.com",
+                DateOfBirth = DateTime.Parse("2000-01-01"),
+                Role = "User"
+            };
+
+            _context.Users.Add(user);  // Add user to context
+            await _context.SaveChangesAsync();  // Save changes
+
+            // Act: Attempt authentication with wrong password
+            var result = await _accountService.Authenticate("testuser", "wrongpassword");
+
+            // Assert: Ensure result is null
+            Assert.Null(result);
+        }
+
+        // Test successful user registration
+        [Fact]
+        public async Task Register_ShouldReturnUserDto_WhenUserIsRegistered()
+        {
+            // Arrange: Registration details
+            var email = "newuser@example.com";
+            var username = "newuser";
+            var password = "password123";
+            var dateOfBirth = DateTime.Parse("1995-01-01");
+
+            // Act: Register new user
+            var result = await _accountService.Register(email, username, password, dateOfBirth);
+
+            // Assert: Verify user registration details
+            Assert.NotNull(result);  // Ensure result is not null
+            Assert.Equal(username, result.Username);  // Ensure correct username
+            Assert.Equal(email, result.Email);  // Ensure correct email
+            Assert.Equal(dateOfBirth, result.DateOfBirth);  // Ensure correct date of birth
+        }
+
+        // Test fetching user by username when user exists
+        [Fact]
+        public async Task GetUserByUsername_ShouldReturnUser_WhenUserExists()
+        {
+            // Arrange: Create and save a test user
+            var user = new User
+            {
+                Username = "existinguser",
+                Password = BCrypt.Net.BCrypt.HashPassword("password"),
+                Email = "existinguser@example.com",
+                DateOfBirth = DateTime.Parse("1990-01-01"),
+                Role = "User"
+            };
+
+            _context.Users.Add(user);  // Add user to context
+            await _context.SaveChangesAsync();  // Save changes
+
+            // Act: Fetch user by username
+            var result = await _accountService.GetUserByUsername("existinguser");
+
+            // Assert: Verify user data
+            Assert.NotNull(result);  // Ensure result is not null
+            Assert.Equal("existinguser", result.Username);  // Ensure correct username
+        }
+
+        // Test fetching user by username when user doesn't exist
+        [Fact]
+        public async Task GetUserByUsername_ShouldReturnNull_WhenUserDoesNotExist()
+        {
+            // Act: Attempt to fetch nonexistent user
+            var result = await _accountService.GetUserByUsername("nonexistentuser");
+
+            // Assert: Ensure result is null
+            Assert.Null(result);
+        }
+
+        // Test successful user update
+        [Fact]
+        public async Task UpdateUser_ShouldReturnUpdatedUserDto_WhenValidDataIsProvided()
+        {
+            // Arrange: Create and save a test user
+            var user = new User
+            {
+                Username = "user1",
+                Password = BCrypt.Net.BCrypt.HashPassword("password"),
+                Email = "user1@example.com",
+                DateOfBirth = DateTime.Parse("1990-01-01"),
+                Role = "User"
+            };
+
+            _context.Users.Add(user);  // Add user to context
+            await _context.SaveChangesAsync();  // Save changes
+
+            // Update details
             var updateDto = new UserUpdateDto
             {
-                Email = "updated@example.com",
-                Username = "updatedUser",
-                DateOfBirth = new DateTime(1985, 5, 15)
-            };
-            var user = new User { Id = 1, Email = "old@example.com", Username = "oldUser", DateOfBirth = new DateTime(1980, 1, 1) };
-
-            _mockContext.Setup(c => c.Users.FirstOrDefaultAsync(It.IsAny<Func<User, bool>>()))
-                .ReturnsAsync(user);
-
-            // Act
-            var result = await _accountService.UpdateUser(userId, updateDto);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(updateDto.Email, result.Email);
-            Assert.Equal(updateDto.Username, result.Username);
-        }
-
-        [Fact]
-        public async Task UpdatePassword_InvalidUserId_ReturnsError()
-        {
-            // Arrange
-            var userId = "invalidId";
-            var passwordUpdateDto = new UserPasswordDto
-            {
-                OldPassword = "oldPassword",
-                NewPassword = "newPassword"
+                Username = "updateduser",
+                Email = "updateduser@example.com",
+                DateOfBirth = DateTime.Parse("1992-01-01")
             };
 
-            // Act
-            var result = await _accountService.UpdatePassword(userId, passwordUpdateDto);
+            // Act: Update user
+            var result = await _accountService.UpdateUser(user.Id.ToString(), updateDto);
 
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("Invalid User Id", result.Message);
-        }
-
-        [Fact]
-        public async Task UpdatePassword_IncorrectOldPassword_ReturnsError()
-        {
-            // Arrange
-            var userId = "1";
-            var passwordUpdateDto = new UserPasswordDto
-            {
-                OldPassword = "wrongOldPassword",
-                NewPassword = "newPassword"
-            };
-            var user = new User { Id = 1, Password = BCrypt.Net.BCrypt.HashPassword("correctOldPassword") };
-
-            _mockContext.Setup(c => c.Users.FirstOrDefaultAsync(It.IsAny<Func<User, bool>>()))
-                .ReturnsAsync(user);
-
-            // Act
-            var result = await _accountService.UpdatePassword(userId, passwordUpdateDto);
-
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("Incorrect Old Password", result.Message);
-        }
-
-        [Fact]
-        public async Task UpdatePassword_ValidPasswordChange_ReturnsSuccess()
-        {
-            // Arrange
-            var userId = "1";
-            var passwordUpdateDto = new UserPasswordDto
-            {
-                OldPassword = "correctOldPassword",
-                NewPassword = "newPassword"
-            };
-            var user = new User { Id = 1, Password = BCrypt.Net.BCrypt.HashPassword("correctOldPassword") };
-
-            _mockContext.Setup(c => c.Users.FirstOrDefaultAsync(It.IsAny<Func<User, bool>>()))
-                .ReturnsAsync(user);
-
-            // Act
-            var result = await _accountService.UpdatePassword(userId, passwordUpdateDto);
-
-            // Assert
-            Assert.True(result.Success);
-            Assert.Equal("Password Updated Successfully", result.Message);
-        }
-    }
-}
+            // Assert: Verify updated user details
+            Assert.NotNull(result);  // Ensure result is not null
+ 

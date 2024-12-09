@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 public class AddTicketToCartRequest
 {
     public int CartId { get; set; }
-    public List<int> TicketId { get; set; }
+    public required List<int> TicketId { get; set; }
     public int Quantity { get; set; }
 }
 
@@ -50,7 +50,11 @@ public class CartController : ControllerBase
     [HttpGet("GetCartForCurrentUser")]
     public async Task<IActionResult> GetCartForCurrentUser()
     {
-        var userEmail = User.Identity.Name; // Assuming the user's email is stored in the Name claim
+        var userEmail = User.Identity?.Name;
+        if (userEmail == null)
+        {
+            return Unauthorized("User is not authenticated.");
+        }
         var cart = await _cartService.GetCartForCurrentUser(userEmail);
         if (cart == null)
         {

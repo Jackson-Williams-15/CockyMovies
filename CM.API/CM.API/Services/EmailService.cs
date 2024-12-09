@@ -53,6 +53,10 @@ public class EmailService : IEmailService
             case EmailType.OrderReceipt:
                 var orderReceipt = data as OrderReceiptDto;
                 subject = "Your Order Receipt";
+                if (orderReceipt == null)
+                {
+                    throw new ArgumentNullException(nameof(orderReceipt));
+                }
                 body = GenerateOrderReceiptEmailBody(orderReceipt, user);
                 break;
             case EmailType.Verification:

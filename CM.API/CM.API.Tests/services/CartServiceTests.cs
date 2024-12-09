@@ -1,184 +1,149 @@
-using CM.API.Data;
-using CM.API.Models;
-using Moq;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+// Import necessary namespaces for the test class
+using CM.API.Data;            // Data access layer
+using CM.API.Models;          // Models for database entities
+using Microsoft.EntityFrameworkCore; // Entity Framework Core for in-memory database
+using Xunit;                  // Testing framework
+using System.Threading.Tasks; // For async methods
+using System.Collections.Generic; // For list collections
+using System.Linq;            // For LINQ queries
+using System;                 // For GUID and DateTime
 
+// Test class for CartService
 public class CartServiceTests
 {
-    private readonly Mock<AppDbContext> _mockContext;
-    private readonly Mock<DbSet<Cart>> _mockCartSet;
-    private readonly Mock<DbSet<Ticket>> _mockTicketSet;
-    private readonly CartService _cartService;
+    private readonly CartService _cartService;  // Service being tested
+    private readonly AppDbContext _context;     // In-memory database context
+    private int _userId;                        // Test user ID
+    private int _cartId;                        // Test cart ID
+    private int _ticketId;                      // Test ticket ID
 
+    // Constructor initializes in-memory database and service
     public CartServiceTests()
     {
-        _mockContext = new Mock<AppDbContext>();
-        _mockCartSet = new Mock<DbSet<Cart>>();
-        _mockTicketSet = new Mock<DbSet<Ticket>>();
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()) // Unique DB for test isolation
+            .Options;
 
-        // Setup mocks for DbSet properties
-        _mockContext.Setup(c => c.Carts).Returns(_mockCartSet.Object);
-        _mockContext.Setup(t => t.Ticket).Returns(_mockTicketSet.Object);
+        _context = new AppDbContext(options); // Initialize database context
+        _cartService = new CartService(_context); // Initialize service
 
-        _cartService = new CartService(_mockContext.Object);
+        ResetDatabase(); // Clear database before tests
+        SeedDatabase();  // Seed initial data
     }
 
-    [Fact]
-    public async Task AddTicketToCart_ShouldReturnFalse_WhenCartNotFound()
+    // Resets the database state before each test
+    private void ResetDatabase()
     {
-        // Arrange
-        int cartId = 1;
-        List<int> ticketIds = new List<int> { 1 };
-        int quantity = 2;
-
-        _mockCartSet.Setup(c => c.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Cart, bool>>>(), default))
-            .ReturnsAsync((Cart)null); // Cart not found
-
-        // Act
-        var result = await _cartService.AddTicketToCart(cartId, ticketIds, quantity);
-
-        // Assert
-        Assert.False(result);
+        _context.Database.EnsureDeleted(); // Delete existing DB
+        _context.Database.EnsureCreated(); // Recreate DB
     }
 
-    [Fact]
-    public async Task AddTicketToCart_ShouldReturnFalse_WhenTicketNotFound()
+    // Seeds initial test data
+    private void SeedDatabase()
     {
-        // Arrange
-        int cartId = 1;
-        List<int> ticketIds = new List<int> { 1 };
-        int quantity = 2;
+        // Generate unique IDs for entities
+        _userId = Guid.NewGuid().GetHashCode();
+        _cartId = Guid.NewGuid().GetHashCode();
+        _ticketId = Guid.NewGuid().GetHashCode();
 
-        var cart = new Cart { CartId = cartId };
-        _mockCartSet.Setup(c => c.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Cart, bool>>>(), default))
-            .ReturnsAsync(cart); // Cart found
-
-        _mockTicketSet.Setup(t => t.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Ticket, bool>>>(), default))
-            .ReturnsAsync((Ticket)null); // Ticket not found
-
-        // Act
-        var result = await _cartService.AddTicketToCart(cartId, ticketIds, quantity);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task AddTicketToCart_ShouldReturnFalse_WhenNotEnoughTicketsAvailable()
-    {
-        // Arrange
-        int cartId = 1;
-        List<int> ticketIds = new List<int> { 1 };
-        int quantity = 2;
-
-        var cart = new Cart { CartId = cartId };
-        var ticket = new Ticket { Id = 1, Showtime = new Showtime { TicketsAvailable = 1 } };
-
-        _mockCartSet.Setup(c => c.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Cart, bool>>>(), default))
-            .ReturnsAsync(cart); // Cart found
-
-        _mockTicketSet.Setup(t => t.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Ticket, bool>>>(), default))
-            .ReturnsAsync(ticket); // Ticket found
-
-        // Act
-        var result = await _cartService.AddTicketToCart(cartId, ticketIds, quantity);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task AddTicketToCart_ShouldUpdateCart_WhenTicketAddedSuccessfully()
-    {
-        // Arrange
-        int cartId = 1;
-        List<int> ticketIds = new List<int> { 1 };
-        int quantity = 2;
-
-        var cart = new Cart { CartId = cartId, Tickets = new List<Ticket>() };
-        var ticket = new Ticket
+        // Create test user
+        var user = new User
         {
-            Id = 1,
-            Showtime = new Showtime { Id = 1, TicketsAvailable = 10 },
-            Price = 10,
-            Quantity = 0
+            Id = _userId,
+            Email = "user@example.com",
+            Username = "testuser",
+            Password = "ValidPassword123"
         };
 
-        _mockCartSet.Setup(c => c.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Cart, bool>>>(), default))
-            .ReturnsAsync(cart); // Cart found
+        // Create test cart
+        var cart = new Cart
+        {
+            CartId = _cartId,
+            UserId = _userId,
+            User = user
+        };
 
-        _mockTicketSet.Setup(t => t.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Ticket, bool>>>(), default))
-            .ReturnsAsync(ticket); // Ticket found
+        // Create test movie and showtime
+        var movie = new Movie
+        {
+            Id = Guid.NewGuid().GetHashCode(),
+            Title = "Test Movie",
+            DateReleased = DateTime.Now
+        };
 
-        // Act
-        var result = await _cartService.AddTicketToCart(cartId, ticketIds, quantity);
+        var showtime = new Showtime
+        {
+            Id = Guid.NewGuid().GetHashCode(),
+            StartTime = DateTime.Now.AddDays(1),
+            Capacity = 100,
+            TicketsAvailable = 100,
+            MovieId = movie.Id,
+            Movie = movie
+        };
 
-        // Assert
-        Assert.True(result);
-        Assert.Single(cart.Tickets);
-        Assert.Equal(2, ticket.Quantity);
-        Assert.Equal(8, ticket.Showtime.TicketsAvailable); // Check if available tickets reduced
+        // Create test ticket
+        var ticket = new Ticket
+        {
+            Id = _ticketId,
+            Price = 10.00m,
+            ShowtimeId = showtime.Id,
+            Showtime = showtime,
+            Quantity = 1,
+            IsSold = false
+        };
+
+        movie.Showtimes = new List<Showtime> { showtime }; // Associate showtime with movie
+        cart.Tickets = new List<Ticket> { ticket };       // Add ticket to cart
+
+        // Save entities to context
+        _context.Users.Add(user);
+        _context.Carts.Add(cart);
+        _context.Movies.Add(movie);
+        _context.Showtime.Add(showtime);
+        _context.Ticket.Add(ticket);
+        _context.SaveChanges(); // Save changes to DB
     }
 
+    // Test adding a valid ticket to cart
     [Fact]
-    public async Task RemoveTicketFromCart_ShouldReturnFalse_WhenCartNotFound()
+    public async Task AddTicketToCart_ShouldAddTicket_WhenValid()
     {
-        // Arrange
-        int cartId = 1;
-        int ticketId = 1;
+        ResetDatabase(); // Reset DB
+        SeedDatabase();  // Seed data
 
-        _mockCartSet.Setup(c => c.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Cart, bool>>>(), default))
-            .ReturnsAsync((Cart)null); // Cart not found
+        var result = await _cartService.AddTicketToCart(_cartId, new List<int> { _ticketId }, 1);
 
-        // Act
-        var result = await _cartService.RemoveTicketFromCart(cartId, ticketId);
+        Assert.True(result); // Verify success
 
-        // Assert
-        Assert.False(result);
+        // Fetch updated cart from DB
+        var updatedCart = await _context.Carts
+            .Include(c => c.Tickets)
+            .FirstOrDefaultAsync(c => c.CartId == _cartId);
+
+        Assert.NotNull(updatedCart); // Ensure cart exists
+
+        // Verify ticket quantity is updated
+        var updatedTicket = updatedCart.Tickets.FirstOrDefault(t => t.Id == _ticketId);
+        Assert.NotNull(updatedTicket);
+        Assert.Equal(2, updatedTicket.Quantity); // Ensure quantity incremented
     }
 
+    // Test adding ticket to nonexistent cart fails
     [Fact]
-    public async Task RemoveTicketFromCart_ShouldReturnFalse_WhenTicketNotFoundInCart()
+    public async Task AddTicketToCart_ShouldFail_WhenCartNotFound()
     {
-        // Arrange
-        int cartId = 1;
-        int ticketId = 1;
-
-        var cart = new Cart { CartId = cartId, Tickets = new List<Ticket>() };
-        _mockCartSet.Setup(c => c.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Cart, bool>>>(), default))
-            .ReturnsAsync(cart); // Cart found
-
-        // Act
-        var result = await _cartService.RemoveTicketFromCart(cartId, ticketId);
-
-        // Assert
-        Assert.False(result);
+        var result = await _cartService.AddTicketToCart(-1, new List<int> { _ticketId }, 2);
+        Assert.False(result); // Verify failure
     }
 
+    // Test adding nonexistent ticket fails
     [Fact]
-    public async Task RemoveTicketFromCart_ShouldRemoveTicketFromCart_WhenTicketFound()
+    public async Task AddTicketToCart_ShouldFail_WhenTicketNotFound()
     {
-        // Arrange
-        int cartId = 1;
-        int ticketId = 1;
-
-        var showtime = new Showtime { Id = 1, TicketsAvailable = 10 };
-        var ticket = new Ticket { Id = ticketId, Showtime = showtime, Quantity = 1 };
-        var cart = new Cart { CartId = cartId, Tickets = new List<Ticket> { ticket } };
-
-        _mockCartSet.Setup(c => c.FirstOrDefaultAsync(It.IsAny<System.Linq.Expressions.Expression<System.Func<Cart, bool>>>(), default))
-            .ReturnsAsync(cart); // Cart found
-
-        // Act
-        var result = await _cartService.RemoveTicketFromCart(cartId, ticketId);
-
-        // Assert
-        Assert.True(result);
-        Assert.Empty(cart.Tickets); // Ticket removed
-        Assert.Equal(11, showtime.TicketsAvailable); // Available tickets updated
+        var result = await _cartService.AddTicketToCart(_cartId, new List<int> { -1 }, 2);
+        Assert.False(result); // Verify failure
     }
-}
+
+    // Test removing a valid ticket from cart
+    [Fact]
+    public async Task RemoveTicketFromCart_ShouldRemoveTic

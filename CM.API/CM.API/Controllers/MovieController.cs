@@ -51,7 +51,7 @@ namespace CM.API.Controllers
                     Name = g.Name
                 }).ToList(),
                 ImageUrl = m.ImageUrl,
-                Rating = m.Rating.Name,
+                Rating = m.Rating?.Name ?? "No Rating",
                 AverageReviewRating = m.Reviews != null && m.Reviews.Any() ? (double?)m.Reviews.Average(r => r.Rating) : null
             }).ToList();
 
@@ -80,7 +80,7 @@ namespace CM.API.Controllers
                 Title = movie.Title,
                 Description = movie.Description,
                 DateReleased = movie.DateReleased,
-                Genres = movie.Genres.Select(g => new GenreDto
+                Genres = movie.Genres?.Select(g => new GenreDto
                 {
                     Id = g.Id,
                     Name = g.Name
@@ -97,7 +97,7 @@ namespace CM.API.Controllers
                 }).ToList(),
                 // ImageUrl in the response
                 ImageUrl = movie.ImageUrl,
-                Rating = movie.Rating.Name,
+                Rating = movie.Rating?.Name ?? "No Rating",
                 AverageReviewRating = movie.Reviews != null && movie.Reviews.Any() ? (double?)movie.Reviews.Average(r => r.Rating) : null
             };
 
@@ -113,6 +113,11 @@ namespace CM.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMovie([FromBody] MovieCreateDto movieDto)
         {
+            if (movieDto == null)
+            {
+                return BadRequest("Movie data cannot be null.");
+            }
+
             // validate genres by their IDs
             if (movieDto.GenreIds == null || !movieDto.GenreIds.Any())
             {
@@ -130,15 +135,15 @@ namespace CM.API.Controllers
             // Map MovieCreateDto to Movie entity and related genres
             var movie = new Movie
             {
-                Title = movieDto.Title,
-                Description = movieDto.Description,
-                DateReleased = movieDto.DateReleased,
+                Title = movieDto?.Title ?? string.Empty,
+                Description = movieDto?.Description ?? string.Empty,
+                DateReleased = movieDto?.DateReleased ?? default,
                 // assign the genres to the movie
                 Genres = genres,
                 // initialize Showtimes
                 Showtimes = new List<Showtime>(),
-                ImageUrl = movieDto.ImageUrl,
-                RatingId = movieDto.RatingId
+                ImageUrl = movieDto?.ImageUrl ?? string.Empty,
+                RatingId = movieDto?.RatingId ?? default
             };
 
             var success = await _movieService.AddMovie(movie);
@@ -196,10 +201,10 @@ namespace CM.API.Controllers
             // Map EditMovieDto to Movie entity
             var newMovie = new Movie
             {
-                Title = editMovieDto.Title,
+                Title = editMovieDto.Title ?? string.Empty,
                 Description = editMovieDto.Description,
                 DateReleased = editMovieDto.DateReleased,
-                ImageUrl = editMovieDto.ImageUrl,
+                ImageUrl = editMovieDto.ImageUrl ?? string.Empty,
                 RatingId = editMovieDto.RatingId,
                 Genres = editMovieDto.GenreIds != null
                     ? await _movieService.GetGenresByIds(editMovieDto.GenreIds)

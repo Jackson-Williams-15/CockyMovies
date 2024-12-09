@@ -8,10 +8,10 @@ public class OrderResult
     public int CartId { get; set; }
     public DateTime ProcessedDate { get; set; }
     public bool Success { get; set; }
-    public string Details { get; set; }
+    public string? Details { get; set; }
     public decimal TotalPrice { get; set; }
-    public List<OrderTicket> Tickets { get; set; }
+    public List<OrderTicket>? Tickets { get; set; }
 
     public int UserId { get; set; }
-    public User User { get; set; }
+    public User? User { get; set; }
 }

@@ -70,7 +70,7 @@ namespace CM.API.Services
                                  .ToListAsync();
         }
 
-        public async Task<TicketDto> GetTicketById(int id)
+        public async Task<TicketDto?> GetTicketById(int id)
         {
             var ticket = await _context.Ticket.FindAsync(id);
             if (ticket == null) return null;

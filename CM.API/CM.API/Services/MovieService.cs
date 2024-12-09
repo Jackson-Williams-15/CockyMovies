@@ -99,10 +99,10 @@ public class MovieService : IMovieService
         // Update genres if provided
         if (newMovie.Genres != null && newMovie.Genres.Any())
         {
-            existingMovie.Genres.Clear();
+            existingMovie.Genres?.Clear();
             foreach (var genre in newMovie.Genres)
             {
-                existingMovie.Genres.Add(genre);
+                existingMovie.Genres?.Add(genre);
             }
         }
 
@@ -148,7 +148,7 @@ public class MovieService : IMovieService
         // Filter by genre IDs
         if (genreIds != null && genreIds.Any())
         {
-            query = query.Where(m => m.Genres.Any(g => genreIds.Contains(g.Id)));
+            query = query.Where(m => m.Genres != null && m.Genres.Any(g => genreIds.Contains(g.Id)));
         }
 
         // Filter by rating IDs

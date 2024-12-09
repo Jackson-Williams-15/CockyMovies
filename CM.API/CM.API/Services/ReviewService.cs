@@ -33,8 +33,8 @@ public class ReviewService : IReviewService
     {
         try
         {
-            review.Title = _contentModerationService.CensorContent(review.Title);
-            review.Description = _contentModerationService.CensorContent(review.Description);
+            review.Title = review.Title != null ? _contentModerationService.CensorContent(review.Title) : review.Title;
+            review.Description = review.Description != null ? _contentModerationService.CensorContent(review.Description) : review.Description;
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
             return true;
@@ -116,7 +116,7 @@ public class ReviewService : IReviewService
     {
         try
         {
-            reply.Body = _contentModerationService.CensorContent(reply.Body);
+            reply.Body = reply.Body != null ? _contentModerationService.CensorContent(reply.Body) : reply.Body;
             _context.Reply.Add(reply);
             await _context.SaveChangesAsync();
             return true;
