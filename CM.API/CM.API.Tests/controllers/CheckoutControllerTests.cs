@@ -17,18 +17,19 @@ using CM.API.Tests.Utilities;
 
 public class CheckoutControllerTests
 {
-    private readonly Mock<ICartService> _mockCartService;
-    private readonly Mock<IPaymentService> _mockPaymentService;
-    private readonly Mock<IEmailService> _mockEmailService; // Mocked IEmailService
-    private readonly Mock<ILogger<CheckoutController>> _mockLogger;
-    private readonly CheckoutController _controller;
-    private readonly AppDbContext _dbContext;
+    private readonly Mock<ICartService> _mockCartService;  // Mock for ICartService
+    private readonly Mock<IPaymentService> _mockPaymentService;  // Mock for IPaymentService
+    private readonly Mock<IEmailService> _mockEmailService;  // Mock for IEmailService
+    private readonly Mock<ILogger<CheckoutController>> _mockLogger;  // Mock for ILogger
+    private readonly CheckoutController _controller;  // The controller under test
+    private readonly AppDbContext _dbContext;  // In-memory database context for testing
 
+    // Constructor to set up mock services, logger, and the controller instance
     public CheckoutControllerTests()
     {
         _mockCartService = new Mock<ICartService>();
         _mockPaymentService = new Mock<IPaymentService>();
-        _mockEmailService = new Mock<IEmailService>(); // Initialize mock
+        _mockEmailService = new Mock<IEmailService>();
         _mockLogger = new Mock<ILogger<CheckoutController>>();
 
         // Set up in-memory database for testing
@@ -39,10 +40,11 @@ public class CheckoutControllerTests
             _mockPaymentService.Object,
             _dbContext,
             _mockLogger.Object,
-            _mockEmailService.Object // Pass the mock email service to controller
+            _mockEmailService.Object  // Pass the mock email service to controller
         );
     }
 
+    // Test for successful checkout processing
     [Fact]
     public async Task ProcessCheckout_ReturnsOk_WhenCheckoutIsSuccessful()
     {
@@ -60,6 +62,7 @@ public class CheckoutControllerTests
             }
         };
 
+        // Create a list of tickets in the cart
         var tickets = new List<CartTicketDto>
         {
             new CartTicketDto 
@@ -72,6 +75,7 @@ public class CheckoutControllerTests
             }
         };
 
+        // Create a cart DTO with the tickets
         var cart = new CartDto
         {
             CartId = 1,
@@ -79,9 +83,10 @@ public class CheckoutControllerTests
             Tickets = tickets
         };
 
-        // Calculate the total price based on tickets
+        // Calculate total price based on the tickets
         decimal totalPrice = tickets.Sum(t => t.Price * t.Quantity);
 
+        // Mock the GetCartById and ProcessPayment methods to simulate successful checkout
         _mockCartService.Setup(s => s.GetCartById(request.CartId)).ReturnsAsync(cart);
         _mockPaymentService.Setup(s => s.ProcessPayment(It.IsAny<PaymentDetails>())).ReturnsAsync(true);
 
@@ -89,48 +94,51 @@ public class CheckoutControllerTests
         var result = await _controller.ProcessCheckout(request);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var orderReceipt = okResult.Value as OrderReceiptDto;
+        var okResult = Assert.IsType<OkObjectResult>(result);  // Expect Ok response
+        var orderReceipt = okResult.Value as OrderReceiptDto;  // Extract the order receipt
 
-        Assert.NotNull(orderReceipt);
-        Assert.Equal(1, orderReceipt.OrderId);
-        Assert.Equal(totalPrice, orderReceipt.TotalPrice);
-        Assert.Single(orderReceipt.Tickets);
+        Assert.NotNull(orderReceipt);  // Ensure the receipt is not null
+        Assert.Equal(1, orderReceipt.OrderId);  // Ensure the order ID is correct
+        Assert.Equal(totalPrice, orderReceipt.TotalPrice);  // Validate the total price
+        Assert.Single(orderReceipt.Tickets);  // Ensure there's only one ticket in the order receipt
     }
 
+    // Test for invalid model state
     [Fact]
     public async Task ProcessCheckout_ReturnsBadRequest_WhenModelStateIsInvalid()
     {
         // Arrange
         _controller.ModelState.AddModelError("CartId", "CartId is required");
-        var request = new CheckoutRequestDto();
+        var request = new CheckoutRequestDto();  // Invalid request with no CartId
 
         // Act
         var result = await _controller.ProcessCheckout(request);
 
         // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        var error = badRequestResult.Value as SerializableError;
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);  // Expect BadRequest response
+        var error = badRequestResult.Value as SerializableError;  // Capture the error details
 
-        Assert.NotNull(error);
-        Assert.True(error.ContainsKey("CartId"));
-        Assert.Contains("CartId is required", error["CartId"] as string[]);
+        Assert.NotNull(error);  // Ensure the error is not null
+        Assert.True(error.ContainsKey("CartId"));  // Ensure the error contains "CartId"
+        Assert.Contains("CartId is required", error["CartId"] as string[]);  // Check the error message
     }
 
+    // Test for checkout when cart is not found
     [Fact]
     public async Task ProcessCheckout_ReturnsNotFound_WhenCartIsNotFound()
     {
         // Arrange
-        var request = new CheckoutRequestDto { CartId = 1 };
+        var request = new CheckoutRequestDto { CartId = 1 };  // Cart ID 1 does not exist
         _mockCartService.Setup(s => s.GetCartById(request.CartId)).ReturnsAsync((CartDto)null);
 
         // Act
         var result = await _controller.ProcessCheckout(request);
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<NotFoundObjectResult>(result);  // Expect NotFound response
     }
 
+    // Test for checkout when payment processing fails
     [Fact]
     public async Task ProcessCheckout_ReturnsBadRequest_WhenPaymentFails()
     {
@@ -148,6 +156,7 @@ public class CheckoutControllerTests
             }
         };
 
+        // Create a list of tickets in the cart
         var tickets = new List<CartTicketDto>
         {
             new CartTicketDto { Id = 101, Price = 10, Quantity = 2, ShowtimeId = 1, MovieId = 1 }
@@ -159,6 +168,7 @@ public class CheckoutControllerTests
             Tickets = tickets
         };
 
+        // Mock the GetCartById method and simulate payment failure
         _mockCartService.Setup(s => s.GetCartById(request.CartId)).ReturnsAsync(cart);
         _mockPaymentService.Setup(s => s.ProcessPayment(It.IsAny<PaymentDetails>())).ReturnsAsync(false);
 
@@ -166,6 +176,6 @@ public class CheckoutControllerTests
         var result = await _controller.ProcessCheckout(request);
 
         // Assert
-        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.IsType<BadRequestObjectResult>(result);  // Expect BadRequest response
     }
 }
