@@ -141,9 +141,27 @@ public class CheckoutController : ControllerBase
             // Ensure entities are tracked in the DbContext
             var trackedShowtime = await _context.Showtime.FindAsync(showtime.Id);
             var trackedMovie = await _context.Movies.FindAsync(movie.Id);
+            
+            // Check if the showtime is already tracked by the DbContext
+            if (trackedShowtime == null)
+            {
+                // If not tracked, attach the showtime entity to the DbContext
+                _context.Attach(showtime);
+            }
+            else
+            {
+                // If tracked, use the tracked showtime entity
+                showtime = trackedShowtime;
+            }
 
-            if (trackedShowtime == null) _context.Attach(showtime);
-            if (trackedMovie == null) _context.Attach(movie);
+            if (trackedMovie == null)
+            {
+                _context.Attach(movie);
+            }
+            else
+            {
+                movie = trackedMovie;
+            }
 
             var orderTicket = new OrderTicket
             {

@@ -56,4 +56,8 @@ namespace CM.API.Models
         public OrderResult? OrderResult { get; set; }
 
         /// <summary>
-        /// Gets or sets
+        /// Gets or sets the quantity of tickets
+        /// </summary>
+        public int Quantity { get; set; }
+}
+}
