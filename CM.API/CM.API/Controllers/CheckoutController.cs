@@ -211,11 +211,11 @@ public class CheckoutController : ControllerBase
             OrderId = order.Id,
             ProcessedDate = order.ProcessedDate,
             TotalPrice = order.TotalPrice,
-            Tickets = order.Tickets.Select(t => new OrderTicketDto
+            Tickets = order.Tickets?.Select(t => new OrderTicketDto
             {
                 TicketId = t.TicketId,
                 ShowtimeId = t.ShowtimeId,
-                MovieTitle = t.Movie.Title,
+                MovieTitle = t.Movie?.Title,
                 ShowtimeStartTime = t.Showtime.StartTime,
                 Price = t.Price,
                 Quantity = t.Quantity
