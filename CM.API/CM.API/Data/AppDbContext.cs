@@ -116,5 +116,6 @@ public class AppDbContext : DbContext
                 .HasOne(r => r.Movie)
                 .WithMany(m => m.Reviews)
                 .HasForeignKey(r => r.MovieId);
-    }
+        
+        }
 }

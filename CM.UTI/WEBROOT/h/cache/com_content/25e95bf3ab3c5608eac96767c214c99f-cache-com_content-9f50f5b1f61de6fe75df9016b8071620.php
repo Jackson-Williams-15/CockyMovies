@@ -50,8 +50,13 @@
 			
 										<dd class="hits">
 					<span class="icon-eye-open" aria-hidden="true"></span>
+
+					<meta itemprop="interactionCount" content="UserPageVisits:12" />
+					Hits: 12			</dd>						</dl>
+
 					<meta itemprop="interactionCount" content="UserPageVisits:13" />
 					Hits: 13			</dd>						</dl>
+
 	
 			
 			<ul class="tags inline">
