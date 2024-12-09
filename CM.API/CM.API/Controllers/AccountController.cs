@@ -25,6 +25,8 @@ public class AccountController : ControllerBase
     private readonly ILogger<AccountController> _logger;
     private readonly ICartService _cartService;
     private readonly AppDbContext _context;
+
+    // Constructor to inject dependencies
     public AccountController(IAccountService accountService, IConfiguration configuration, ILogger<AccountController> logger, ICartService cartService, AppDbContext context, IEmailService emailServices)
     {
         _accountService = accountService;
@@ -35,18 +37,20 @@ public class AccountController : ControllerBase
         _context = context;
     }
 
+    // Sign-up endpoint, registers a new user and sends a verification email
     [HttpPost("signup")]
     [AllowAnonymous]
     public async Task<IActionResult> SignUp([FromBody] UserCreateDto signupRequest)
     {
         var userDto = await _accountService.Register(signupRequest.Email, signupRequest.Username, signupRequest.Password, signupRequest.DateOfBirth);
 
+        // If registration fails
         if (userDto == null)
             return BadRequest(new { message = "User registration failed" });
 
         var cart = await _cartService.GetCartByUserId(userDto.Id);
 
-        // Send verification email
+        // Send verification email after successful registration
         var user = await _accountService.GetUserById(userDto.Id.ToString());
         if (user != null)
         {
@@ -60,13 +64,14 @@ public class AccountController : ControllerBase
         });
     }
 
-
+    // Login endpoint, authenticates the user and returns a JWT token
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] UserLoginDto loginRequest)
     {
         var userDto = await _accountService.Authenticate(loginRequest.Username, loginRequest.Password);
 
+        // If authentication fails
         if (userDto == null)
             return Unauthorized(new { message = "Invalid username or password" });
 
@@ -81,14 +86,12 @@ public class AccountController : ControllerBase
         });
     }
 
-
+    // Fetch profile of the currently authenticated user
     [Authorize]
     [HttpGet("profile")]
     public async Task<IActionResult> GetProfile()
     {
-        // Extract the UserId from the JWT token claims
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        _logger.LogInformation("Extracted username from token: {Username}", userId);
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -98,7 +101,6 @@ public class AccountController : ControllerBase
         var user = await _accountService.GetUserById(userId);
         if (user == null)
         {
-            _logger.LogWarning("User not found for username: {Username}", userId);
             return NotFound(new { message = "User not found" });
         }
 
@@ -120,16 +122,17 @@ public class AccountController : ControllerBase
         return Ok(userDto);
     }
 
+    // Generate JWT token for authenticated user
     private string GenerateJwtToken(UserDto user)
     {
         var claims = new[]
         {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString(), user.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString(), user.Username),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role)
-            };
+        };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -144,38 +147,32 @@ public class AccountController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    // Update user profile information
     [Authorize]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto updateDto)
     {
-        _logger.LogInformation("Received update request for user.");
-
         if (updateDto == null)
         {
-            _logger.LogWarning("Update request body is null.");
             return BadRequest(new { message = "Invalid request body" });
         }
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
         {
-            _logger.LogWarning("Invalid token: User ID not found in token.");
             return Unauthorized(new { message = "Invalid token" });
         }
-
-        _logger.LogInformation("Updating user with ID: {UserId}", userId);
 
         var updatedUser = await _accountService.UpdateUser(userId, updateDto);
         if (updatedUser == null)
         {
-            _logger.LogWarning("User update failed for user ID: {UserId}", userId);
             return BadRequest(new { message = "User update failed" });
         }
 
-        _logger.LogInformation("User updated successfully for user ID: {UserId}", userId);
         return Ok(updatedUser);
     }
 
+    // Update user password
     [Authorize]
     [HttpPut("update-password")]
     public async Task<IActionResult> UpdatePassword([FromBody] UserPasswordDto passwordUpdateDto)
@@ -200,6 +197,7 @@ public class AccountController : ControllerBase
         return Ok(new { message = errorMessage });
     }
 
+    // Save or update payment details for the user
     [Authorize]
     [HttpPost("save-payment-details")]
     public async Task<IActionResult> SavePaymentDetails([FromBody] PaymentDetailsDto paymentDetailsDto)
@@ -218,7 +216,7 @@ public class AccountController : ControllerBase
 
         var existingPaymentDetails = user.PaymentDetails;
 
-        // Check if there are any changes
+        // Check if payment details have changed
         if (existingPaymentDetails != null &&
             existingPaymentDetails.CardNumber == paymentDetailsDto.CardNumber &&
             existingPaymentDetails.ExpiryDate == paymentDetailsDto.ExpiryDate &&
@@ -229,7 +227,7 @@ public class AccountController : ControllerBase
             return Ok(new { message = "No changes detected in payment details." });
         }
 
-        // Update existing payment details or create new if doesnt exist
+        // Update or add new payment details
         if (existingPaymentDetails != null)
         {
             existingPaymentDetails.CardNumber = paymentDetailsDto.CardNumber;
