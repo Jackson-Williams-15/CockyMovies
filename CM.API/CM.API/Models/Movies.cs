@@ -28,7 +28,7 @@ public class Movie
     /// <summary>
     /// Gets or sets the list of showtimes for the movie.
     /// </summary>
-    public required List<Showtime> Showtimes { get; set; }
+    public List<Showtime>? Showtimes { get; set; }
     /// <summary>
     /// Gets or sets the list of reviews for the movie.
     /// </summary>
