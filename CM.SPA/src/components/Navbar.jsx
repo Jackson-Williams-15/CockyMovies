@@ -70,7 +70,6 @@ export default function Navbar() {
             Manager
           </Button>
         )}
-        {isAuthenticated ? (
 
         {isLoggedIn ? (
           <>
