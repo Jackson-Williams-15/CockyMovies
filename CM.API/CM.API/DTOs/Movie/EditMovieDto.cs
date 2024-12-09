@@ -1,3 +1,4 @@
+// DTO used for editing an existing movie's details.
 public class EditMovieDto
 {
     public string Title { get; set; }
