@@ -11,12 +11,14 @@ namespace CM.API.Controllers
     [Route("api/[controller]")]
     public class MoviesController : ControllerBase
     {
-        private readonly IMovieService _movieService; // Dependency injection for the movie service
+        // Dependency injection for the movie service
+        private readonly IMovieService _movieService;
 
         // Constructor to inject the IMovieService dependency into the controller.
         public MoviesController(IMovieService movieService)
         {
-            _movieService = movieService; // Assign the injected service to the private field
+            // Assign the injected service to the private field
+            _movieService = movieService;
         }
 
         // GET: api/movies
@@ -38,9 +40,9 @@ namespace CM.API.Controllers
                 {
                     Id = g.Id,
                     Name = g.Name
-                }).ToList(), // Converting genres to GenreDto
+                }).ToList(),
                 ImageUrl = m.ImageUrl,
-                Rating = m.Rating.Name // Getting the rating name
+                Rating = m.Rating.Name
             }).ToList();
 
             // Return the movie DTOs as a JSON response with an HTTP 200 OK status.
@@ -83,8 +85,8 @@ namespace CM.API.Controllers
                         Id = t.Id
                     }).ToList()
                 }).ToList(),
-                ImageUrl = movie.ImageUrl, // Including the movie's image URL
-                Rating = movie.Rating.Name // Including the movie's rating name
+                ImageUrl = movie.ImageUrl,
+                Rating = movie.Rating.Name
             };
 
             // Return the movie DTO with an HTTP 200 OK status.
@@ -117,10 +119,10 @@ namespace CM.API.Controllers
                 Title = movieDto.Title,
                 Description = movieDto.Description,
                 DateReleased = movieDto.DateReleased,
-                Genres = genres, // Assign genres
-                Showtimes = new List<Showtime>(), // Initialize an empty list for showtimes (not provided in DTO)
-                ImageUrl = movieDto.ImageUrl, // Set the image URL (can be optional in the DTO)
-                RatingId = movieDto.RatingId // Assign the rating ID
+                Genres = genres,
+                Showtimes = new List<Showtime>(),
+                ImageUrl = movieDto.ImageUrl,
+                RatingId = movieDto.RatingId
             };
 
             // Check if the movie was successfully added using the movie service.
@@ -188,7 +190,7 @@ namespace CM.API.Controllers
                 // Update genres if new genre IDs are provided.
                 Genres = editMovieDto.NewMovie.GenreIds != null
                     ? await _movieService.GetGenresByIds(editMovieDto.NewMovie.GenreIds)
-                    : new List<Genre>() // If no genres are provided, assign an empty list.
+                    : new List<Genre>()
             };
 
             // Attempt to edit the movie using the movie service.

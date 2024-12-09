@@ -13,8 +13,10 @@ namespace CM.API.Services;
 // methods for managing movies, such as adding, removing, editing, and retrieving movies.
 public class MovieService : IMovieService
 {
-    private readonly AppDbContext _context;          // Database context for accessing the Movies table.
-    private readonly GenreRepository _genreRepository; // Repository to fetch Genre data.
+    // Database context for accessing the Movies table.
+    private readonly AppDbContext _context;
+    // Repository to fetch Genre data.
+    private readonly GenreRepository _genreRepository;
 
     // Constructor initializes MovieService with AppDbContext and GenreRepository dependencies.
     public MovieService(AppDbContext context, GenreRepository genreRepository)
@@ -43,8 +45,8 @@ public class MovieService : IMovieService
 
         // Save the changes asynchronously to the database.
         await _context.SaveChangesAsync();
-
-        return true; // Return true indicating that the movie was successfully added.
+        // Return true indicating that the movie was successfully added.
+        return true;
     }
 
     // Method to remove a movie from the database.
@@ -64,8 +66,8 @@ public class MovieService : IMovieService
 
         // Save the changes asynchronously to the database.
         await _context.SaveChangesAsync();
-
-        return true; // Return true indicating that the movie was successfully removed.
+        // Return true indicating that the movie was successfully removed.
+        return true;
     }
 
     // Method to update an existing movie with new data.
@@ -73,8 +75,8 @@ public class MovieService : IMovieService
     {
         // Retrieve the existing movie with its related genres.
         var existingMovie = await _context.Movies
-            .Include(m => m.Genres)  // Load related genres.
-            .FirstOrDefaultAsync(m => m.Id == oldMovie.Id); // Find the movie by its Id.
+            .Include(m => m.Genres)
+            .FirstOrDefaultAsync(m => m.Id == oldMovie.Id);
 
         // If the movie is not found, return false.
         if (existingMovie == null)
@@ -86,23 +88,23 @@ public class MovieService : IMovieService
         existingMovie.Title = newMovie.Title;
         existingMovie.Description = newMovie.Description;
         existingMovie.DateReleased = newMovie.DateReleased;
-        existingMovie.ImageUrl = newMovie.ImageUrl ?? existingMovie.ImageUrl; // Use new image if provided, otherwise keep the existing one.
+        existingMovie.ImageUrl = newMovie.ImageUrl ?? existingMovie.ImageUrl;
         existingMovie.RatingId = newMovie.RatingId;
 
         // If new genres are provided, update the genres of the movie.
         if (newMovie.Genres != null && newMovie.Genres.Any())
         {
-            existingMovie.Genres.Clear(); // Remove all existing genres.
+            existingMovie.Genres.Clear();
             foreach (var genre in newMovie.Genres)
             {
-                existingMovie.Genres.Add(genre); // Add each new genre.
+                existingMovie.Genres.Add(genre);
             }
         }
 
         // Save the updated movie to the database.
         await _context.SaveChangesAsync();
-
-        return true; // Return true indicating that the movie was successfully edited.
+        // Return true indicating that the movie was successfully edited.
+        return true;
     }
 
     // Method to get a movie by its Id.
@@ -112,9 +114,9 @@ public class MovieService : IMovieService
         return await _context.Movies
             .Include(m => m.Genres)
             .Include(m => m.Showtimes)
-                .ThenInclude(s => s.Tickets)  // Include related tickets for each showtime.
+                .ThenInclude(s => s.Tickets)
             .Include(m => m.Rating)
-            .FirstOrDefaultAsync(m => m.Id == id); // Find the movie by its Id.
+            .FirstOrDefaultAsync(m => m.Id == id);
     }
 
     // Method to retrieve a list of movies with optional filters by genre and rating.
@@ -126,7 +128,7 @@ public class MovieService : IMovieService
             .Include(m => m.Showtimes)
                 .ThenInclude(s => s.Tickets)
             .Include(m => m.Rating)
-            .AsQueryable(); // Convert to IQueryable to allow further query modifications.
+            .AsQueryable();
 
         // Filter by genre if genreIds are provided.
         if (genreIds != null && genreIds.Any())
