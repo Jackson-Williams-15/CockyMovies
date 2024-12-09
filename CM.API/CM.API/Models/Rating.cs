@@ -1,11 +1,6 @@
-namespace CM.API.Models
+namespace CM.API.Models;
+public class Rating
 {
-    public class Rating
-    {
-        // The unique ID of the rating.
-        public int Id { get; set; }
-
-        // The name of the rating.
-        public string Name { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }
