@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.ComponentModel.DataAnnotations.Schema;
 using T4DBMYSQL;
 using T4DBMSSQL;
+
 using MENUSYSTEM33; //REVIEW LIST DATA
 using MENUSYSTEM34; //INSTALLER MYSQL
 using MENUSYSTEM35; //INSTALLER MSSQL
@@ -31,8 +32,6 @@ public class Program
         //Menu33.DiagMenu();
 
 
-        //FIRST DEMONSTRATE - USE OF LISTS - PHASE I REQUIREMENT - AND INEUMERABLE DATA STRUCTURE 
-
         // Declare list variables Before Building a Menu System.  
         // List Variables Have Been Moved to a Seperate Namespace in lists.cs which just has the type declarations, and constructors;
         //T4MYSQL MyDbclass = new T4MYSQL();
@@ -53,6 +52,7 @@ public class Program
             Console.WriteLine("\nSystemCockyEntertainment[V2.1] Installation and Maintenance Utilities");
             Console.WriteLine("CE Uses a React & ASPX FrontEnd, RESTBackEnd, ASP.NET->LanManager, and COTS Demonstrating The Breadth of Our Team Skills.");
             Console.WriteLine("Please Enter Your Choice:");
+
             Console.WriteLine("0.Review Seed Data Before Installation:");
             Console.WriteLine("1.Review Current Table Information(DUMP SQL Info):");
             Console.WriteLine("2.Create DBMS and Tables:");
@@ -61,6 +61,7 @@ public class Program
             Console.WriteLine("5.Swagger JSON Check:");
             Console.WriteLine("99.Exit:");
             Console.WriteLine("Please Enter Your Choice(0,1,2,3,4,5,99):\n");
+
             string somestring = null;
             somestring = Console.ReadLine();
             number = Convert.ToInt32(somestring);
@@ -71,6 +72,7 @@ public class Program
                 exit = 99;
             }
             else if (number == 0)
+
             {
                 Console.WriteLine("You Choose Option: 0-Review Seed Data\n");
                 Menu33.DiagMenu();

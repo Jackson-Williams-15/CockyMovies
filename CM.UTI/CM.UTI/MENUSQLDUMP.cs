@@ -26,11 +26,11 @@ namespace MENUSYSTEM35
         string storecode;
         string manager;
         string state;
-
        
         // Driver code 
         static public void DiagMenu()
         {
+
             int exit = 0;
             int number = 0;
             do
@@ -63,7 +63,10 @@ namespace MENUSYSTEM35
                         if (somestring[0] == 'O')
                         {
                             T4MYSQL.connectiontest();
+
+
                             T4MYSQL.showtables();
+
                             exit = 101;
                         }
                         else if (somestring[0] == 'M')
