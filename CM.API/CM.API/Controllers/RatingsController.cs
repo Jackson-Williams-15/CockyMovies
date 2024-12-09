@@ -4,24 +4,30 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CM.API.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class RatingsController : ControllerBase
+namespace CM.API.Controllers
 {
-    private readonly IRatingService _ratingService;
-
-    public RatingsController(IRatingService ratingService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RatingsController : ControllerBase
     {
-        _ratingService = ratingService;
-    }
+        private readonly IRatingService _ratingService;
 
-    // GET: api/ratings
-    [HttpGet]
-    public async Task<IActionResult> GetRatings()
-    {
-        var ratings = await _ratingService.GetRatings();
-        return Ok(ratings);
+        // Constructor that injects the IRatingService dependency.
+        public RatingsController(IRatingService ratingService)
+        {
+            _ratingService = ratingService;
+        }
+
+        // GET: api/ratings
+        // Retrieves all ratings from the IRatingService.
+        [HttpGet]
+        public async Task<IActionResult> GetRatings()
+        {
+            // Calls the service to get all ratings.
+            var ratings = await _ratingService.GetRatings();
+
+            // Returns the list of ratings in the response with a 200 OK status.
+            return Ok(ratings);
+        }
     }
 }
