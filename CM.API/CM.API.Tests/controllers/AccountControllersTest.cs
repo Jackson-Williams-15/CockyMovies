@@ -14,32 +14,34 @@ using System.Collections.Generic;
 
 public class AccountControllerTests
 {
-    private readonly Mock<IAccountService> _mockAccountService;
-    private readonly Mock<ICartService> _mockCartService;
-    private readonly Mock<ILogger<AccountController>> _mockLogger;
-    private readonly Mock<IConfiguration> _mockConfiguration;
-    private readonly Mock<IEmailService> _mockEmailService;  // Added mock for IEmailService
+    private readonly Mock<IAccountService> _mockAccountService;  // Mock for IAccountService
+    private readonly Mock<ICartService> _mockCartService;      // Mock for ICartService
+    private readonly Mock<ILogger<AccountController>> _mockLogger;  // Mock for ILogger
+    private readonly Mock<IConfiguration> _mockConfiguration;    // Mock for IConfiguration
+    private readonly Mock<IEmailService> _mockEmailService;  // Mock for IEmailService
 
     private readonly AccountController _controller;
 
+    // Constructor to set up mock objects and initialize the controller
     public AccountControllerTests()
     {
         _mockAccountService = new Mock<IAccountService>();
         _mockCartService = new Mock<ICartService>();
         _mockLogger = new Mock<ILogger<AccountController>>();
         _mockConfiguration = new Mock<IConfiguration>();
-        _mockEmailService = new Mock<IEmailService>();  // Initialize the mock here
+        _mockEmailService = new Mock<IEmailService>();  // Initialize the mock for IEmailService
 
+        // Create the AccountController instance with mocks
         _controller = new AccountController(
             _mockAccountService.Object,
             _mockConfiguration.Object,
             _mockLogger.Object,
             _mockCartService.Object,
-            null, // Assuming AppDbContext is not relevant for these tests
-            _mockEmailService.Object // Pass the mock to the controller constructor
+            null,  // Assuming AppDbContext is not relevant for these tests
+            _mockEmailService.Object  // Pass the mock to the controller constructor
         );
 
-        // Mock JWT configuration
+        // Mock configuration settings for JWT (used in authentication)
         _mockConfiguration.Setup(c => c["Jwt:Key"]).Returns("dummykeydummykeydummykeydummykey");
         _mockConfiguration.Setup(c => c["Jwt:Issuer"]).Returns("testissuer");
     }
@@ -69,13 +71,15 @@ public class AccountControllerTests
             }
         };
 
+        // Set up mock to return userDto when Register is called
         _mockAccountService.Setup(s => s.Register(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()))
             .ReturnsAsync(userDto);
 
+        // Set up mock for CartService
         _mockCartService.Setup(s => s.GetCartByUserId(It.IsAny<int>()))
             .ReturnsAsync(new Cart { CartId = 1, UserId = 1 });
 
-        // Mock SendEmail call
+        // Mock email service call
         _mockEmailService.Setup(e => e.SendEmail(It.IsAny<string>(), It.IsAny<EmailType>(), It.IsAny<User>(), It.IsAny<User>()))
             .Returns(Task.CompletedTask);
 
@@ -83,9 +87,10 @@ public class AccountControllerTests
         var result = await _controller.SignUp(signupRequest);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);  // Check if the result is Ok
         var response = okResult.Value as SignUpResponseDto;
 
+        // Validate response properties
         Assert.NotNull(response);
         Assert.Equal(userDto.Email, response.User.Email);
         Assert.Equal(userDto.Id, response.User.Id);
@@ -99,6 +104,7 @@ public class AccountControllerTests
         // Arrange
         var loginRequest = new UserLoginDto { Username = "testuser", Password = "wrongpassword" };
 
+        // Mock authentication to return null when invalid credentials are provided
         _mockAccountService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((UserDto?)null);
 
@@ -106,49 +112,48 @@ public class AccountControllerTests
         var result = await _controller.Login(loginRequest);
 
         // Assert
-        Assert.IsType<UnauthorizedObjectResult>(result);
+        Assert.IsType<UnauthorizedObjectResult>(result);  // Expect Unauthorized response
     }
 
-[Fact]
-public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
-{
-    // Arrange
-    var loginRequest = new UserLoginDto { Username = "testuser", Password = "password" };
-
-    var userDto = new UserDto
+    [Fact]
+    public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
     {
-        Id = 1,
-        Username = "testuser",
-        Email = "test@example.com",
-        Role = "User" // Ensure this is set
-    };
+        // Arrange
+        var loginRequest = new UserLoginDto { Username = "testuser", Password = "password" };
 
-    _mockAccountService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
-        .ReturnsAsync(userDto);
-
-    _mockCartService.Setup(s => s.GetCartByUserId(It.IsAny<int>()))
-        .ReturnsAsync(new Cart
+        var userDto = new UserDto
         {
-            CartId = 1,
-            UserId = 1
-        });
+            Id = 1,
+            Username = "testuser",
+            Email = "test@example.com",
+            Role = "User"
+        };
 
-    _mockConfiguration.Setup(c => c["Jwt:Key"]).Returns("dummykeydummykeydummykeydummykey");
-    _mockConfiguration.Setup(c => c["Jwt:Issuer"]).Returns("testissuer");
+        // Set up mock to return userDto for valid credentials
+        _mockAccountService.Setup(s => s.Authenticate(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(userDto);
 
-    // Act
-    var result = await _controller.Login(loginRequest);
+        // Set up mock for CartService
+        _mockCartService.Setup(s => s.GetCartByUserId(It.IsAny<int>()))
+            .ReturnsAsync(new Cart
+            {
+                CartId = 1,
+                UserId = 1
+            });
 
-    // Assert
-    var okResult = Assert.IsType<OkObjectResult>(result);
-    var response = okResult.Value as LoginResponseDto;
+        // Act
+        var result = await _controller.Login(loginRequest);
 
-    Assert.NotNull(response.Token);  // Assert that the token is not null
-    Assert.Equal("testuser", response.User.Username);
-    Assert.Equal("test@example.com", response.User.Email);
-    Assert.Equal(1, response.CartId);
-}
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);  // Expect Ok response
+        var response = okResult.Value as LoginResponseDto;
 
+        // Validate response properties
+        Assert.NotNull(response.Token);  // Ensure token is present
+        Assert.Equal("testuser", response.User.Username);
+        Assert.Equal("test@example.com", response.User.Email);
+        Assert.Equal(1, response.CartId);
+    }
 
     [Fact]
     public async Task GetProfile_ReturnsOk_WhenUserIsFound()
@@ -180,9 +185,10 @@ public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
         var result = await _controller.GetProfile();
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);  // Expect Ok response
         var response = okResult.Value as UserDto;
 
+        // Validate response properties
         Assert.NotNull(response);
         Assert.Equal(user.Id, response.Id);
         Assert.Equal(user.Email, response.Email);
@@ -204,6 +210,7 @@ public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
             HttpContext = new DefaultHttpContext { User = claims }
         };
 
+        // Set up mock to return null when user is not found
         _mockAccountService.Setup(s => s.GetUserById(It.IsAny<string>()))
             .ReturnsAsync((User?)null);
 
@@ -211,6 +218,6 @@ public async Task Login_ReturnsOk_WhenAuthenticationIsSuccessful()
         var result = await _controller.GetProfile();
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<NotFoundObjectResult>(result);  // Expect NotFound response
     }
 }
