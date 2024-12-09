@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System.Text;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -13,15 +14,17 @@ public class CheckoutController : ControllerBase
 {
     private readonly ICartService _cartService;
     private readonly IPaymentService _paymentService;
+    private readonly IEmailService _emailService;
     private readonly AppDbContext _context;
     private readonly ILogger<CheckoutController> _logger;
 
-    public CheckoutController(ICartService cartService, IPaymentService paymentService, AppDbContext context, ILogger<CheckoutController> logger)
+    public CheckoutController(ICartService cartService, IPaymentService paymentService, AppDbContext context, ILogger<CheckoutController> logger, IEmailService emailService)
     {
         _cartService = cartService;
         _paymentService = paymentService;
         _context = context;
         _logger = logger;
+        _emailService = emailService;
     }
 
     [HttpPost("ProcessCheckout")]
@@ -189,6 +192,20 @@ public class CheckoutController : ControllerBase
 
         _logger.LogInformation("Checkout processed successfully for cart: {CartId}", request.CartId);
 
+        var orderReceipt = await GenerateOrderReceipt(order);
+
+        // Send order receipt email
+        var user = await _context.Users.FindAsync(request.UserId);
+        if (user != null)
+        {
+            await _emailService.SendEmail(user.Email, EmailType.OrderReceipt, orderReceipt, user);
+        }
+
+        return Ok(orderReceipt);
+    }
+
+    private async Task<OrderReceiptDto> GenerateOrderReceipt(OrderResult order)
+    {
         var orderReceipt = new OrderReceiptDto
         {
             OrderId = order.Id,
@@ -200,10 +217,12 @@ public class CheckoutController : ControllerBase
                 ShowtimeId = t.ShowtimeId,
                 MovieTitle = t.Movie.Title,
                 ShowtimeStartTime = t.Showtime.StartTime,
-                Price = t.Price
+                Price = t.Price,
+                Quantity = t.Quantity
             }).ToList()
         };
 
-        return Ok(orderReceipt);
+        return orderReceipt;
     }
+
 }

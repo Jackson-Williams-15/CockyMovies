@@ -30,6 +30,26 @@ namespace CM.API.Services
             return true;
         }
 
+        public async Task<bool> EditTicket(int id, TicketUpdateDto updatedTicketDto)
+        {
+            // Find the ticket to update
+            var ticket = await _context.Ticket.FirstOrDefaultAsync(t => t.Id == id);
+            if (ticket == null)
+            {
+                return false; // Ticket not found
+            }
+
+            // Update ticket properties with values from the DTO
+            ticket.Price = updatedTicketDto.Price;
+            ticket.ShowtimeId = updatedTicketDto.ShowtimeId;
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
+
         // Get all tickets
         public async Task<List<Ticket>> GetAllTickets()
         {
@@ -56,7 +76,7 @@ namespace CM.API.Services
             };
         }
 
-       public async Task<bool> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
+        public async Task<bool> RemoveTicketsFromShowtime(int showtimeId, int numberOfTickets)
         {
             if (numberOfTickets <= 0)
             {
@@ -66,14 +86,15 @@ namespace CM.API.Services
             // Find the showtime
             var showtime = await _context.Showtime
                 .Include(s => s.Tickets) // Include tickets to make sure we can access them
-                .FirstOrDefaultAsync(s => s.Id == showtimeId); 
+                .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
             if (showtime == null)
             {
                 return false; // Showtime not found
             }
 
-            if(showtime.TicketsAvailable == showtime.Capacity) {
+            if (showtime.TicketsAvailable == showtime.Capacity)
+            {
                 return false;
             }
 
@@ -109,13 +130,14 @@ namespace CM.API.Services
             // Find the showtime
             var showtime = await _context.Showtime
                 .Include(s => s.Tickets) // Include tickets to make sure we can access them
-                .FirstOrDefaultAsync(s => s.Id == showtimeId); 
+                .FirstOrDefaultAsync(s => s.Id == showtimeId);
 
             if (showtime == null)
             {
                 return false; // Showtime not found
             }
-            if(showtime.TicketsAvailable == showtime.Capacity) {
+            if (showtime.TicketsAvailable == showtime.Capacity)
+            {
                 return false;
             }
 
@@ -141,10 +163,5 @@ namespace CM.API.Services
 
             return true;
         }
-
-
-
-
-
     }
 }

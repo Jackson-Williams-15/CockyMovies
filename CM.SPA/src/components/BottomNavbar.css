@@ -1,0 +1,20 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.TopNavbar {
+  height: 50px; /* Example height for the top navbar */
+  background-color: lightgray; /* Example color for the top navbar */
+}
+
+.Content {
+  flex: 1;
+}
+
+.BottomNavbar {
+  position: absolute;
+  top: 900px; /* 50px for the top navbar + 900px */
+  width: 100%;
+ }

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+blink {
+                color: #2d38be;
+                font-size: 22px;
+                font-weight: bold;
+            }
+
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+  height: 460px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+</head>
+<body>
+<div align=center><span align=center><h1><font color=pink><blink>Now Playing</blink></font></h1></span></div>
+    <form id="form1" runat="server">
+    <div align="center">
+	<span align=left><H3>Featured Movie: Marvel Comments presents XMen</H3></span>
+	<span style="float:left;">&nbsp&nbsp&nbsp<asp:Image ID="jenimage" runat="server" height="60" width="60"/><BR></span>
+        <span style="float:left;">&nbsp&nbsp&nbsp<Label ID="Label1" runat="server" Text="Hello, MovieTimes!"></Label></span><BR>
+        <span style="float:left;">&nbsp&nbsp&nbsp<Label ID="Label2" runat="server" Text="Hello, MovieDescription!"></Label></span><BR>
+        <span style="float:left;">&nbsp&nbsp&nbsp<Label ID="Label3" runat="server" Text="Hello, OpenSeats"></Label></span><BR>
+    <iframe src="https://www.youtube.com/embed/SiO3vCBNt_A?si=rn0AvxFT8poPd7R0" width=100% height=350px></iframe><BR><BR>
+    </div>
+    </form>
+    <div align=center>
+<h3><font color=maroon>Action Movies</font></h3>
+<div class="row">
+  <div class="column" style="background-color:#aaa;">
+    <div align=center><h3>James Bond - Casino Royale</h3></div>
+    <iframe src="https://www.youtube.com/embed/d4ggLi3Us-A?si=R11k65ceLImgwlvo" width=100% height=300px></iframe>
+    <span align=center><p>|&nbsp&nbsp&nbsp<a href="http://class.usc547team4.info/shop/?p=90">Full Description</a>&nbsp&nbsp&nbsp | &nbsp&nbsp&nbspBuy&nbsp&nbsp&nbsp |&nbsp&nbsp&nbsp Showtimes&nbsp&nbsp&nbsp|</p></span>
+  </div>
+  <div class="column" style="background-color:#bbb;">
+    <div align=center><h3>Tom Cruises - TopGun2</h3></div>
+
+    <iframe src="https://www.youtube.com/embed/IXbnzEHZDPg?si=D_5tY7kQcYJTHY9Q" width=100% height=300px></iframe><span align=center><p>|&nbsp&nbsp&nbsp<a href="http://class.usc547team4.info/shop/?p=92">Full Description</a>&nbsp&nbsp&nbsp | &nbsp&nbsp&nbspBuy&nbsp&nbsp&nbsp |&nbsp&nbsp&nbsp Showtimes&nbsp&nbsp&nbsp|</p></span>
+
+  </div>
+  <div class="column" style="background-color:#ccc;">
+    <div align=center><h3>Michele Rodriguez - Blue Crush </h3></div>
+    <iframe src="https://www.youtube.com/embed/3q2PXB-aE7Q?si=L7gwg-5o7Y6GA2T9" width=100% height=300px></iframe><span align=center><p>|&nbsp&nbsp&nbsp<a href="http://class.usc547team4.info/shop/?p=94"> Full Description</a>&nbsp&nbsp&nbsp | &nbsp&nbsp&nbspBuy&nbsp&nbsp&nbsp |&nbsp&nbsp&nbsp Showtimes&nbsp&nbsp&nbsp|</p></span>
+
+  </div>
+</div>
+<h3><font color=maroon>Romantic Comedies</font></h3>
+<div class="row">
+  <div class="column" style="background-color:#aaa;">
+    <div align=center><h3>Shes All That</h3></div>
+
+    <iframe src="https://www.youtube.com/embed/ExDPiPhLqEQ?si=u01ptHh-g_UdFxBX" width=100% height=300px></iframe><span align=center><p>|&nbsp&nbsp&nbsp<a href="http://class.usc547team4.info/shop/?p=104">Full Description</a>&nbsp&nbsp&nbsp | &nbsp&nbsp&nbspBuy&nbsp&nbsp&nbsp |&nbsp&nbsp&nbsp Showtimes&nbsp&nbsp&nbsp|</p></span>
+
+  </div>
+  <div class="column" style="background-color:#bbb;">
+    <div align=center><h3>Notting Hill</h3></div>
+
+    <iframe src="https://www.youtube.com/embed/RESwG23_YGw?si=lv1oFVNzugrxgBwt" width=100% height=300px></iframe><span align=center><p>|&nbsp&nbsp&nbsp<a href="http://class.usc547team4.info/shop/?p=88">Full Description</a>&nbsp&nbsp&nbsp | &nbsp&nbsp&nbspBuy&nbsp&nbsp&nbsp |&nbsp&nbsp&nbsp Showtimes&nbsp&nbsp&nbsp|</p></span>
+
+  </div>
+  <div class="column" style="background-color:#ccc;">
+    <div align=center><h3>Jerry McGuire</h3></div>
+
+    <iframe src="https://www.youtube.com/embed/FFrag8ll85w?si=ekjBdyw1D1vMMGTa" width=100% height=300px></iframe>
+    <span align=center><p>|&nbsp&nbsp&nbsp<a href="http://class.usc547team4.info/shop/?p=1">Full Description</a>&nbsp&nbsp&nbsp | &nbsp&nbsp&nbspBuy&nbsp&nbsp&nbsp |&nbsp&nbsp&nbsp Showtimes&nbsp&nbsp&nbsp|</p></span>
+
+  </div>
+</div>
