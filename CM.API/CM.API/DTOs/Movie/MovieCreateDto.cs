@@ -1,10 +1,34 @@
+/// <summary>
+/// Gets or sets the rating for the movie.
+/// </summary>
 public class MovieCreateDto
 {
+    /// <summary>
+    /// Gets or sets the movie ID.
+    /// </summary>
     public int Id { get; set; }
+    /// <summary>
+    /// Gets or sets the movie title.
+    /// </summary>
     public string? Title { get; set; }
+    /// <summary>
+    /// Gets or sets the movie description.
+    /// </summary>
     public string? Description { get; set; }
+    /// <summary>
+    /// Gets or sets the release date of the movie.
+    /// </summary>
     public DateTime DateReleased { get; set; }
-    public List<int>? GenreIds { get; set; } // Just the list of genre IDs
+    /// <summary>
+    /// Gets or sets the list of genre IDs associated with the movie.
+    /// </summary>
+    public List<int>? GenreIds { get; set; }
+    /// <summary>
+    /// Gets or sets the image URL for the movie.
+    /// </summary>
     public string? ImageUrl { get; set; }
+    /// <summary>
+    /// Gets or sets the rating ID for the movie.
+    /// </summary>
     public int RatingId { get; set; }
 }
