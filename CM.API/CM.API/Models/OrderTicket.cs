@@ -1,63 +1,58 @@
 namespace CM.API.Models
 {
     /// <summary>
-    /// Represents a ticket associated with an order.
+    /// Represents an order for a ticket associated with a specific showtime and movie.
     /// </summary>
     public class OrderTicket
     {
         /// <summary>
-        /// Gets or sets the unique identifier for the order ticket.
-        /// This is the primary key for the OrderTicket entity.
+        /// Gets or sets the unique ID of the order ticket.
         /// </summary>
         public int OrderTicketId { get; set; }
 
         /// <summary>
-        /// Gets or sets the ID of the ticket associated with this order ticket.
+        /// Gets or sets the ticket ID associated with this order.
         /// </summary>
         public int TicketId { get; set; }
 
         /// <summary>
-        /// Gets or sets the ID of the showtime associated with this order ticket.
+        /// Gets or sets the showtime ID associated with the ticket order.
         /// </summary>
         public int ShowtimeId { get; set; }
 
         /// <summary>
-        /// Gets or sets the ID of the movie associated with this order ticket.
+        /// Gets or sets the movie ID associated with the ticket order.
         /// </summary>
         public int MovieId { get; set; }
 
         /// <summary>
-        /// Gets or sets the price of this specific ticket in the order.
+        /// Gets or sets the price of the ticket for this order.
         /// </summary>
         public decimal Price { get; set; }
 
         /// <summary>
-        /// Gets or sets the showtime details for the ticket.
-        /// This is a navigation property to the Showtime entity.
+        /// Gets or sets the associated showtime for this ticket order.
         /// </summary>
         public Showtime? Showtime { get; set; }
 
         /// <summary>
-        /// Gets or sets the movie details for the ticket.
-        /// This is a navigation property to the Movie entity.
+        /// Gets or sets the associated movie for this ticket order.
         /// </summary>
         public Movie? Movie { get; set; }
 
         /// <summary>
-        /// Gets or sets the ID of the associated order result.
-        /// This is a foreign key linking this ticket to the OrderResult entity.
+        /// Gets or sets the foreign key to the associated order result.
         /// </summary>
         public int OrderResultId { get; set; }
 
         /// <summary>
-        /// Gets or sets the order result associated with this order ticket.
-        /// This is a navigation property to the OrderResult entity.
+        /// Gets or sets the navigation property to the associated order result.
         /// </summary>
         public OrderResult? OrderResult { get; set; }
 
         /// <summary>
-        /// Gets or sets the quantity of tickets
+        /// Gets or sets the quantity of tickets ordered.
         /// </summary>
         public int Quantity { get; set; }
-}
+    }
 }
