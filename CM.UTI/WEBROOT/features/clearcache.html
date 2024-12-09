@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title>This page clears the cache</title>
+    <meta Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"'>
+    <header Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"'>
+</head>
+<body onload="clearlocationstorage(), clearCache(), clearme() ">
+The cache of https://gl1.glocation.info is now clear. To Resynch Circusframe. Click the Button in the User Menu.
+</body>
+</html>
+<script>
+      
+    function clearCache() 
+    {
+         windows.location.reload(true);
+    }
+    function clearme()
+    {
+    header('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
+    //alert("cache clear rlearing location storage");
+    }
+    function clearlocationstorage()
+    {
+        //alert("clearing location storage");
+        localStorage.clear();
+    }
+</script>
