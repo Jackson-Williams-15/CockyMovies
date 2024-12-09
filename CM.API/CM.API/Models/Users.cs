@@ -39,4 +39,6 @@ public class User
     public List<OrderResult>? OrderResults { get; set; }
     public int? PaymentDetailsId { get; set; }
     public PaymentDetails? PaymentDetails { get; set; }
+
+    public string? Role { get; set; }
 }

@@ -35,23 +35,23 @@ namespace CM.API.Controllers
             return BadRequest("Ticket already exists or invalid data.");
         }
 
-        // PUT: api/tickets/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> EditTicket(int id, [FromBody] TicketUpdateDto updatedTicketDto)
+        // PUT: api/tickets/edit-price/{showtimeId}
+        [HttpPut("edit-price/{showtimeId}")]
+        public async Task<IActionResult> EditTicketPrice(int showtimeId, [FromBody] EditTicketPriceDto editTicketPriceDto)
         {
-            if (updatedTicketDto == null)
+            if (editTicketPriceDto.NewPrice <= 0)
             {
-                return BadRequest("Updated ticket cannot be null.");
+                return BadRequest("Invalid price.");
             }
 
-            var success = await _ticketService.EditTicket(id, updatedTicketDto);
+            var success = await _ticketService.EditTicket(showtimeId, editTicketPriceDto.NewPrice);
 
             if (success)
             {
-                return Ok("Ticket updated successfully.");
+                return Ok("Ticket prices updated successfully.");
             }
 
-            return NotFound("Ticket not found or update failed.");
+            return NotFound("Showtime not found or update failed.");
         }
 
 

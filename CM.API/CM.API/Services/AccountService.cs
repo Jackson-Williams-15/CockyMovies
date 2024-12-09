@@ -59,6 +59,7 @@ public class AccountService : IAccountService
             Email = user.Email,
             Username = user.Username,
             DateOfBirth = user.DateOfBirth,
+            Role = user.Role,
             Cart = new CartDto
             {
                 CartId = cart.CartId,
@@ -95,7 +96,8 @@ public class AccountService : IAccountService
             Email = email,
             Username = username,
             Password = hashedPassword,
-            DateOfBirth = dateOfBirth
+            DateOfBirth = dateOfBirth,
+            Role = "User"
         };
 
         _context.Users.Add(user);

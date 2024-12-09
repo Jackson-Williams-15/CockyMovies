@@ -97,6 +97,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ManagerOnly", policy => policy.RequireRole("Manager"));
+});
+
 var app = builder.Build();
 
 // This can logs requests paths, methods, and bodies which can contain sensitive info
