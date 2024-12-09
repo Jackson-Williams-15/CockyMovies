@@ -4,6 +4,7 @@ using CM.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CM.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241206062358_AddReplies")]
+    partial class AddReplies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -415,9 +418,6 @@ namespace CM.API.Migrations
                     b.Property<int?>("PaymentDetailsId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Role")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -429,17 +429,6 @@ namespace CM.API.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 2,
-                            DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "managerEmail@example.com",
-                            Password = "$2a$11$vbXuult0IdDnMxg9PQpVW.a8Ljj1qsQC9c4e7VameIM3jq/DibeDm",
-                            Role = "Manager",
-                            Username = "Manager"
-                        });
                 });
 
             modelBuilder.Entity("GenreMovie", b =>

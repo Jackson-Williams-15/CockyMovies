@@ -17,6 +17,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
+import Rating from '@mui/material/Rating';
 
 export default function Movies() {
   const [movies, setMovies] = useState([]);
@@ -124,7 +125,11 @@ export default function Movies() {
           {movies.map((movie) => (
             <Grid item xs={12} sm={6} md={4} key={movie.id}>
               <Card
-                sx={{ height: 350, display: 'flex', flexDirection: 'column' }}
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
                 <CardMedia
                   component="img"
@@ -132,7 +137,7 @@ export default function Movies() {
                   height="140"
                   image={movie.imageUrl}
                 />
-                <CardContent sx={{ flexgrow: '1' }}>
+                <CardContent sx={{ flexGrow: 1 }}>
                   <Typography gutterBottom variant="h5" component="div">
                     {movie.title}
                   </Typography>
@@ -141,6 +146,18 @@ export default function Movies() {
                       ? movie.genres.map((genre) => genre.name).join(', ')
                       : 'No genres available'}
                   </Typography>
+                  {movie.averageReviewRating !== null && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Rating
+                        value={movie.averageReviewRating}
+                        readOnly
+                        precision={0.5}
+                      />
+                      <Typography variant="body2" sx={{ ml: 1 }}>
+                        {movie.averageReviewRating.toFixed(1)}
+                      </Typography>
+                    </Box>
+                  )}
                   <Typography
                     variant="body2"
                     sx={{
@@ -163,6 +180,13 @@ export default function Movies() {
                     to={`/movies/${movie.id}/showtimes`}
                   >
                     Show Times
+                  </Button>
+                  <Button
+                    size="large"
+                    component={Link}
+                    to={`/movies/${movie.id}/reviews`}
+                  >
+                    Reviews
                   </Button>
                 </CardActions>
               </Card>

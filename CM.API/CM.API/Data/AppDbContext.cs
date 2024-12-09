@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<PaymentDetails> PaymentDetails { get; set; }
     public DbSet<CheckoutRequest> CheckoutRequest { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Reply> Reply { get; set; }
 
     // this is used to further configure the model
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -130,5 +131,19 @@ public class AppDbContext : DbContext
                 .HasOne(r => r.Movie)
                 .WithMany(m => m.Reviews)
                 .HasForeignKey(r => r.MovieId);
+
+        modelBuilder.Entity<Reply>()
+            .HasOne(r => r.Review)
+            .WithMany(rev => rev.Reply)
+            .HasForeignKey(r => r.ReviewId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Reply>()
+            .Property(r => r.Author)
+            .IsRequired();
+
+        modelBuilder.Entity<Reply>()
+            .Property(r => r.Body)
+            .IsRequired();
     }
 }

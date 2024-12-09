@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-public class ReviewCreateDto
+
+public class ReviewUpdateDto
 {
     [StringLength(100, MinimumLength = 3)]
     public string? Title { get; set; }
@@ -9,9 +10,4 @@ public class ReviewCreateDto
 
     [StringLength(1000, MinimumLength = 10)]
     public string? Description { get; set; }
-
-    [Required]
-    public int MovieId { get; set; }
-
-    public string? Username { get; set; }
 }
