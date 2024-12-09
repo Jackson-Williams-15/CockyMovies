@@ -3,11 +3,7 @@ public class MovieDto
 {
     // The unique identifier of the movie.
     public int Id { get; set; }
-
-    // The title of the movie.
     public string Title { get; set; }
-
-    // A brief description of the movie.
     public string? Description { get; set; }
 
     // The release date of the movie.
@@ -24,4 +20,5 @@ public class MovieDto
 
     // The name of the movie's rating (e.g., "PG", "R", "G").
     public string Rating { get; set; } = string.Empty;
+    public double? AverageReviewRating { get; set; }
 }

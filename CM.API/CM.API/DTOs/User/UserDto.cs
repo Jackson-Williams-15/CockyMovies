@@ -6,5 +6,5 @@ public class UserDto
     public string Username { get; set; }
     public DateTime DateOfBirth { get; set; }
     public CartDto Cart { get; set; }
-    public PaymentDetailsDto? PaymentDetails {get; set;}
+    public PaymentDetailsDto? PaymentDetails { get; set; }
 }

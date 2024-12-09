@@ -49,7 +49,10 @@ const OrderReceipt = ({ orderId }) => {
     <Container maxWidth="sm" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Order Receipt
+          Order Confirmation
+        </Typography>
+        <Typography variant="body1" color="textSecondary" gutterBottom>
+          A receipt has been sent to your email
         </Typography>
         <Typography variant="body1" color="text.secondary" gutterBottom>
           Order ID: {order.id}

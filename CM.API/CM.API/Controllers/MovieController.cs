@@ -47,7 +47,8 @@ namespace CM.API.Controllers
                     Name = g.Name
                 }).ToList(),
                 ImageUrl = m.ImageUrl,
-                Rating = m.Rating.Name
+                Rating = m.Rating.Name,
+                AverageReviewRating = m.Reviews != null && m.Reviews.Any() ? (double?)m.Reviews.Average(r => r.Rating) : null
             }).ToList();
 
             // Return the movie DTOs as a JSON response with an HTTP 200 OK status.
@@ -91,7 +92,8 @@ namespace CM.API.Controllers
                     }).ToList()
                 }).ToList(),
                 ImageUrl = movie.ImageUrl,
-                Rating = movie.Rating.Name
+                Rating = movie.Rating.Name,
+                AverageReviewRating = movie.Reviews != null && movie.Reviews.Any() ? (double?)movie.Reviews.Average(r => r.Rating) : null
             };
 
             // Return the movie DTO with an HTTP 200 OK status.
@@ -171,12 +173,13 @@ namespace CM.API.Controllers
         }
 
         // PUT: api/movies/edit
+        // PUT: api/movies/edit/{id}
         // Endpoint to update an existing movie's details.
-        [HttpPut("edit")]
-        public async Task<IActionResult> EditMovie([FromBody] EditMovieDto editMovieDto)
+        [HttpPut("edit/{id}")]
+        public async Task<IActionResult> EditMovie(int id, [FromBody] EditMovieDto editMovieDto)
         {
             // Get the existing movie by its ID (old movie).
-            var oldMovie = await _movieService.GetMovieById(editMovieDto.OldMovieId);
+            var oldMovie = await _movieService.GetMovieById(id);
 
             // If the original movie is not found, return a 404 Not Found status.
             if (oldMovie == null)
@@ -184,7 +187,7 @@ namespace CM.API.Controllers
                 return NotFound("Original movie not found.");
             }
 
-            // Map the new movie details (from EditMovieDto) to a Movie entity.
+            // Map newMovieDto to Movie entity
             var newMovie = new Movie
             {
                 Title = editMovieDto.NewMovie.Title,
@@ -192,7 +195,6 @@ namespace CM.API.Controllers
                 DateReleased = editMovieDto.NewMovie.DateReleased,
                 ImageUrl = editMovieDto.NewMovie.ImageUrl,
                 RatingId = editMovieDto.NewMovie.RatingId,
-                // Update genres if new genre IDs are provided.
                 Genres = editMovieDto.NewMovie.GenreIds != null
                     ? await _movieService.GetGenresByIds(editMovieDto.NewMovie.GenreIds)
                     : new List<Genre>()
