@@ -50,7 +50,10 @@ public class AccountController : ControllerBase
         var user = await _accountService.GetUserById(userDto.Id.ToString());
         if (user != null)
         {
-            await _emailService.SendEmail(user.Email, EmailType.Verification, user, user);
+            if (!string.IsNullOrEmpty(user.Email))
+            {
+                await _emailService.SendEmail(user.Email, EmailType.Verification, user, user);
+            }
         }
 
         return Ok(new SignUpResponseDto
@@ -128,10 +131,15 @@ public class AccountController : ControllerBase
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role ?? string.Empty)
             };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var jwtKey = _configuration["Jwt:Key"];
+        if (string.IsNullOrEmpty(jwtKey))
+        {
+            throw new InvalidOperationException("JWT key is not configured.");
+        }
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(

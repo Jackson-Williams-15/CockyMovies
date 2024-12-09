@@ -54,7 +54,7 @@ public class CartService : ICartService
         return true;
     }
 
-    public async Task<CartDto> GetCartById(int cartId)
+    public async Task<CartDto?> GetCartById(int cartId)
     {
         var cart = await _context.Carts
             .Include(c => c.Tickets)

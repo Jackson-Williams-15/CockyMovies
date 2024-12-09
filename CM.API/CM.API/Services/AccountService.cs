@@ -20,10 +20,10 @@ public class AccountService : IAccountService
         _logger = logger;
     }
 
-    public async Task<UserDto> Authenticate(string username, string password)
+    public async Task<UserDto?> Authenticate(string username, string password)
     {
         _logger.LogInformation("Attempting to authenticate user: {Username}", username);
-        var user = await _context.Users.Include(u => u.Cart).ThenInclude(c => c.Tickets).ThenInclude(t => t.Showtime).ThenInclude(s => s.Movie).FirstOrDefaultAsync(u => u.Username == username);
+        var user = _context.Users != null ? await _context.Users.Include(u => u.Cart).ThenInclude(c => c.Tickets).ThenInclude(t => t.Showtime).ThenInclude(s => s.Movie).FirstOrDefaultAsync(u => u.Username == username) : null;
 
         if (user == null)
         {
@@ -78,7 +78,7 @@ public class AccountService : IAccountService
                             Title = t.Showtime.Movie.Title,
                             Description = t.Showtime.Movie.Description,
                             DateReleased = t.Showtime.Movie.DateReleased,
-                            Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
+                            Rating = t.Showtime.Movie.Rating?.ToString() ?? string.Empty
                         }
                     }
                 }).ToList()
@@ -138,7 +138,7 @@ public class AccountService : IAccountService
                             Title = t.Showtime.Movie.Title,
                             Description = t.Showtime.Movie.Description,
                             DateReleased = t.Showtime.Movie.DateReleased,
-                            Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
+                            Rating = t.Showtime.Movie.Rating?.ToString() ?? string.Empty
 
                         }
                     }
@@ -164,7 +164,7 @@ public class AccountService : IAccountService
         return null;
     }
 
-    public async Task<UserDto> UpdateUser(string userId, UserUpdateDto updateDto)
+    public async Task<UserDto?> UpdateUser(string userId, UserUpdateDto updateDto)
     {
         if (!int.TryParse(userId, out int parsedUserId))
         {
@@ -177,8 +177,8 @@ public class AccountService : IAccountService
             return null;
         }
 
-        user.Email = updateDto.Email;
-        user.Username = updateDto.Username;
+        user.Email = updateDto.Email ?? user.Email;
+        user.Username = updateDto.Username ?? user.Username;
         user.DateOfBirth = updateDto.DateOfBirth;
 
         _context.Users.Update(user);
@@ -208,7 +208,7 @@ public class AccountService : IAccountService
                             Title = t.Showtime.Movie.Title,
                             Description = t.Showtime.Movie.Description,
                             DateReleased = t.Showtime.Movie.DateReleased,
-                            Rating = t.Showtime.Movie.Rating != null ? t.Showtime.Movie.Rating.ToString() : string.Empty
+                            Rating = t.Showtime.Movie.Rating?.ToString() ?? string.Empty
                         }
                     }
                 }).ToList()

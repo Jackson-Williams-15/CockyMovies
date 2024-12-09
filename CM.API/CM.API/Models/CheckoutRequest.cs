@@ -8,5 +8,5 @@ public class CheckoutRequest
     public int CartId { get; set; }
     public int UserId { get; set; }
     public DateTime RequestDate { get; set; }
-    public PaymentDetails PaymentDetails { get; set; }
+    public PaymentDetails? PaymentDetails { get; set; }
 }
