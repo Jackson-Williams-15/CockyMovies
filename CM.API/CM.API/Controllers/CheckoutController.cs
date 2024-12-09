@@ -18,6 +18,7 @@ public class CheckoutController : ControllerBase
     private readonly AppDbContext _context;
     private readonly ILogger<CheckoutController> _logger;
 
+    // Constructor to inject dependencies
     public CheckoutController(ICartService cartService, IPaymentService paymentService, AppDbContext context, ILogger<CheckoutController> logger, IEmailService emailService)
     {
         _cartService = cartService;
@@ -27,17 +28,20 @@ public class CheckoutController : ControllerBase
         _emailService = emailService;
     }
 
+    // Process checkout: Payment, Order, and Ticket management
     [HttpPost("ProcessCheckout")]
     public async Task<IActionResult> ProcessCheckout([FromBody] CheckoutRequestDto request)
     {
         _logger.LogInformation("Received checkout request: {@Request}", request);
 
+        // Validate the model
         if (!ModelState.IsValid)
         {
             _logger.LogWarning("Invalid model state: {@ModelState}", ModelState);
             return BadRequest(ModelState);
         }
 
+        // Get cart by ID
         var cart = await _cartService.GetCartById(request.CartId);
         if (cart == null)
         {
@@ -45,6 +49,7 @@ public class CheckoutController : ControllerBase
             return NotFound("Cart not found.");
         }
 
+        // Create payment details
         var paymentDetails = new PaymentDetails
         {
             CardNumber = request.PaymentDetails.CardNumber,
@@ -56,6 +61,7 @@ public class CheckoutController : ControllerBase
             PaymentMethod = "Credit Card"
         };
 
+        // Process the payment
         var paymentResult = await _paymentService.ProcessPayment(paymentDetails);
         if (!paymentResult)
         {
@@ -63,7 +69,7 @@ public class CheckoutController : ControllerBase
             return BadRequest("Payment failed.");
         }
 
-        // Mark tickets as sold
+        // Mark tickets as sold and update ticket status
         foreach (var ticket in cart.Tickets)
         {
             if (ticket.Quantity <= 0)
@@ -81,7 +87,7 @@ public class CheckoutController : ControllerBase
             }
         }
 
-        // Create order details
+        // Create an order result entry
         var order = new OrderResult
         {
             CartId = request.CartId,
@@ -93,11 +99,11 @@ public class CheckoutController : ControllerBase
             UserId = request.UserId
         };
 
-        // Save OrderResult FIRST so the OrderResultId is set for the OrderTicket.
+        // Save the order first to set OrderResultId for OrderTicket
         _context.OrderResult.Add(order);
         await _context.SaveChangesAsync();
 
-        // Group tickets by showtime and movie
+        // Group tickets by showtime and movie, then create OrderTickets
         var groupedTickets = cart.Tickets
             .GroupBy(t => new { t.ShowtimeId, t.MovieId })
             .Select(g => new
@@ -127,42 +133,26 @@ public class CheckoutController : ControllerBase
 
             _logger.LogInformation("Creating OrderTicket for ShowtimeId: {ShowtimeId}, MovieId: {MovieId}, Quantity: {Quantity}", group.ShowtimeId, group.MovieId, group.TotalQuantity);
 
-            // This checks if the entities are already tracked in the dbcontext
+            // Attach entities if not already tracked
             var trackedShowtime = await _context.Showtime.FindAsync(showtime.Id);
             var trackedMovie = await _context.Movies.FindAsync(movie.Id);
 
-            if (trackedShowtime == null)
-            {
-                _context.Attach(showtime);
-            }
-            else
-            {
-                showtime = trackedShowtime;
-            }
-
-            if (trackedMovie == null)
-            {
-                _context.Attach(movie);
-            }
-            else
-            {
-                movie = trackedMovie;
-            }
+            if (trackedShowtime == null) _context.Attach(showtime);
+            if (trackedMovie == null) _context.Attach(movie);
 
             var orderTicket = new OrderTicket
             {
-                // Assign to group tickets, showtimes, movie, and price
-                TicketId = group.Tickets.First().Id, // Use first ticket's ID
+                TicketId = group.Tickets.First().Id, // First ticket's ID
                 ShowtimeId = group.ShowtimeId,
                 MovieId = group.MovieId,
                 Price = group.TotalPrice / group.TotalQuantity, // Average price per ticket
                 Showtime = showtime,
                 Movie = movie,
                 OrderResultId = order.Id, // Associate with OrderResult
-                Quantity = group.TotalQuantity // Set the total quantity
+                Quantity = group.TotalQuantity // Total quantity
             };
 
-            // Make sure  the OrderTicket is not already tracked in the dbcontext
+            // Add or update the OrderTicket
             var trackedOrderTicket = await _context.OrderTickets.FindAsync(orderTicket.OrderTicketId);
             if (trackedOrderTicket == null)
             {
@@ -177,7 +167,7 @@ public class CheckoutController : ControllerBase
             _logger.LogInformation("OrderTicket created: {@OrderTicket}", orderTicket);
         }
 
-        // Save the OrderTickets
+        // Save OrderTickets
         await _context.SaveChangesAsync();
 
         // Clear the cart
@@ -192,9 +182,8 @@ public class CheckoutController : ControllerBase
 
         _logger.LogInformation("Checkout processed successfully for cart: {CartId}", request.CartId);
 
+        // Generate and send order receipt
         var orderReceipt = await GenerateOrderReceipt(order);
-
-        // Send order receipt email
         var user = await _context.Users.FindAsync(request.UserId);
         if (user != null)
         {
@@ -204,6 +193,7 @@ public class CheckoutController : ControllerBase
         return Ok(orderReceipt);
     }
 
+    // Generate order receipt details
     private async Task<OrderReceiptDto> GenerateOrderReceipt(OrderResult order)
     {
         var orderReceipt = new OrderReceiptDto
@@ -224,5 +214,4 @@ public class CheckoutController : ControllerBase
 
         return orderReceipt;
     }
-
 }
