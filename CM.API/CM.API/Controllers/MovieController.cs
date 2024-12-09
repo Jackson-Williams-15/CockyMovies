@@ -6,21 +6,36 @@ using System.Threading.Tasks;
 
 namespace CM.API.Controllers
 {
+    /// <summary>
+    /// Controller for managing movies.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieService _movieService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MoviesController"/> class.
+        /// </summary>
+        /// <param name="movieService">The movie service.</param>
         public MoviesController(IMovieService movieService)
         {
             _movieService = movieService;
         }
 
+
+        /// <summary>
+        /// Gets a list of movies.
+        /// </summary>
+        /// <param name="genreIds">Optional list of genre IDs to filter movies.</param>
+        /// <param name="ratingIds">Optional list of rating IDs to filter movies.</param>
+        /// <returns>A list of movies.</returns>
         // GET: api/movies
         [HttpGet]
         public async Task<IActionResult> GetMovies([FromQuery] List<int>? genreIds = null, [FromQuery] List<int>? ratingIds = null)
         {
+            // fetch movies using the movie service
             var movies = await _movieService.GetMovies(genreIds, ratingIds);
 
             // map movie entities to movieDtos
@@ -43,6 +58,11 @@ namespace CM.API.Controllers
             return Ok(movieDtos);
         }
 
+        /// <summary>
+        /// Gets a movie by its ID.
+        /// </summary>
+        /// <param name="id">The movie ID.</param>
+        /// <returns>The movie with the specified ID.</returns>
         // GET: api/movies/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMovieById(int id)
@@ -65,7 +85,7 @@ namespace CM.API.Controllers
                     Id = g.Id,
                     Name = g.Name
                 }).ToList(),
-                // showtimes added
+                // Showtimes added
                 Showtimes = movie.Showtimes.Select(s => new ShowtimeDto
                 {
                     Id = s.Id,
@@ -84,23 +104,30 @@ namespace CM.API.Controllers
             return Ok(movieDto);
         }
 
+        /// <summary>
+        /// Adds a new movie.
+        /// </summary>
+        /// <param name="movieDto">The movie data transfer object.</param>
+        /// <returns>A result indicating the success or failure of the adding the movie.</returns>
         // POST: api/movies
         [HttpPost]
         public async Task<IActionResult> AddMovie([FromBody] MovieCreateDto movieDto)
         {
-            // genres by their IDs
+            // validate genres by their IDs
             if (movieDto.GenreIds == null || !movieDto.GenreIds.Any())
             {
                 return BadRequest("Genre IDs cannot be null or empty.");
             }
 
+            // Use the service
             var genres = await _movieService.GetGenresByIds(movieDto.GenreIds);
 
+            // Malidate genres
             if (!genres.Any())
             {
                 return BadRequest("Invalid genre IDs provided.");
             }
-            // map MovieCreateDto to Movie entity and related genres
+            // Map MovieCreateDto to Movie entity and related genres
             var movie = new Movie
             {
                 Title = movieDto.Title,
@@ -124,16 +151,22 @@ namespace CM.API.Controllers
             return Ok("Movie added successfully.");
         }
 
+        /// <summary>
+        /// Removes a movie by its ID.
+        /// </summary>
+        /// <param name="id">The movie ID.</param>
+        /// <returns>A result indicating the success or failure of removing the movie.</returns>
         // DELETE: api/movies/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveMovie(int id)
         {
+            // First fetch the movie by id
             var movie = await _movieService.GetMovieById(id);
             if (movie == null)
             {
                 return NotFound("Movie not found.");
             }
-
+            // Delete the movie
             var success = await _movieService.RemoveMovie(movie);
             if (!success)
             {
@@ -143,11 +176,17 @@ namespace CM.API.Controllers
             return Ok("Movie removed successfully.");
         }
 
-        // PUT: api/movies/edit
+        /// <summary>
+        /// Edits an existing movie.
+        /// </summary>
+        /// <param name="id">The movie ID.</param>
+        /// <param name="editMovieDto">The movie data transfer object with updated information.</param>
+        /// <returns>A result indicating the success or failure of editing the specified movie.</returns>
         // PUT: api/movies/edit/{id}
         [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditMovie(int id, [FromBody] EditMovieDto editMovieDto)
         {
+            // Find the movie, check if not found
             var oldMovie = await _movieService.GetMovieById(id);
             if (oldMovie == null)
             {
