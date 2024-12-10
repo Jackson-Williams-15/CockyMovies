@@ -180,4 +180,40 @@ namespace CM.API.Tests
 
             // Assert: Verify updated user details
             Assert.NotNull(result);  // Ensure result is not null
- 
+            Assert.Equal("updateduser", result.Username);  // Ensure correct username
+            Assert.Equal("updateduser@example.com", result.Email);  // Ensure correct email
+            Assert.Equal(DateTime.Parse("1992-01-01"), result.DateOfBirth);  // Ensure correct date of birth
+        }
+
+        // Test password update success
+        [Fact]
+        public async Task UpdatePassword_ShouldReturnSuccess_WhenOldPasswordIsCorrect()
+        {
+            // Arrange: Create and save a test user
+            var user = new User
+            {
+                Username = "user1",
+                Password = BCrypt.Net.BCrypt.HashPassword("oldpassword"),
+                Email = "user1@example.com",
+                DateOfBirth = DateTime.Parse("1990-01-01"),
+                Role = "User"
+            };
+
+            _context.Users.Add(user);  // Add user to context
+            await _context.SaveChangesAsync();  // Save changes
+
+            var passwordUpdateDto = new UserPasswordDto
+            {
+                OldPassword = "oldpassword",
+                NewPassword = "newpassword"
+            };
+
+            // Act: Update password
+            var result = await _accountService.UpdatePassword(user.Id.ToString(), passwordUpdateDto);
+
+            // Assert: Ensure update succeeded
+            Assert.True(result.Success);  // Ensure success
+            Assert.Equal("Password Updated Successfully", result.Message);  // Ensure correct message
+        }
+    }
+}

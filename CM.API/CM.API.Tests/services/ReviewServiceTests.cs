@@ -144,4 +144,53 @@ public class ReviewServiceTests
         Assert.Equal(1, likedReview.Likes);
     }
 
-    // Test adding 
+    // Test adding a valid reply to a review
+    [Fact]
+    public async Task AddReply_ShouldAddReply_WhenValid()
+    {
+        ResetDatabase(); // Reset DB
+        SeedDatabase(); // Seed data
+
+        // Create new reply
+        var reply = new Reply
+        {
+            ReviewId = 1,
+            Body = "I agree with this review!",
+            Author = "TestUser" // Ensure Author is set
+        };
+
+        var result = await _reviewService.AddReply(reply); // Call service
+
+        Assert.True(result); // Verify success
+        Assert.Single(await _reviewService.GetReplies(1)); // Verify reply count
+    }
+
+    // Test removing a valid review
+    [Fact]
+    public async Task RemoveReview_ShouldRemoveReview_WhenValid()
+    {
+        ResetDatabase(); // Reset DB
+        SeedDatabase(); // Seed data
+
+        var result = await _reviewService.RemoveReview(1); // Call service
+
+        Assert.True(result); // Verify success
+
+        // Verify review is deleted
+        var deletedReview = await _context.Reviews.FindAsync(1);
+        Assert.Null(deletedReview);
+    }
+
+    // Test fetching a review by ID when it exists
+    [Fact]
+    public async Task GetReviewById_ShouldReturnReview_WhenExists()
+    {
+        ResetDatabase(); // Reset DB
+        SeedDatabase(); // Seed data
+
+        var review = await _reviewService.GetReviewById(1); // Call service
+
+        Assert.NotNull(review); // Verify review exists
+        Assert.Equal("Great Movie", review.Title); // Verify correct title
+    }
+}

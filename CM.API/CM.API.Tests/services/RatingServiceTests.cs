@@ -41,4 +41,33 @@ public class RatingServiceTests
         _context.SaveChanges(); // Save changes
     }
 
-    // Test to ensure retrieving ex
+    // Test to ensure retrieving existing ratings works
+    [Fact]
+    public async Task GetRatings_ShouldReturnRatings_WhenRatingsExist()
+    {
+        // Act: Retrieve ratings using service
+        var result = await _ratingService.GetRatings();
+
+        // Assert: Verify ratings exist and are correct
+        Assert.NotNull(result); // Ensure result is not null
+        Assert.Equal(4, result.Count); // Ensure expected count
+        Assert.Contains(result, r => r.Name == "G"); // Check for specific rating
+        Assert.Contains(result, r => r.Name == "PG-13"); // Check another rating
+    }
+
+    // Test to ensure retrieving ratings returns an empty list when none exist
+    [Fact]
+    public async Task GetRatings_ShouldReturnEmptyList_WhenNoRatingsExist()
+    {
+        // Arrange: Clear all ratings from the database
+        _context.Ratings.RemoveRange(_context.Ratings);
+        await _context.SaveChangesAsync(); // Save changes
+
+        // Act: Attempt to retrieve ratings
+        var result = await _ratingService.GetRatings();
+
+        // Assert: Verify the list is empty
+        Assert.NotNull(result); // Ensure result is not null
+        Assert.Empty(result); // Ensure no ratings are returned
+    }
+}
