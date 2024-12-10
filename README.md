@@ -31,11 +31,6 @@ For an API solution overview, navigate to `CM.API/README.md` for more details.
  - After starting the containers, run the command `dotnet run` in the project folder `cm.api/cm.api`
  - Make sure the database container is running before the API for proper connection.
 
- ### Testing API
- - Run backend tests by going to the `cm.api/cm.api.tests` directory
- - Run tests with `dotnet test` 
- - These tests are service and controller unit tests.
-
 ## CM.SPA
 To start the frontend make sure the database and API is running before starting the frontend.
 - Leave the API folders and navigate to `cd cm.spa`
