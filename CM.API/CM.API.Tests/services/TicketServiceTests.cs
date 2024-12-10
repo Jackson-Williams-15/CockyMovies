@@ -161,4 +161,46 @@ public class TicketServiceTests
         ResetDatabase(); // Reset DB
 
         // Attempt to remove tickets from invalid showtime ID
-        var result = await _ticketService.Rem
+        var result = await _ticketService.RemoveTicketsFromShowtime(-1, 1);
+        Assert.False(result);
+    }
+
+    // Test to ensure adding tickets to a valid showtime works
+    [Fact]
+    public async Task AddTicketsToShowtime_ShouldAddTickets_WhenValid()
+    {
+        ResetDatabase(); // Reset DB
+        var (_, showtimeId, _) = SeedDatabase(); // Seed data
+
+        // Add tickets and assert success
+        var result = await _ticketService.AddTicketsToShowtime(showtimeId, 10);
+        Assert.True(result);
+
+        // Verify total tickets count
+        var tickets = await _context.Ticket.Where(t => t.ShowtimeId == showtimeId).ToListAsync();
+        Assert.Equal(11, tickets.Count); // 1 original + 10 new
+    }
+
+    // Test to ensure adding tickets to a nonexistent showtime fails
+    [Fact]
+    public async Task AddTicketsToShowtime_ShouldFail_WhenShowtimeNotFound()
+    {
+        ResetDatabase(); // Reset DB
+
+        // Attempt to add tickets to invalid showtime ID
+        var result = await _ticketService.AddTicketsToShowtime(-1, 10);
+        Assert.False(result);
+    }
+
+    // Test to ensure exceeding showtime capacity fails
+    [Fact]
+    public async Task AddTicketsToShowtime_ShouldFail_WhenExceedsCapacity()
+    {
+        ResetDatabase(); // Reset DB
+        var (_, showtimeId, _) = SeedDatabase(); // Seed data
+
+        // Attempt to add more tickets than available capacity
+        var result = await _ticketService.AddTicketsToShowtime(showtimeId, 200);
+        Assert.False(result);
+    }
+}

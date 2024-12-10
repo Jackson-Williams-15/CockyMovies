@@ -81,4 +81,58 @@ public class GenreServiceTests : IDisposable
 
         // Assert: Verify the genre exists and data matches
         Assert.NotNull(result); // Ensure result is not null
-        Assert.Equal("Action", result!.Name); // Ensure
+        Assert.Equal("Action", result!.Name); // Ensure correct genre name
+    }
+
+    // Test to ensure fetching a genre by invalid ID returns null
+    [Fact]
+    public async Task GetGenreById_ShouldReturnNull_WhenGenreDoesNotExist()
+    {
+        // Act: Attempt to fetch a genre with an invalid ID
+        var result = await _genreService.GetGenreById(999);
+
+        // Assert: Ensure result is null
+        Assert.Null(result);
+    }
+
+    // Test to ensure adding a new genre succeeds
+    [Fact]
+    public async Task AddGenre_ShouldReturnTrue_WhenGenreIsAddedSuccessfully()
+    {
+        // Arrange: Prepare a new genre
+        var genre = new Genre { Name = "Horror" };
+
+        // Act: Add the genre using the service
+        var result = await _genreService.AddGenre(genre);
+
+        // Assert: Ensure the operation succeeded
+        Assert.True(result);
+
+        // Verify the genre was saved in the database
+        var savedGenre = await _context.Genres.FirstOrDefaultAsync(g => g.Name == "Horror");
+        Assert.NotNull(savedGenre); // Ensure genre was saved
+    }
+
+    // Test to ensure adding a duplicate genre fails
+    [Fact]
+    public async Task AddGenre_ShouldReturnFalse_WhenAddFails()
+    {
+        // Arrange: Add a genre to the database
+        var existingGenre = new Genre { Name = "Sci-Fi" };
+        _context.Genres.Add(existingGenre); // Add to context
+        await _context.SaveChangesAsync(); // Save changes
+
+        // Prepare a duplicate genre with the same name
+        var newGenre = new Genre { Name = "Sci-Fi" };
+
+        // Act: Attempt to add the duplicate genre
+        var result = await _genreService.AddGenre(newGenre);
+
+        // Assert: Ensure the operation failed
+        Assert.False(result); // Ensure failure
+
+        // Verify only one instance of the genre exists
+        var count = await _context.Genres.CountAsync(g => g.Name == "Sci-Fi");
+        Assert.Equal(1, count); // Ensure only one genre exists
+    }
+}

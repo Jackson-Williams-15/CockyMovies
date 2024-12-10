@@ -146,4 +146,72 @@ public class CartServiceTests
 
     // Test removing a valid ticket from cart
     [Fact]
-    public async Task RemoveTicketFromCart_ShouldRemoveTic
+    public async Task RemoveTicketFromCart_ShouldRemoveTicket_WhenValid()
+    {
+        ResetDatabase(); // Reset DB
+        SeedDatabase();  // Seed data
+
+        var result = await _cartService.RemoveTicketFromCart(_cartId, _ticketId);
+        Assert.True(result); // Verify success
+
+        // Verify cart is updated
+        var updatedCart = await _context.Carts
+            .Include(c => c.Tickets)
+            .FirstOrDefaultAsync(c => c.CartId == _cartId);
+
+        Assert.NotNull(updatedCart); // Ensure cart exists
+        Assert.Empty(updatedCart.Tickets); // Ensure cart is empty
+    }
+
+    // Test removing ticket from nonexistent cart fails
+    [Fact]
+    public async Task RemoveTicketFromCart_ShouldFail_WhenCartNotFound()
+    {
+        var result = await _cartService.RemoveTicketFromCart(-1, _ticketId);
+        Assert.False(result); // Verify failure
+    }
+
+    // Test removing nonexistent ticket fails
+    [Fact]
+    public async Task RemoveTicketFromCart_ShouldFail_WhenTicketNotFound()
+    {
+        var result = await _cartService.RemoveTicketFromCart(_cartId, -1);
+        Assert.False(result); // Verify failure
+    }
+
+    // Test retrieving cart by valid ID
+    [Fact]
+    public async Task GetCartById_ShouldReturnCart_WhenCartExists()
+    {
+        var cart = await _cartService.GetCartById(_cartId);
+
+        Assert.NotNull(cart); // Verify cart exists
+        Assert.Equal(_cartId, cart.CartId); // Verify correct cart ID
+    }
+
+    // Test retrieving cart by invalid ID returns null
+    [Fact]
+    public async Task GetCartById_ShouldReturnNull_WhenCartNotFound()
+    {
+        var cart = await _cartService.GetCartById(-1);
+        Assert.Null(cart); // Verify cart does not exist
+    }
+
+    // Test retrieving cart by valid user ID
+    [Fact]
+    public async Task GetCartByUserId_ShouldReturnCart_WhenUserExists()
+    {
+        var cart = await _cartService.GetCartByUserId(_userId);
+
+        Assert.NotNull(cart); // Verify cart exists
+        Assert.Equal(_userId, cart.UserId); // Verify correct user ID
+    }
+
+    // Test retrieving cart by invalid user ID returns null
+    [Fact]
+    public async Task GetCartByUserId_ShouldReturnNull_WhenUserNotFound()
+    {
+        var cart = await _cartService.GetCartByUserId(-1);
+        Assert.Null(cart); // Verify cart does not exist
+    }
+}
