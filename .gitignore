@@ -456,8 +456,5 @@ $RECYCLE.BIN/
 # Ignore .env files
 *.env
 
-#README.md
-README.md
-
 #net8.0
 net8.0/
