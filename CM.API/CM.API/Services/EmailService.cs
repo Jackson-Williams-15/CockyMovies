@@ -3,24 +3,59 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using CM.API.Models;
+
+/// <summary>
+/// Represents the settings required for sending emails.
+/// </summary>
 public class EmailSettings
 {
+    /// <summary>
+    /// Gets or sets the SMTP server address.
+    /// </summary>
     public string? SmtpServer { get; set; }
+
+    /// <summary>
+    /// Gets or sets the SMTP server port.
+    /// </summary>
     public int SmtpPort { get; set; }
+    /// <summary>
+    /// Gets or sets the sender's name.
+    /// </summary>
     public string? SenderName { get; set; }
+
+    /// <summary>
+    /// Gets or sets the sender's email address.
+    /// </summary>
     public string? SenderEmail { get; set; }
+    /// <summary>
+    /// Gets or sets the sender's email password.
+    /// </summary>
     public string? SenderPassword { get; set; }
 }
 
+/// <summary>
+/// Provides functionality to send emails.
+/// </summary>
 public class EmailService : IEmailService
 {
     private readonly EmailSettings _emailSettings;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EmailService"/> class.
+    /// </summary>
+    /// <param name="emailSettings">The email settings.</param>
     public EmailService(IOptions<EmailSettings> emailSettings)
     {
         _emailSettings = emailSettings.Value;
     }
 
+    /// <summary>
+    /// Sends an email with the specified parameters.
+    /// </summary>
+    /// <param name="to">The recipient's email address.</param>
+    /// <param name="subject">The email subject.</param>
+    /// <param name="body">The email body.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task SendEmail(string to, string subject, string body)
     {
         var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
@@ -42,6 +77,14 @@ public class EmailService : IEmailService
         await client.SendMailAsync(mailMessage);
     }
 
+    /// <summary>
+    /// Sends an email based on the specified email type and data.
+    /// </summary>
+    /// <param name="to">The recipient's email address.</param>
+    /// <param name="emailType">The type of email to send.</param>
+    /// <param name="data">The data required for the email.</param>
+    /// <param name="user">The user associated with the email.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task SendEmail(string to, EmailType emailType, object data, User user)
     {
         string subject = string.Empty;

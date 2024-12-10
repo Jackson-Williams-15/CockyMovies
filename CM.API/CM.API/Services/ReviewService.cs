@@ -89,6 +89,11 @@ public class ReviewService : IReviewService
         }
     }
 
+    /// <summary>
+    /// Likes a review.
+    /// </summary>
+    /// <param name="reviewId">The ID of the review to like.</param>
+    /// <returns>A task result that has a boolean showing whether the operation was successful.</returns>
     public async Task<bool> LikeReview(int reviewId)
     {
         var review = await _context.Reviews.FindAsync(reviewId);
@@ -112,6 +117,11 @@ public class ReviewService : IReviewService
         }
     }
 
+    /// <summary>
+    /// Adds a reply to a review.
+    /// </summary>
+    /// <param name="reply">The reply to add.</param>
+    /// <returns>A task result that has a boolean showing whether the operation was successful.</returns>
     public async Task<bool> AddReply(Reply reply)
     {
         try
@@ -128,6 +138,11 @@ public class ReviewService : IReviewService
         }
     }
 
+    /// <summary>
+    /// Gets replies for a specific review.
+    /// </summary>
+    /// <param name="reviewId">The ID of the review to get replies for.</param>
+    /// <returns>A task that results in a list of replies for the specified review.</returns>
     public async Task<List<Reply>> GetReplies(int reviewId)
     {
         return await _context.Reply
@@ -135,6 +150,11 @@ public class ReviewService : IReviewService
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Removes a review.
+    /// </summary>
+    /// <param name="reviewId">The ID of the review to remove.</param>
+    /// <returns>A task result that has a boolean showing whether the operation was successful.</returns>
     public async Task<bool> RemoveReview(int reviewId)
     {
         try
@@ -156,6 +176,11 @@ public class ReviewService : IReviewService
         }
     }
 
+    /// <summary>
+    /// Gets a review by ID.
+    /// </summary>
+    /// <param name="reviewId">The ID of the review to retrieve.</param>
+    /// <returns>A task that results in the review with the specified ID.</returns>
     public async Task<Review> GetReviewById(int reviewId)
     {
         var review = await _context.Reviews.FindAsync(reviewId);
