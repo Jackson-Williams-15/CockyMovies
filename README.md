@@ -30,7 +30,6 @@ The Cocky Movies website is a place to purchase tickets and review movies. To Ru
  - Make sure the database container is running before the API for proper connection.
 
  ### Testing API
- - The database should be running for tests.
  - Run backend tests by going to the `cm.api/cm.api.tests` directory
  - Run tests with `dotnet test` 
  - These tests are service and controller unit tests.
