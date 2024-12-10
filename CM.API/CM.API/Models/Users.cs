@@ -90,7 +90,7 @@ namespace CM.API.Models
         public PaymentDetails? PaymentDetails { get; set; }
 
         /// <summary>
-        /// Gets or sets the role of the user (e.g., "admin", "customer").
+        /// Gets or sets the role of the user (e.g., "user", "manager").
         /// This is an optional field.
         /// </summary>
         public string? Role { get; set; }
