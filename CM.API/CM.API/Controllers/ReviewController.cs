@@ -86,6 +86,12 @@ public class ReviewsController : ControllerBase
 
         return Ok(reviewDtos);
     }
+
+    /// <summary>
+    /// Likes a review.
+    /// </summary>
+    /// <param name="reviewId">The review identifier.</param>
+    /// <returns>An <see cref="IActionResult"/> that indicates a review added a like.</returns>
     [HttpPost("{reviewId}/like")]
     public async Task<IActionResult> LikeReview(int reviewId)
     {
@@ -144,6 +150,11 @@ public class ReviewsController : ControllerBase
         return Ok("Review updated successfully.");
     }
 
+    /// <summary>
+    /// Removes a review.
+    /// </summary>
+    /// <param name="id">The review identifier.</param>
+    /// <returns>An <see cref="IActionResult"/> that indicates the review was removed.</returns>
     // DELETE: api/reviews/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveReview(int id)
@@ -158,6 +169,12 @@ public class ReviewsController : ControllerBase
         return Ok("Review removed successfully.");
     }
 
+    /// <summary>
+    /// Adds a reply to a review.
+    /// </summary>
+    /// <param name="reviewId">The review identifier.</param>
+    /// <param name="replyDto">The reply data transfer object.</param>
+    /// <returns>An <see cref="IActionResult"/> that shows the reply was added.</returns>
     [HttpPost("{reviewId}/replies")]
     public async Task<IActionResult> AddReply(int reviewId, [FromBody] ReplyCreateDto replyDto)
     {
@@ -183,6 +200,11 @@ public class ReviewsController : ControllerBase
         return Ok("Reply added successfully.");
     }
 
+    /// <summary>
+    /// Gets replies for a specific review.
+    /// </summary>
+    /// <param name="reviewId">The review identifier.</param>
+    /// <returns>An <see cref="IActionResult"/> that gets the replies.</returns>
     [HttpGet("{reviewId}/replies")]
     public async Task<IActionResult> GetReplies(int reviewId)
     {
