@@ -212,4 +212,18 @@ public class ShowtimeServiceTests
 
         Assert.NotNull(showtimes); // Verify showtimes exist
         Assert.Single(showtimes); // Verify only one showtime exists
-        Assert.Equal(showtimeId, showtimes.First().Id); // Verify correct showt
+        Assert.Equal(showtimeId, showtimes.First().Id); // Verify correct showtime ID
+    }
+
+    // Test fetching showtimes by nonexistent movie ID returns empty
+    [Fact]
+    public async Task GetShowtimesByMovieId_ShouldReturnEmpty_WhenMovieNotFound()
+    {
+        ResetDatabase(); // Reset DB
+
+        var showtimes = await _showtimeService.GetShowtimesByMovieId(Guid.NewGuid().GetHashCode()); // Call service
+
+        Assert.NotNull(showtimes); // Verify list is not null
+        Assert.Empty(showtimes); // Verify list is empty
+    }
+}

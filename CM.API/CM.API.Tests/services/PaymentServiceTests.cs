@@ -96,4 +96,51 @@ public class PaymentServiceTests
         Assert.Empty(_context.PaymentDetails); // Ensure no records were added
     }
 
-    // T
+    // Test to ensure payment fails with an invalid expiry date
+    [Fact]
+    public async Task ProcessPayment_ShouldFail_WhenExpiryDateIsInvalid()
+    {
+        // Arrange: Invalid expiry date
+        var paymentDetails = new PaymentDetails
+        {
+            CardNumber = "1234567812345678",
+            CVV = "123",
+            ExpiryDate = "13/25", // Invalid expiry date
+            Amount = 100.00m,
+            PaymentDate = DateTime.UtcNow,
+            CardHolderName = "John Doe",
+            PaymentMethod = "CreditCard"
+        };
+
+        // Act: Attempt payment
+        var result = await _paymentService.ProcessPayment(paymentDetails);
+
+        // Assert: Ensure payment failed and nothing was saved
+        Assert.False(result); // Ensure failure
+        Assert.Empty(_context.PaymentDetails); // Ensure no records were added
+    }
+
+    // Test to ensure payment fails with completely invalid details
+    [Fact]
+    public async Task ProcessPayment_ShouldFail_WhenAllDetailsAreInvalid()
+    {
+        // Arrange: Completely invalid payment details
+        var paymentDetails = new PaymentDetails
+        {
+            CardNumber = "abcd1234", // Invalid card number
+            CVV = "12x", // Invalid CVV
+            ExpiryDate = "20/99", // Invalid expiry date
+            Amount = 100.00m,
+            PaymentDate = DateTime.UtcNow,
+            CardHolderName = "John Doe",
+            PaymentMethod = "CreditCard"
+        };
+
+        // Act: Attempt payment
+        var result = await _paymentService.ProcessPayment(paymentDetails);
+
+        // Assert: Ensure payment failed and nothing was saved
+        Assert.False(result); // Ensure failure
+        Assert.Empty(_context.PaymentDetails); // Ensure no records were added
+    }
+}
