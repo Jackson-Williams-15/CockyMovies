@@ -1,5 +1,6 @@
 # CockyMovies
-The Cocky Movies website is a place to purchase tickets and review movies. This read me focuses on how to run our app. To Run our web app, you need npm and Docker installed.
+The Cocky Movies website is a place to purchase tickets and review movies. This read me focuses on how to run our app. To Run our web app, you need npm and Docker installed.<br>
+Read our [wiki](https://github.com/Jackson-Williams-15/CockyMovies/wiki/Architecture) for the architecture!
 ## CM.API
 
 For an API solution overview, navigate to `CM.API/README.md` for more details.
