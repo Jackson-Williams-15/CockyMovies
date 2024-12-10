@@ -3,7 +3,7 @@ The Cocky Movies website is a place to purchase tickets and review movies. This 
 Read our [wiki](https://github.com/Jackson-Williams-15/CockyMovies/wiki/Architecture) for the architecture!
 ## CM.API
 
-For an API solution overview, navigate to `CM.API/README.md` for more details.
+For an API [solution overview](https://github.com/Jackson-Williams-15/CockyMovies/blob/main/CM.API/README.md), navigate to `CM.API/README.md` for more details.
 
 ### Environment variables (Config)
 - Create a `.env` in the root directory `/cm.api`.
