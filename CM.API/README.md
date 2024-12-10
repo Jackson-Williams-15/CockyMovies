@@ -121,3 +121,10 @@ The `Program` file is the entry point for the application. It configures service
 - appsettings.Development.json: Contains configuration settings for the development - - environment.<br>
 - docker-compose.yml: Defines services, networks, and volumes for Docker Compose.<br>
 - dockerfile: Contains instructions for building a Docker image for the application.
+
+## Testing
+ - Run backend tests by going to the `cm.api/cm.api.tests` directory
+ - Run tests with `dotnet test` 
+ - These tests are service and controller unit tests.
+ - Here is an image of the results of our tests<br>
+ ![image](TestResults.png)
