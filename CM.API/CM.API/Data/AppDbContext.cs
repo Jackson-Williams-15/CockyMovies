@@ -2,9 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using CM.API.Models;
 
 namespace CM.API.Data;
+
+/// <summary>
+/// Represents the database context for the application.
+/// </summary>
 public class AppDbContext : DbContext
 {
-    // constructor that passes options to the base DbContext class
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AppDbContext"/> class.
+    /// </summary>
+    /// <param name="options">The options to be used by a <see cref="DbContext"/>.</param>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
@@ -24,7 +31,11 @@ public class AppDbContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Reply> Reply { get; set; }
 
-    // this is used to further configure the model
+    /// <summary>
+    /// Configures the model that was discovered by convention from the entity types
+    /// exposed in <see cref="DbSet{TEntity}"/> properties on this context.
+    /// </summary>
+    /// <param name="modelBuilder">The builder being used to construct the model for this context.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

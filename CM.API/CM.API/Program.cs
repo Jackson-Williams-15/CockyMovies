@@ -10,8 +10,14 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using DotNetEnv;
 
+/// <summary>
+/// Entry point for the application.
+/// </summary>
 var builder = WebApplication.CreateBuilder(args);
 
+/// <summary>
+/// Clears all logging providers and adds console logging.
+/// </summary>
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
@@ -25,6 +31,7 @@ builder.Services.AddHttpsRedirection(options =>
     options.HttpsPort = null;
 });
 
+// Configures CORS to allow all origins, methods, and headers.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -36,6 +43,7 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Adds scoped services for dependency injection.
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
@@ -50,6 +58,7 @@ builder.Services.AddScoped<GenreRepository>();
 builder.Services.AddScoped<ContentModerationService>();
 builder.Services.AddControllers();
 
+// Configures JSON serialization options.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -60,7 +69,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add services to the container
+// Adds the database context to the service container.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(8, 0, 28))));
@@ -77,7 +86,7 @@ builder.Services.Configure<EmailSettings>(options =>
 
 builder.Services.AddTransient<IEmailService, EmailService>();
 
-//JWT authentication
+// Configure JWT authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -97,6 +106,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Configures authorization policies.
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ManagerOnly", policy => policy.RequireRole("Manager"));
@@ -104,8 +114,12 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
-// This can logs requests paths, methods, and bodies which can contain sensitive info
-// only uncomment for debugging purposes, otherwise leave commented out
+/// <summary>
+/// Middleware to log request paths, methods, and bodies for debugging purposes.
+/// </summary>
+/// <remarks>
+/// This middleware should only be uncommented for debugging purposes as it can log sensitive information.
+/// </remarks>
 /*app.Use(async (context, next) =>
 {
     // Log the request path and method

@@ -3,8 +3,15 @@ using CM.API.Models;
 
 namespace CM.API.Data
 {
+    /// <summary>
+    /// Contains extension methods for the ModelBuilder class.
+    /// </summary>
     public static class ModelBuilderExtensions
-    {
+    {   
+        /// <summary>
+        /// Seeds the database with initial data.
+        /// </summary>
+        /// <param name="modelBuilder">The ModelBuilder instance.</param>
         public static void Seed(this ModelBuilder modelBuilder)
         {
             // Hash the password for the manager account
